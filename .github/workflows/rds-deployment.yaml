@@ -25,5 +25,8 @@ jobs:
                   ssh -i ~/.ssh/meinPrivateKey ubuntu@${{ secrets.EC2_IP}} '
                   cd app 
                   docker build -t rds-backend .
+                  if [ "$(docker ps -q -f name=container-rds-backend)" ]; then
+                      docker rm -f container-rds-backend
+                  fi
                   docker run -d --env-file .env --name container-rds-backend rds-backend
                   '
