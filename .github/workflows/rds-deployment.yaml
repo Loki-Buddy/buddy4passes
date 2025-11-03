@@ -5,8 +5,8 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         steps:
-            - name: github-checkout
-            - uses: actions/checkout@v5
+            - name: Checkout Repo
+              uses: actions/checkout@v5
 
             - name: SSH Setup
               run: |
