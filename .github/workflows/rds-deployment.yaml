@@ -1,0 +1,29 @@
+name: Deploy to RDS
+on:
+    workflow_dispatch:
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: github-checkout
+            - uses: actions/checkout@v5
+
+            - name: SSH Setup
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/meinPrivateKey
+                  chmod 400 ~/.ssh/meinPrivateKey
+                  ssh-keyscan -H ${{ secrets.EC2_IP}} >> ~/.ssh/known_hosts
+
+            - name: Copy backend directory to ec2
+              run: |
+                  ssh -i ~/.ssh/meinPrivateKey ubuntu@${{ secrets.EC2_IP}} "mkdir -p app"
+                  scp -i ~/.ssh/meinPrivateKey ./Cloud/.env ./Cloud/dockerfile ./Cloud/package.json ./Cloud/server.js ubuntu@${{ secrets.EC2_IP}}:/home/ubuntu/app
+            
+            - name: Start Docker Container
+              run: |
+                  ssh -i ~/.ssh/meinPrivateKey ubuntu@${{ secrets.EC2_IP}} '
+                  cd app 
+                  docker build -t rds-backend .
+                  docker run -d --env-file .env --name container-rds-backend rds-backend
+                  '
