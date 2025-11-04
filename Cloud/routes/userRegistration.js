@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const pool = require ("pg") // Verbindung zur DB?
+const pool = require ("../server.js") // Verbindung zur DB?
 require("dotenv").config();
 
 router.post("/user/register", async(req, res)=> {
@@ -8,7 +8,7 @@ router.post("/user/register", async(req, res)=> {
 
     // Prüfen, ob der User schon existiert
     try {
-        const existingUser=await pool.query(
+        const existingUser=await Pool.query(
             "SELECT * FROM b4puser WHERE userEmail=$1",
             [userEmail]
         );
