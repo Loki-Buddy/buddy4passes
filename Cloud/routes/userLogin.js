@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { verifyString } = require("../middleware/hashing");
 
 router.post("/user/login", async (req, res) => {
   const { userEmail, masterPW } = req.body;
@@ -13,19 +12,19 @@ router.post("/user/login", async (req, res) => {
       [userEmail]
     );
     if (user.rows.length === 0) {
-      return res.status(401).json({ message: "Benutzer nicht gefunden" });
-    }
-    const hashedMasterPW = user.rows[0].masterPW;
-    const match = await verifyString(masterPW, hashedMasterPW);
-    if (!match) {
       return res
         .status(401)
         .json({
-          message:
-            "Loginvorgang fehlgeschlagen, bitte überprüfe E-Mail und Passwort",
+          message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingae!",
         });
     }
-
+    if (user.rows[0].masterPW !== masterPW) {
+      return res
+        .status(401)
+        .json({
+          message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingae!",
+        });
+    }
     const token = jwt.sign(
       { userID: user.rows[0].userID },
       process.env.JWT_SECRET,
