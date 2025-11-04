@@ -18,7 +18,7 @@ jobs:
       - name: Copy backend directory to ec2
         run: |
           ssh -i ~/.ssh/meinPrivateKey ubuntu@${{ secrets.EC2_IP}} "mkdir -p app"
-          scp -i ~/.ssh/meinPrivateKey -r ./Cloud/.env ./Cloud/dockerfile ./Cloud/.dockerignore ./Cloud/package.json ./Cloud/server.js ./Cloud/routes/* ./Cloud/middleware/* ubuntu@${{ secrets.EC2_IP}}:/home/ubuntu/app
+          scp -i ~/.ssh/meinPrivateKey -r ./Cloud/.env ./Cloud/dockerfile ./Cloud/.dockerignore ./Cloud/package.json ./Cloud/server.js ./Cloud/routes ./Cloud/middleware ubuntu@${{ secrets.EC2_IP}}:/home/ubuntu/app
 
       - name: Start Docker Container
         run: |
