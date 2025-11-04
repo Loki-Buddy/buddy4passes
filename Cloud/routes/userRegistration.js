@@ -8,7 +8,7 @@ router.post("/user/register", async(req, res)=> {
 
     // Prüfen, ob der User schon existiert
     try {
-        const existingUser=await Pool.query(
+        const existingUser=await pool.query(
             "SELECT * FROM b4puser WHERE userEmail=$1",
             [userEmail]
         );
