@@ -28,7 +28,7 @@ async function initDB() {
             UNIQUE(userName, userEmail)
         );
         CREATE TABLE IF NOT EXISTS accounts (
-            userID INTEGER NOT NULL ON DELETE CASCADE,
+            userID INTEGER NOT NULL REFERENCES b4puser(userID) ON DELETE CASCADE,
             service TEXT NOT NULL,
             serviceEmail TEXT NOT NULL,
             serviceUsername TEXT,
