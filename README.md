@@ -9,7 +9,7 @@ als native Desktop-App verwendet wird.
 - Tauri Framework
   	- Frontend: JavaScript/React
   	- Backend: Rust
-- Database: SQLite (falls das nicht reicht: Postgres)
+- Database: PostgreSQL
   	- Tabelle 1: User mit Vor- / Nachname, Geburtsdatum, Main-E-Mail, Main-Passwort
   	- Tabelle 2: Gesammelte eigene Accounts
   	- Tabelle 3: Geteilte Accounts
@@ -31,7 +31,7 @@ als native Desktop-App verwendet wird.
 ## Sicherheit - 
 - Die Daten sollen auf dem Client gehasht werden und in der cloud serverseitig mit SHA-256 verschlüsselt abgespeichert werden (Das sind die anfänglichen Überlegungen was die Sicherheit betrifft: Anpassungen möglich).
 
-### Nice-To-Have - 
+## Nice-To-Have - 
 - Der User hat die Möglichkeit, einen kompletten Eintrag seines Passwort-Managers mit einem anderen *User* der App zu teilen. (Sicherheitswarnungen müssen erfolgen/angezeigt werden etc.)
 	- Der andere User MUSS registrierter Nutzer der App sein (Hinweis zum Sicherheitsrisiko!)
 - Browser-Addon für Autofill und Speicherung
