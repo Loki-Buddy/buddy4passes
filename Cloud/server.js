@@ -37,6 +37,11 @@ async function initDB() {
         );`);
 }
 
+// User Login
+
+const userLoginRoute = require("./routes/userLogin");
+app.use(userLoginRoute);
+
 initDB().then(() => {
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
