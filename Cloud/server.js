@@ -37,6 +37,12 @@ async function initDB() {
         );`);
 }
 
+// User Registrierung
+
+const userRegRoute=require("./routes/userRegistration")
+app.use(userRegRoute);
+
+
 // User Login
 
 const userLoginRoute = require("./routes/userLogin");

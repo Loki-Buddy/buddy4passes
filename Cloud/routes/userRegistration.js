@@ -1,0 +1,33 @@
+const express = require("express");
+const router = express.Router();
+const pool = require ("pg") // Verbindung zur DB?
+require("dotenv").config();
+
+router.post("/user/register", async(req, res)=> {
+    const {userEmail, masterPW}= req.body;
+
+    // Prüfen, ob der User schon existiert
+    try {
+        const existingUser=await pool.query(
+            "SELECT * FROM b4puser WHERE userEmail=$1",
+            [userEmail]
+        );
+
+        if (existingUser.rows.length > 0) {
+            return res
+                .status(400) //Clientfehler? Status 400 korrekt?
+                .json({message: "Diese E-Mail wird bereits von einem anderen User verwendet."});
+        }
+
+        // neuen User speichern
+        const newUser = await pool.query("INSERT INTO b4puser (userEmail, masterPW) VALUES ($1, $2)", [userEmail, masterPW]);
+
+        // Registrierung erfolgreich
+        res.status(201).json({message: "Nutzer erfolgreich registriert", user: newUser.rows[0],});
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Fehler, bitte später erneut versuchen."}); //internal Server Error
+    }
+});
+
+module.exports = router;
