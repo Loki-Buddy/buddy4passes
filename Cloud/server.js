@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
-// const { Pool } = require("pg");
+const { Pool } = require("pg");
 const pool=require("./pool");
 
 const app = express();
@@ -8,7 +8,7 @@ const port = 3000;
 
 app.use(express.json());
 
-/* const pool = new Pool({
+const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
@@ -17,7 +17,7 @@ app.use(express.json());
   ssl: {
     rejectUnauthorized: false,
   },
-}); */
+});
 
 async function initDB() {
   await pool.query(`
