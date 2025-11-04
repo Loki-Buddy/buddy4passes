@@ -22,6 +22,7 @@ router.post("/user/login", async (req, res) => {
     const user = await pool.query("SELECT * FROM b4puser WHERE userName = $1", [
       userName,
     ]);
+    console.log(user);
     if (user.rows.length === 0) {
       return res.status(401).json({
         message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingabe!",
