@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const pool = require ("../server") // Verbindung zur DB?
+const pool = require ("../pool") // Verbindung zur DB?
 
 require("dotenv").config();
 
