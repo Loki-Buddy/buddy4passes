@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const pool = require ("../server.js") // Verbindung zur DB?
+const pool = require ("../server") // Verbindung zur DB?
+
 require("dotenv").config();
 
 router.post("/user/register", async(req, res)=> {
