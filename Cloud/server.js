@@ -54,4 +54,4 @@ initDB().then(() => {
   });
 });
 
-modules.exports = pool
+module.exports = pool
