@@ -20,15 +20,24 @@ router.post("/user/register", async(req, res)=> {
 
     // Prüfen, ob der User schon existiert
     try {
-        const existingUser=await pool.query(
+        const existingUserEmail=await pool.query(
             "SELECT * FROM b4puser WHERE userEmail=$1",
             [userEmail]
         );
 
-        if (existingUser.rows.length > 0) {
+        const existingUserName=await pool.query(
+            "SELECT * FROM b4puser WHERE userName=$1",
+            [userName]
+        );
+
+        if (existingUserEmail.rows.length > 0) {
             return res
                 .status(400) //Clientfehler? Status 400 korrekt?
                 .json({message: "Diese E-Mail wird bereits von einem anderen User verwendet."});
+        }else if (existingUserName.rows.length > 0) {
+            return res
+                .status(400) //Clientfehler? Status 400 korrekt?
+                .json({message: "Dieser Benutzername wird bereits von einem anderen User verwendet."});
         }
 
         // neuen User speichern

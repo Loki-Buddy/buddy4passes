@@ -23,10 +23,9 @@ async function initDB() {
   await pool.query(`
         CREATE TABLE IF NOT EXISTS b4puser (
             userID SERIAL PRIMARY KEY,
-            userName TEXT NOT NULL,
-            userEmail TEXT NOT NULL,
+            userName TEXT NOT NULL UNIQUE,
+            userEmail TEXT NOT NULL UNIQUE,
             masterPW TEXT NOT NULL,
-            UNIQUE(userName, userEmail)
         );
         CREATE TABLE IF NOT EXISTS accounts (
             userID INTEGER NOT NULL REFERENCES b4puser(userID) ON DELETE CASCADE,
