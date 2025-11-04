@@ -16,7 +16,7 @@ const pool = new Pool({
 });
 
 router.post("/user/register", async(req, res)=> {
-    const {userEmail, masterPW}= req.body;
+    const {userName, userEmail, masterPW}= req.body;
 
     // Prüfen, ob der User schon existiert
     try {
@@ -32,7 +32,7 @@ router.post("/user/register", async(req, res)=> {
         }
 
         // neuen User speichern
-        const newUser = await pool.query("INSERT INTO b4puser (userEmail, masterPW) VALUES ($1, $2)", [userEmail, masterPW]);
+        const newUser = await pool.query("INSERT INTO b4puser (userName, userEmail, masterPW) VALUES ($1, $2, $3)", [userName,userEmail, masterPW]);
 
         // Registrierung erfolgreich
         res.status(201).json({message: "Nutzer erfolgreich registriert", user: newUser.rows[0],});
