@@ -22,24 +22,25 @@ const pool = new Pool({
 async function initDB() {
   await pool.query(`
         CREATE TABLE IF NOT EXISTS b4puser (
-            userID SERIAL PRIMARY KEY,
-            userName TEXT NOT NULL UNIQUE,
-            userEmail TEXT NOT NULL UNIQUE,
-            masterPW TEXT NOT NULL
+            user_id SERIAL PRIMARY KEY,
+            user_name TEXT NOT NULL UNIQUE,
+            user_email TEXT NOT NULL UNIQUE,
+            master_password TEXT NOT NULL
         );
         CREATE TABLE IF NOT EXISTS accounts (
-            userID INTEGER NOT NULL REFERENCES b4puser(userID) ON DELETE CASCADE,
+            account_id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES b4puser(user_id) ON DELETE CASCADE,
             service TEXT NOT NULL,
-            serviceEmail TEXT NOT NULL,
-            serviceUsername TEXT,
-            servicePW TEXT NOT NULL,
-            FOREIGN KEY (userID) REFERENCES b4puser(userID)
+            service_email TEXT NOT NULL,
+            service_username TEXT,
+            service_password TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES b4puser(user_id)
         );`);
 }
 
 // User Registrierung
 
-const userRegRoute=require("./routes/userRegistration")
+const userRegRoute = require("./routes/userRegistration");
 app.use(userRegRoute);
 
 // User löschen
@@ -50,10 +51,22 @@ app.use(userDelRoute);
 
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
+// Accounts anzeigen
+const displayAccountsRoute = require("./routes/displayAccounts");
+app.use(displayAccountsRoute);
+
+// Account Hinzufügen
+
+const accountAddRoute = require("./routes/accountAdd");
+app.use(accountAddRoute);
+
+// Account Löschen
+
+const accountDeleteRoute = require("./routes/accountDelete");
+app.use(accountDeleteRoute);
 
 initDB().then(() => {
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
   });
 });
-
