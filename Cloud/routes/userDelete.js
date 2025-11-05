@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const auth = require("../middleware/auth"); // User muss für die Aktion eingeloggt sein
-const pool = require("../pool")
+const pool = require("../pool");
 
 // Löschen-Route
 router.delete("/user/delete", auth, async (req, res) => {
