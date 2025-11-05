@@ -49,6 +49,9 @@ app.use(accountAddRoute);
 const accountDeleteRoute = require("./routes/accountDelete");
 app.use(accountDeleteRoute);
 
+const masterAccChangesRoute = require("./routes/chmastercreds");
+app.use(masterAccChangesRoute);
+
 initDB().then(() => {
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
