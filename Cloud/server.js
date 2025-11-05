@@ -46,6 +46,9 @@ app.use(userRegRoute);
 
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
+// Accounts anzeigen
+const displayAccountsRoute = require("./routes/displayAccounts");
+app.use(displayAccountsRoute);
 
 // Account Hinzufügen
 
