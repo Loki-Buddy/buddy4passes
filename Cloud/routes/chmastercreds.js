@@ -44,7 +44,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
         });
     }
 
-    if (user.rows[0].user_name === user_name || user.rows[0].user_name === "") {
+    if (user.rows[0].user_name === user_name || user_name === "") {
       return res
         .status(401)
         .json({
@@ -72,7 +72,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
         });
     }
 
-    if (user.rows[0].user_email === user_email || user.rows[0].user_email === "") {
+    if (user.rows[0].user_email === user_email || user_email === "") {
       return res
         .status(401)
         .json({
