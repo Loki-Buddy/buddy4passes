@@ -28,12 +28,12 @@ async function initDB() {
             master_password TEXT NOT NULL
         );
         CREATE TABLE IF NOT EXISTS accounts (
-            user_id INTEGER NOT NULL REFERENCES b4puser(userID) ON DELETE CASCADE,
+            user_id INTEGER NOT NULL REFERENCES b4puser(user_id) ON DELETE CASCADE,
             service TEXT NOT NULL,
             service_email TEXT NOT NULL,
             service_username TEXT,
             service_password TEXT NOT NULL,
-            FOREIGN KEY (userID) REFERENCES b4puser(userID)
+            FOREIGN KEY (user_id) REFERENCES b4puser(user_id)
         );`);
 }
 
