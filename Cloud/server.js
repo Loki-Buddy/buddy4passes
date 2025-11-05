@@ -47,6 +47,9 @@ app.use(userRegRoute);
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
 
+const masterAccChangesRoute = require("./routes/masterAccChanges");
+app.use(masterAccChangesRoute);
+
 initDB().then(() => {
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
