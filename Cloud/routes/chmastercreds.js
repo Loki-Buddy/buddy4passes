@@ -1,24 +1,9 @@
 const express = require("express");
 const router = express.Router();
-//const jwt = require("jsonwebtoken");
-const { Pool } = require("pg");
+const pool = require("../pool");
 const auth = require("../middleware/auth");
 require("dotenv").config();
 
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-/* if (user.rows.length === 0) {
-        return res.status(404).json({ message: "User nicht gefunden" });
-      } */
 router.put("/user/chmastercreds", auth, async (req, res) => {
   const { new_user_name, new_user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
 
@@ -70,7 +55,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
     await pool.query(updateQuery, values);
 
 
-    res.status(200).json({ message: "Passwort erfolgreich geändert" });
+    res.status(200).json({ message: "Änderungen erfolgreich gespeichert!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Interner Serverfehler" });
