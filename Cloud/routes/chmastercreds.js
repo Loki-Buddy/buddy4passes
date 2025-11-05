@@ -32,12 +32,18 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
     let index = 1;
 
     if (new_user_name) {
+      if(new_user_name === user.rows[0].user_name) {
+        return res.status(400).json({ message: "Benutzername ist gleich!" });
+      }
       sets.push(`user_name = $${index}`);
       values.push(new_user_name);
       index++;
     }
 
     if (new_user_email) {
+      if(new_user_email === user.rows[0].user_email) {
+        return res.status(400).json({ message: "E-Mail ist gleich!" });
+      }
       sets.push(`user_email = $${index}`);
       values.push(new_user_email);
       index++;
