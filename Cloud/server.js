@@ -47,7 +47,7 @@ app.use(userRegRoute);
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
 
-const masterAccChangesRoute = require("./routes/masterAccChanges");
+const masterAccChangesRoute = require("./routes/chmastercreds");
 app.use(masterAccChangesRoute);
 
 initDB().then(() => {

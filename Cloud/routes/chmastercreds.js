@@ -16,7 +16,7 @@ const pool = new Pool({
   },
 });
 
-router.put("/user/master-account-changes", auth, async (req, res) => {
+router.put("/user/chmastercreds", auth, async (req, res) => {
   const { old_master_password, new_master_password, confirm_new_master_password } = req.body;
 
   try {
