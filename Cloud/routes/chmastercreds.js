@@ -31,6 +31,9 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
     );
 
     if (new_master_password) {
+      if (old_master_password !== user.rows[0].master_password) {
+        return res.status(400).json({ message: "Altes Passwort ist falsch!" });
+      }
       if (new_master_password !== confirm_new_master_password) {
         return res.status(400).json({ message: "Passwörter stimmen nicht überein!"});
       }
