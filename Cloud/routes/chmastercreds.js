@@ -20,7 +20,7 @@ const pool = new Pool({
         return res.status(404).json({ message: "User nicht gefunden" });
       } */
 router.put("/user/chmastercreds", auth, async (req, res) => {
-  const { user_name, user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
+  const { new_user_name, new_user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
 
   try {
     const { user_id } = req.user;
@@ -31,8 +31,8 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
     );
 
     const existingUserName = await pool.query(
-      "SELECT * FROM b4puser WHERE user_name=$1",
-      [user_name]
+      "SELECT user_name FROM b4puser WHERE user_name=$1",
+      [new_user_name]
     );
 
     if (existingUserName.rows.length > 0) {
@@ -44,7 +44,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
         });
     }
 
-    if (user.rows[0].user_name === user_name || user_name === "") {
+    if (user.rows[0].user_name === new_user_name || new_user_name === "") {
       return res
         .status(401)
         .json({
@@ -54,13 +54,13 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
     } else {
       await pool.query(
         "UPDATE b4puser SET user_name = $1 WHERE user_id = $2",
-        [user_name, user_id]
+        [new_user_name, user_id]
       );
     }
 
     const existingUserEmail = await pool.query(
-      "SELECT * FROM b4puser WHERE user_email=$1",
-      [user_email]
+      "SELECT user_email FROM b4puser WHERE user_email=$1",
+      [new_user_email]
     );
 
     if (existingUserEmail.rows.length > 0) {
@@ -72,7 +72,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
         });
     }
 
-    if (user.rows[0].user_email === user_email || user_email === "") {
+    if (user.rows[0].user_email === new_user_email || new_user_email === "") {
       return res
         .status(401)
         .json({
@@ -98,8 +98,8 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
 
     // Passwort aktualisieren
     await pool.query(
-      "UPDATE b4puser SET master_password = $1 WHERE master_password = $2",
-      [new_master_password, old_master_password]
+      "UPDATE b4puser SET master_password = $1 WHERE user_id = $2",
+      [new_master_password, user_id]
     );
 
     res.status(200).json({ message: "Passwort erfolgreich geändert" });
