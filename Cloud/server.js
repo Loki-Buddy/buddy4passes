@@ -47,6 +47,11 @@ app.use(userRegRoute);
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
 
+// Account Hinzufügen
+
+const accountAddRoute = require("./routes/accountAdd");
+app.use(accountAddRoute);
+
 initDB().then(() => {
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
