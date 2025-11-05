@@ -42,6 +42,9 @@ async function initDB() {
 const userRegRoute=require("./routes/userRegistration")
 app.use(userRegRoute);
 
+// User löschen
+const userDelRoute=require("./routes/userDelete")
+app.use(userDelRoute);
 
 // User Login
 
