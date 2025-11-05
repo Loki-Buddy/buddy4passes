@@ -18,16 +18,19 @@ const pool = new Pool({
 router.post("/user/login", async (req, res) => {
   const { userName, masterPW } = req.body;
 
+  console.log("Body: ", userName, masterPW);
+
   try {
     const user = await pool.query("SELECT * FROM b4puser WHERE userName = $1", [
       userName,
     ]);
-    console.log(user);
+    console.log("User Rows:", user.rows);
     if (user.rows.length === 0) {
       return res.status(401).json({
         message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingabe!",
       });
     }
+    console.log("Gespeichertes Passwort:", user.rows[0].masterPW);
     if (user.rows[0].masterPW !== masterPW) {
       return res.status(401).json({
         message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingabe!",
@@ -36,7 +39,7 @@ router.post("/user/login", async (req, res) => {
     const token = jwt.sign(
       { userID: user.rows[0].userID },
       process.env.JWT_SECRET,
-      { expiresIn: "300000" }
+      { expiresIn: "5m" }
     );
     res.json({ message: "Login erfolgreich!", token: token });
   } catch (err) {
