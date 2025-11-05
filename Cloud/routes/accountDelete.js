@@ -17,13 +17,13 @@ const pool = new Pool({
 });
 
 router.delete("/account/delete", auth, async (req, res) => {
-  const { service_id } = req.body;
+  const { account_id } = req.body;
   const { user_id } = req.user;
 
   try {
     const deleteAccount = await pool.query(
-      "DELETE FROM accounts WHERE service_id = $1 AND user_id = $2",
-      [service_id, user_id]
+      "DELETE FROM accounts WHERE account_id = $1 AND user_id = $2",
+      [account_id, user_id]
     );
     res.status(200).json({ message: "Account erfolgreich gelöscht!" });
   } catch (err) {
