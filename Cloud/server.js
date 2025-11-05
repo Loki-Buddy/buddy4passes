@@ -1,7 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const pool = require("./pool");
-
 const app = express();
 const port = 3000;
 
@@ -27,7 +26,6 @@ async function initDB() {
 }
 
 // User Registrierung
-
 const userRegRoute = require("./routes/userRegistration");
 app.use(userRegRoute);
 
@@ -36,20 +34,18 @@ const userDelRoute=require("./routes/userDelete")
 app.use(userDelRoute);
 
 // User Login
-
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
+
 // Accounts anzeigen
 const displayAccountsRoute = require("./routes/displayAccounts");
 app.use(displayAccountsRoute);
 
 // Account Hinzufügen
-
 const accountAddRoute = require("./routes/accountAdd");
 app.use(accountAddRoute);
 
 // Account Löschen
-
 const accountDeleteRoute = require("./routes/accountDelete");
 app.use(accountDeleteRoute);
 
