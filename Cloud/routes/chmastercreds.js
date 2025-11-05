@@ -16,28 +16,83 @@ const pool = new Pool({
   },
 });
 
+/* if (user.rows.length === 0) {
+        return res.status(404).json({ message: "User nicht gefunden" });
+      } */
 router.put("/user/chmastercreds", auth, async (req, res) => {
-  const { old_master_password, new_master_password, confirm_new_master_password } = req.body;
+  const { user_name, user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
 
   try {
     const { user_id } = req.user;
 
-    // Prüfen, ob das alte Passwort korrekt ist
     const user = await pool.query(
       "SELECT * FROM b4puser WHERE user_id = $1",
       [user_id]
     );
 
-    /* if (user.rows.length === 0) {
-      return res.status(404).json({ message: "User nicht gefunden" });
-    } */
+    const existingUserName = await pool.query(
+      "SELECT * FROM b4puser WHERE user_name=$1",
+      [user_name]
+    );
 
-    if (user.rows[0].master_password !== old_master_password) {
-      return res.status(401).json({ message: "Altes Passwort ist falsch" });
+    if (existingUserName.rows.length > 0) {
+      return res
+        .status(400) //Clientfehler? Status 400 korrekt?
+        .json({
+          message:
+            "Dieser Benutzername wird bereits von einem anderen User verwendet.",
+        });
     }
 
-    // Passwortwiederholung korrekt?
-    if (new_master_password !== confirm_new_master_password) {
+    if (user.rows[0].user_name === user_name || user.rows[0].user_name === "") {
+      return res
+        .status(401)
+        .json({
+          message:
+            "Keine Änderung notwendig!"
+        });
+    } else {
+      await pool.query(
+        "UPDATE b4puser SET user_name = $1 WHERE user_id = $2",
+        [user_name, user_id]
+      );
+    }
+
+    const existingUserEmail = await pool.query(
+      "SELECT * FROM b4puser WHERE user_email=$1",
+      [user_email]
+    );
+
+    if (existingUserEmail.rows.length > 0) {
+      return res
+        .status(400) //Clientfehler? Status 400 korrekt?
+        .json({
+          message:
+            "Diese E-Mail wird bereits von einem anderen User verwendet.",
+        });
+    }
+
+    if (user.rows[0].user_email === user_email || user.rows[0].user_email === "") {
+      return res
+        .status(401)
+        .json({
+          message:
+            "Keine Änderung notwendig!"
+        });
+    } else {
+      await pool.query(
+        "UPDATE b4puser SET user_name = $1 WHERE user_id = $2",
+        [user_name, user_id]
+      );
+    }
+
+    if (user.rows[0].master_password !== old_master_password) {
+      return res.status(401).json({ message: "Altes Passwort ist falsch!" });
+    }
+    else if (user.rows[0].master_password === new_master_password) {
+      return res.status(400).json({ message: "Wähle ein neues Passwort!" });
+    }
+    else if (new_master_password !== confirm_new_master_password) {
       return res.status(400).json({ message: "Passwörter stimmen nicht ueberein" });
     }
 
@@ -52,7 +107,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Interner Serverfehler" });
   }
-    
+
 });
 
 
