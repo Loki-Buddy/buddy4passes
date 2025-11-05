@@ -1,23 +1,11 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
-const { Pool } = require("pg");
-// const pool=require("./pool");
+const pool = require("./pool");
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
 
 async function initDB() {
   await pool.query(`
@@ -42,6 +30,10 @@ async function initDB() {
 
 const userRegRoute = require("./routes/userRegistration");
 app.use(userRegRoute);
+
+// User löschen
+const userDelRoute=require("./routes/userDelete")
+app.use(userDelRoute);
 
 // User Login
 
