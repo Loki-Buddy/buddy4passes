@@ -16,25 +16,26 @@ const pool = new Pool({
 });
 
 router.post("/user/login", async (req, res) => {
-  const { userName, masterPW } = req.body;
+  const { user_name, master_password } = req.body;
 
   try {
-    const user = await pool.query("SELECT * FROM b4puser WHERE userName = $1", [
-      userName,
-    ]);
+    const user = await pool.query(
+      "SELECT * FROM b4puser WHERE user_name = $1",
+      [user_name]
+    );
 
     if (user.rows.length === 0) {
       return res.status(401).json({
         message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingabe!",
       });
     }
-    if (user.rows[0].masterpw !== masterPW) {
+    if (user.rows[0].master_password !== master_password) {
       return res.status(401).json({
         message: "Loginversuch fehlgeschlagen, bitte überprüfe deine Eingabe!",
       });
     }
     const token = jwt.sign(
-      { userID: user.rows[0].userID },
+      { user_id: user.rows[0].user_id },
       process.env.JWT_SECRET,
       { expiresIn: "5m" }
     );
