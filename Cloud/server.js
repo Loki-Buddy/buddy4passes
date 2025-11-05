@@ -28,6 +28,7 @@ async function initDB() {
             master_password TEXT NOT NULL
         );
         CREATE TABLE IF NOT EXISTS accounts (
+            account_id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL REFERENCES b4puser(user_id) ON DELETE CASCADE,
             service TEXT NOT NULL,
             service_email TEXT NOT NULL,
@@ -54,6 +55,11 @@ app.use(displayAccountsRoute);
 
 const accountAddRoute = require("./routes/accountAdd");
 app.use(accountAddRoute);
+
+// Account Löschen
+
+const accountDeleteRoute = require("./routes/accountDelete");
+app.use(accountDeleteRoute);
 
 initDB().then(() => {
   app.listen(port, () => {
