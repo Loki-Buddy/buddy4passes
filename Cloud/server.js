@@ -30,7 +30,7 @@ const userRegRoute = require("./routes/userRegistration");
 app.use(userRegRoute);
 
 // User löschen
-const userDelRoute=require("./routes/userDelete")
+const userDelRoute = require("./routes/userDelete")
 app.use(userDelRoute);
 
 // User Login
@@ -48,6 +48,10 @@ app.use(accountAddRoute);
 // Account Löschen
 const accountDeleteRoute = require("./routes/accountDelete");
 app.use(accountDeleteRoute);
+
+// Account bearbeiten
+const accountEditRoute = require("./routes/accountEdit");
+app.use(accountEditRoute);
 
 const masterAccChangesRoute = require("./routes/chmastercreds");
 app.use(masterAccChangesRoute);
