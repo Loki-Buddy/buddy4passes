@@ -23,3 +23,14 @@ tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
+# Krypto-Bibliotheken
+# AES-Verschlüsselung
+aes-gcm = { version = "0.10", features = ["aes", "std"] }
+# Passwort-Hashing
+argon2 = { version = "0.5", features = ["std"] }
+# Zufallszahlengenerator
+rand = { version = "0.8", features = ["std"] }
+# Base64-Kodierung
+base64 = "0.21"
+# Fehlerbehandlung
+thiserror = "1.0"
