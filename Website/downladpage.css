@@ -1,0 +1,66 @@
+/* Grundlayout */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* verteilt Inhalte vertikal */
+  align-items: center;
+  background-color: rosybrown; /* Hintergrundfarbe */
+  color: white;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+.headline {
+  border: 3px solid black;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem 2rem;              
+  border-radius: 1rem;             
+  margin-top: 2rem;                
+  text-align: center;              
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); 
+  backdrop-filter: blur(4px);      
+}
+
+h1 {
+  margin-top: 2rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: black;
+}
+
+.logo {
+  max-width: 80%;
+  height: auto;
+  max-height: 50vh;
+  object-fit: contain;
+}
+
+.btn {
+  background-color: rosybrown;
+  color: black;
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem 3rem;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #0088cc;
+  transform: scale(1.05);
+}
+
+.footer {
+  width: 100%;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  position: relative;
+  bottom: 0;
+}
