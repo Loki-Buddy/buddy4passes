@@ -1,7 +1,7 @@
 function downloadFiles() {
     // Link zum Bucket
     const url= "http://website-b4p.s3-website.eu-central-1.amazonaws.com/mellon.zip";
-    const link = document.creatElement("a");
+    const link = document.createElement("a");
     link.href = url;
 
     link.download="mellon.zip";
