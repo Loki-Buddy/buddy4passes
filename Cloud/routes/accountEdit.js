@@ -4,13 +4,12 @@ const pool = require("../pool");
 const auth = require("../middleware/auth");
 
 // PUT /account/edit
-// Body: { account_id, service?, service_email?, service_username?, service_password? }
+// Body: {  service_email, service_username, service_password }
 router.put("/account/edit", auth, async (req, res) => {
     const { service_email, service_username, service_password } = req.body;
 
     try {
         const { user_id } = req.user;
-
 
 
         const existing = await pool.query("SELECT * FROM accounts WHERE account_id = $1", [account_id]);
@@ -24,7 +23,6 @@ router.put("/account/edit", auth, async (req, res) => {
         const sets = [];
         const values = [];
         let index = 1;
-
 
 
         if (service_email !== undefined) {
