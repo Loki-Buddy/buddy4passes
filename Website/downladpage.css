@@ -1,13 +1,12 @@
-/* Grundlayout */
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* verteilt Inhalte vertikal */
+  justify-content: space-between; 
   align-items: center;
-  background-color: rosybrown; /* Hintergrundfarbe */
+  background-color: rosybrown; 
   color: white;
   font-family: system-ui, sans-serif;
   text-align: center;
