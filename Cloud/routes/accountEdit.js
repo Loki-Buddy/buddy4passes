@@ -25,19 +25,19 @@ router.put("/account/edit", auth, async (req, res) => {
         let index = 1;
 
 
-        if (service_email !== undefined) {
+        if (service_email) {
             sets.push(`service_email = $${index}`);
             values.push(service_email);
             index++;
         }
 
-        if (service_username !== undefined) {
+        if (service_username) {
             sets.push(`service_username = $${index}`);
             values.push(service_username);
             index++;
         }
 
-        if (service_password !== undefined) {
+        if (service_password) {
             sets.push(`service_password = $${index}`);
             values.push(service_password);
             index++;
