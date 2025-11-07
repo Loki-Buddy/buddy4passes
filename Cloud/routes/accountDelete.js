@@ -5,7 +5,6 @@ const pool = require("../pool");
 require("dotenv").config();
 const auth = require("../middleware/auth");
 
-
 router.delete("/account/delete", auth, async (req, res) => {
   const { account_id } = req.body;
   const { user_id } = req.user;
@@ -18,7 +17,9 @@ router.delete("/account/delete", auth, async (req, res) => {
     res.status(200).json({ message: "Account erfolgreich gelöscht!" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Serverfehler, verusche es später nochmal!");
+    res
+      .status(500)
+      .json({ message: "Serverfehler, verusche es später nochmal!" });
   }
 });
 
