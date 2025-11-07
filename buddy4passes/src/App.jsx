@@ -11,6 +11,13 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
   }
+  async function deleteUser() {
+    const email = "test@test.de";
+    const response = await invoke("delete_user", { email });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
 
   return (
     <main className="container">
@@ -33,7 +40,7 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          greet();
+          deleteUser();
         }}
       >
         <input

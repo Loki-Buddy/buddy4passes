@@ -35,3 +35,8 @@ rand = { version = "0.8", features = ["std"] }
 base64 = "0.21"
 # Fehlerbehandlung
 thiserror = "1.0"
+
+# Requests
+
+reqwest = { version = "0.12", features = ["json"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
