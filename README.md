@@ -21,7 +21,7 @@ als native Desktop-App verwendet wird.
 	- User kann dem Account ein "Tag" und / oder direkt die URL zuweisen
 	- ZUSATZ: E-Mail-Adresse kann als Standard / default hinterlegt werden. Spart Zeit und ist einfacher in der Anwendung.
 - Die App soll über eine Website (eigene einfache statische Website?)  als Download zur Verfügung stehen.
-  	- Website-URL über Github bereitstellen, gehostet im S3 Bucket
+  	- Website-URL über AWS bereitstellen, gehostet im S3 Bucket --> Datei heißt "mellon.zip"
 - Automatisierungen im vollen Umfang mittels Github-Actions
 - Physiche Sicherheit implementieren:
 	- Neuanmeldung erforderlich, nach Minimieren oder 3 Minuten Inaktivität. (Kein MUSS, erforderliche Passowrteingabe kann in den Einstellungen angepasst / ausgeschaltet werden --> Sicherheits-Hinweis einblenden!)
