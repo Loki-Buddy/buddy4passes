@@ -17,7 +17,7 @@ struct LoginResponse {
 
 // Token wird im RAM gespeichert
 pub struct MemoryStore {
-    token: Mutex<Option<String>>,
+    pub token: Mutex<Option<String>>,
 }
 
 // Tauri command für den Login
@@ -27,7 +27,7 @@ pub async fn login_user(
     user_name: String,
     master_password: String,
 ) -> Result<String, String> {
-    let client=Client::new();
+    let client = Client::new();
 
     // Cloud-Backend-Endpunkt
     let api_url="http://3.74.73.164:3000/user/login";
@@ -41,11 +41,15 @@ pub async fn login_user(
         })
         .send()
         .await
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("Fehler beim Senden der Anfrage: {}", e))?;
 
     // Antwort prüfen
-    if !response.status().is_success() {
-        return Err(format!("Login fehlgeschlagen: {}", response.status()));
+    let status = response.status();
+    if !status.is_success() {
+        return Ok(LoginResult {
+            success: false,
+            message: format!("Login fehlgeschlagen (HTTP {}): {}", status.as_u16(), status),
+        });
     }
 
     let login_response: LoginResponse=response
@@ -55,12 +59,21 @@ pub async fn login_user(
 
     if let Some(token)=login_response.token {
         // Token im Speicher ablegen
-        let mut stored_token = state.token.lock().unwrap();
-        *stored_token = Some(token.clone());
+        if let Ok(mut stored_token) = state.token.lock() {
+            *stored_token = Some(token);
+        } else {
+            eprintln!("Warnung: Token konnte nicht in MemoryStore gespeichert werden!");
+        }
 
-        Ok(format!("{} (Token im Speicher)", login_response.message))
+        Ok(LoginResult {
+            success: true,
+            message: format!("{} (Token gespeichert)", login_response.message),
+        })
     } else {
-        Err("Kein Token erhalten".to_string())
+        Ok(LoginResult {
+            success: false,
+            message: format!("{} (kein Token erhalten)", login_response.message),
+        })
     }
 }
 
