@@ -17,8 +17,8 @@ function App() {
       //new_user_name: "testuser",
       //new_user_email: "test@testtestNEWWW.de",
       old_master_password: "test123",
-      new_master_password: "test12345",
-      confirm_new_master_password: "test12345",
+      new_master_password: "test1234",
+      confirm_new_master_password: "test1234",
     }
 
     const response = await invoke("change_master_creds", { data });
