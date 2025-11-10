@@ -55,11 +55,12 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
     let request_data = json!({
         "new_user_name": data.new_user_name,
         "new_user_email": data.new_user_email,
+        "old_master_password": data.old_master_password,
         "new_master_password": new_master_password_hash,
         "confirm_new_master_password": data.confirm_new_master_password,
     });
 
-    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywiaWF0IjoxNzYyNzc4OTkyLCJleHAiOjE3NjI3NzkyOTJ9.cos3pzoE-ARJG3SxgYIZ9TAhhusT-oPSw1wklJ_zGFs";
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywiaWF0IjoxNzYyNzc5NTMwLCJleHAiOjE3NjI3Nzk4MzB9.FnjVeeTvimIMmwFJNB35kjy3lch9PDfdnsbSm7DWOWk";
     
     let response = client
         .put("http://3.74.73.164:3000/user/chmastercreds")

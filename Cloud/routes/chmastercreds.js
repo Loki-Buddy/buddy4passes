@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 require("dotenv").config();
 
 router.put("/user/chmastercreds", auth, async (req, res) => {
-  const { new_user_name, new_user_email, old_master_password, new_master_password } = req.body;
+  const { new_user_name, new_user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
 
   try {
     const { user_id } = req.user;
