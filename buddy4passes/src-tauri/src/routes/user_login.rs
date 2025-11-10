@@ -29,11 +29,11 @@ pub struct MemoryStore {
 // Tauri command für den Login
 #[tauri::command]
 pub async fn login_user(
+    client: State<'_, Arc<Client>>,
     state: State<'_, Arc<MemoryStore>>,
     user_name: String,
     master_password: String,
 ) -> Result<LoginResult, String> {
-    let client = Client::new();
 
     // Cloud-Backend-Endpunkt
     let api_url="http://3.74.73.164:3000/user/login";
