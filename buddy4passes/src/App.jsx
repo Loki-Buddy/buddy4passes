@@ -15,9 +15,10 @@ function App() {
   async function chmastercreds() {
     try {
       const data = {
-        old_master_password: "test123",
-        new_master_password: "test1234",
-        confirm_new_master_password: "test1234",
+        new_user_name: "lokiiNEW2",
+        old_master_password: "test123456",
+        new_master_password: "123456",
+        confirm_new_master_password: "123456",
       };
 
       const response = await invoke("change_master_creds", { data });
