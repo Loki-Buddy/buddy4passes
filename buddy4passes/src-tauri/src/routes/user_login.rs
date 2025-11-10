@@ -31,10 +31,12 @@ pub struct MemoryStore {
 pub async fn login_user(
     client: State<'_, Arc<Client>>,
     state: State<'_, Arc<MemoryStore>>,
-    user_name: String,
-    master_password: String,
+    username: String,
+    masterpassword: String,
 ) -> Result<LoginResult, String> {
-
+    {let stored = state.token.lock().unwrap();
+        println!("Token zu Beginn der Funktion: {:?}", *stored);
+    }
     // Cloud-Backend-Endpunkt
     let api_url="http://3.74.73.164:3000/user/login";
 
@@ -42,8 +44,8 @@ pub async fn login_user(
     let response = client
         .post(api_url)
         .json(&LoginRequest {
-            user_name,
-            master_password,
+            user_name: username,
+            master_password: masterpassword,
         })
         .send()
         .await
@@ -70,7 +72,9 @@ pub async fn login_user(
         } else {
             eprintln!("Warnung: Token konnte nicht in MemoryStore gespeichert werden!");
         }
-
+        {let stored = state.token.lock().unwrap().clone().unwrap_or_default();
+        println!("Token zum Ende der Funktion: {:?}", stored);
+        }
         Ok(LoginResult {
             success: true,
             message: format!("{} (Token gespeichert)", login_response.message),
