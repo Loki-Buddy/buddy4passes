@@ -16,13 +16,13 @@ struct LoginResponse {
 }
 
 // Token wird im RAM gespeichert
-struct MemoryStore {
+pub struct MemoryStore {
     token: Mutex<Option<String>>,
 }
 
 // Tauri command für den Login
 #[tauri::command]
-async fn login_user(
+pub async fn login_user(
     state: State<'_, Arc<MemoryStore>>,
     user_name: String,
     master_password: String,
@@ -64,37 +64,3 @@ async fn login_user(
     }
 }
 
-// Authentifizierte Anfrage mit Token
-#[tauri::command]
-async fn fetch_protected_resource(state: State<'_, Arc<MemoryStore>>) -> Result<String, String> {
-    let token = {
-        let stored = state.token.lock().unwrap();
-        stored.clone()
-    };
-
-    let client = Client::new();
-    let res = client
-        .get("http://3.74.73.164:3000/user/protected")
-        .bearer_auth(&token)
-        .send()
-        .await
-        .map_err(|e| format!("Fehler bei Anfrage: {}", e))?;
-
-    if res.status().is_success() {
-        let body = res.text().awaot.map_err(|e| e.to_string())?;
-        Ok(body)
-    } else {
-        Err(format!("Backend-Fehler: {}", res.status()))
-    }
-}
-
-// App starten
-fn main() {
-    tauri::Builder::default()
-        .manage(Arc::new(MemoryStore {
-            token: Mutex::new(None),
-        }))
-        .invoke_handler(tauri::generate_handler![login_user, fetch_protected_resource])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-}

@@ -12,8 +12,9 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
   async function deleteUser() {
-    const email = "test@test.de";
-    const response = await invoke("delete_user", { email });
+    const user_name = "Chris";
+    const master_password = "test123";
+    const response = await invoke("login_user", { user_name, master_password });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
