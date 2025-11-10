@@ -13,33 +13,16 @@ function App() {
   }
 
   async function chmastercreds() {
-    try {
-      const data = {
-        new_user_name: "lokiiNEW2",
-        old_master_password: "test123456",
-        new_master_password: "123456",
-        confirm_new_master_password: "123456",
-      };
+    const data = {
+      new_user_name: "lokiiNEW3",
+      new_master_password: "1234567",
+      confirm_new_master_password: "1234567",
+    };
 
-      const response = await invoke("change_master_creds", { data });
-
-      if (typeof response === "string") {
-        console.error("Fehler:", response);
-        setGreetMsg(response);
-        return;
-      }
-
-      console.log("Server response:", response);
-
-      if (response.message) {
-        setGreetMsg(response.message);
-      }
-
-    } catch (error) {
-      const errorMessage = error.message || "Ein unbekannter Fehler ist aufgetreten";
-      console.error("Fehler:", errorMessage);
-      setGreetMsg(`Fehler: ${errorMessage}`);
-    }
+    const response = await invoke("change_master_creds", { data });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
   }
   async function deleteUser() {
     const email = "test@testtestNEWWW.de";
