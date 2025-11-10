@@ -15,6 +15,12 @@ struct LoginResponse {
     token: Option<String>,
 }
 
+#[derive(Serialize)]
+pub struct LoginResult {
+    pub success: bool,
+    pub message: String,
+}
+
 // Token wird im RAM gespeichert
 pub struct MemoryStore {
     pub token: Mutex<Option<String>>,
@@ -26,7 +32,7 @@ pub async fn login_user(
     state: State<'_, Arc<MemoryStore>>,
     user_name: String,
     master_password: String,
-) -> Result<String, String> {
+) -> Result<LoginResult, String> {
     let client = Client::new();
 
     // Cloud-Backend-Endpunkt
@@ -52,7 +58,7 @@ pub async fn login_user(
         });
     }
 
-    let login_response: LoginResponse=response
+    let login_response: LoginResponse = response
         .json()
         .await
         .map_err(|e| format!("Antwort konnte nicht gelesen werden: {}", e))?;
