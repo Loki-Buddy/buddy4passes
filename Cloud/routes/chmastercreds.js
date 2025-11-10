@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 require("dotenv").config();
 
 router.put("/user/chmastercreds", auth, async (req, res) => {
-  const { new_user_name, new_user_email, old_master_password, new_master_password } = req.body;
+  const { new_user_name, new_user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
 
   try {
     const { user_id } = req.user;
@@ -15,14 +15,17 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
       [user_id]
     );
 
-    /* if (new_master_password) {
+    if (new_master_password) {
       if (old_master_password !== user.rows[0].master_password) {
         return res.status(400).json({ message: "Altes Passwort ist falsch!" });
+      }
+      if (new_master_password !== confirm_new_master_password) {
+        return res.status(400).json({ message: "Passwörter stimmen nicht überein!"});
       }
       if (!old_master_password) {
         return res.status(400).json({ message: "Altes Passwort erforderlich!" });
       }
-    } */
+    }
 
     const sets = [];
     const values = [];
