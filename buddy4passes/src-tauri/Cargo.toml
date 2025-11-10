@@ -22,7 +22,6 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-reqwest = { version = "0.11", features = ["blocking", "json", "rustls-tls"] }
 
 # Krypto-Bibliotheken
 # AES-Verschlüsselung
@@ -38,5 +37,5 @@ thiserror = "1.0"
 
 # Requests
 
-reqwest = { version = "0.12", features = ["json"] }
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

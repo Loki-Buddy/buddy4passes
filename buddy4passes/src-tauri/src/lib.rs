@@ -13,7 +13,8 @@ pub fn run() {
         .manage(client)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            routes::user_delete::delete_user
+            routes::user_delete::delete_user,
+            routes::user_registration::register_user_test
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
