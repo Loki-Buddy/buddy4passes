@@ -31,7 +31,9 @@ router.post("/user/login", async (req, res) => {
     res.json({ message: "Login erfolgreich!", token: token });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Serverfehler, verusche es später nochmal!");
+    res
+      .status(500)
+      .json({ message: "Serverfehler, verusche es später nochmal!" });
   }
 });
 

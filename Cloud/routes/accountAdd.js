@@ -5,8 +5,6 @@ const pool = require("../pool");
 require("dotenv").config();
 const auth = require("../middleware/auth");
 
-
-
 router.post("/account/add", auth, async (req, res) => {
   const { service, service_email, service_username, service_password } =
     req.body;
@@ -20,7 +18,9 @@ router.post("/account/add", auth, async (req, res) => {
     res.status(201).json({ message: "Account erfolgreich hinzugefügen!" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Serverfehler, verusche es später nochmal!");
+    res
+      .status(500)
+      .json({ message: "Serverfehler, verusche es später nochmal!" });
   }
 });
 
