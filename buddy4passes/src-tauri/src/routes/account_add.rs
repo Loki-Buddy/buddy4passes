@@ -21,17 +21,14 @@ pub struct AccountResult {
     pub message: String,
 }
 
-pub struct MemoryStore {
-    pub token: Mutex<Option<String>>,
-}
-
 #[tauri::command]
 pub async fn add_account(
+    client: State<'_, Arc<Client>>,
     state: State<'_, Arc<MemoryStore>>,
-    service: String,
-    service_email: String,
-    servcie_username: String,
-    servcie_password: String,
+    servicename: String,
+    serviceemail: String,
+    servcieusername: String,
+    servciepassword: String,
 ) -> Result<AccountResult, String> {
     let client = Client::new();
     let api_url = "http://3.74.73.164:3000/account/add";
