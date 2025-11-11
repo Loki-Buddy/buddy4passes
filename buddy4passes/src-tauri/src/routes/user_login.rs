@@ -13,10 +13,10 @@ struct LoginRequest {
     user_name: String,
     master_password: String,
 }
-#[derive(Deserialize, Serialize)]
-struct UserRequest {
-    user_name: String,
-}
+// #[derive(Deserialize, Serialize)]
+// struct UserRequest {
+//     user_name: String,
+// }
 
 #[derive(Deserialize, Debug)]
 struct LoginResponse {
@@ -54,9 +54,7 @@ pub async fn login_user(
     // gehashtes Passwort anfordern
     let hash_response = client
         .get("http://3.74.73.164:3000/user/data")
-        .json(&UserRequest {
-            user_name: username,
-        })
+        .query(&[("user_name", &username)])
         .send()
         .await
         .map_err(|e| format!("Fehler beim Senden der Anfrage: {}", e))?;
@@ -82,14 +80,14 @@ pub async fn login_user(
     
     // Cloud-Backend-Endpunkt
     let api_url="http://3.74.73.164:3000/user/login";
-
+    let user_set= LoginRequest {
+            user_name: username,
+            master_password: old_master_password_hash,
+        };
     // Anfrage absenden
     let response = client
         .post(api_url)
-        .json(&LoginRequest {
-            user_name: username,
-            master_password: masterpassword,
-        })
+        .json(&user_set)
         .send()
         .await
         .map_err(|e| format!("Fehler beim Senden der Anfrage: {}", e))?;
@@ -125,9 +123,9 @@ pub async fn login_user(
             let appdata = env::var("LOCALAPPDATA")
                 .or_else(|_| env::var("USER"))
                 .unwrap_or_else(|_| "Unbekannt".to_string());
-            let test = fs::read(&format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, &username.as_str())).map_err(|_| format!("Fehler beim Lesen!"));
+            let test = fs::read(&format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, &user_set.user_name.as_str())).map_err(|_| format!("Fehler beim Lesen!"));
             let test2=String::from_utf8(test?);
-            println!("key: {}", test2);
+            println!("key: {:?}", test2);
         }
         {let stored = state.key.lock().unwrap().clone().unwrap_or_default();
         println!("Key zum Ende der Funktion: {:?}", stored);
