@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 require("dotenv").config();
 
 router.get("/user/data/auth", auth, async (req, res) => {
-    const { user_id } = req.body;
+    const { user_id } = req.user;
 
     try {
         const user = await pool.query(
