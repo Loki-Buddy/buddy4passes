@@ -12,13 +12,26 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
   async function deleteUser() {
-    const email = "test@test.de";
-    const response = await invoke("delete_user", { email });
+    const username = "Sebs1";
+    const masterpassword = "test";
+    const response = await invoke("login_user", { username, masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    // console.log("message", response.message);
+  }
+
+async function registerUser() {
+    const data = {
+      name: "Sebs1",
+      email: "test@testtest23.de",
+      masterpassword: "test",
+    };
+
+    const response = await invoke("register_user_test", { name: data.name, email: data.email, masterpassword: data.masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
-
   return (
     <main className="container">
       <h1>Welcome to buddy4passes</h1>
@@ -41,6 +54,7 @@ function App() {
         onSubmit={(e) => {
           e.preventDefault();
           deleteUser();
+          // registerUser();
         }}
       >
         <input
