@@ -21,17 +21,27 @@ pub struct MasterData {
 
 #[tauri::command]
 pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterData) -> Result<Value, String> {
-    // Prüfe ob das alte Passwort angegeben wurde
-    if data.old_master_password.is_none() {
-        return Err("Das alte Passwort muss angegeben werden!".to_string());
+    
+    // Prüfen ob die Passwörter gesetzt wurden
+    if data.new_master_password.is_some() || data.confirm_new_master_password.is_some() {
+        // Prüfen ob die Passwörter übereinstimmen (im Klartext)
+        if let (Some(new_pass), Some(confirm_pass)) = (&data.new_master_password, &data.confirm_new_master_password) {
+            if new_pass != confirm_pass {
+                return Err("Die neuen Passwörter stimmen nicht überein!".to_string());
+            }
+        }
+
+        if data.old_master_password.is_none() {
+            return Err("Altes Passwort erforderlich!".to_string());
+        }
     }
 
-    // Erst prüfen ob die Passwörter übereinstimmen
-    if let (Some(new_pass), Some(confirm_pass)) = (&data.new_master_password, &data.confirm_new_master_password) {
+    
+    /* if let (Some(new_pass), Some(confirm_pass)) = (&data.new_master_password, &data.confirm_new_master_password) {
         if new_pass != confirm_pass {
             return Err("Die neuen Passwörter stimmen nicht überein!".to_string());
         }
-    }
+    } */
 
     // Erstelle das JSON-Objekt mit den gehashten Passwörtern
     let request_data = json!({
