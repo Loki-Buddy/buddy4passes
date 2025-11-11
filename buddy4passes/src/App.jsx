@@ -25,13 +25,16 @@ function App() {
     console.log("message", response.message);
   }
   async function chmastercreds() {
+    const userName = "test";
     const data = {
-      old_master_password: "test",
-      new_master_password: "testNEW",
-      confirm_new_master_password: "testNEW",
+      new_user_name: "testNEWW",
+      new_user_email: "testNEWWW.de",
+      /* old_master_password: "testNEW",
+      new_master_password: "testNEWW",
+      confirm_new_master_password: "testNE", */
     };
 
-    const response = await invoke("change_master_creds", { data });
+    const response = await invoke("change_master_creds", { data, userName });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
