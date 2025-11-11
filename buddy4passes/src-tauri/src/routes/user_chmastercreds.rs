@@ -71,22 +71,6 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
         }
     }
 
-    let existing_user_name = client
-        .get("http://3.74.73.164:3000/user/data")
-        .query(&data.new_user_name.as_ref().map(|s| ("user_name", s)))
-        .send()
-        .await
-        .map_err(|e| e.to_string())?
-        .json::<Value>()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    if existing_user_name["user_name"].as_str().unwrap_or_default().to_string() != user_name {
-        return Err("Benutzername bereits vergeben.".to_string());
-    }
-
-    let existing_user_email = user_response["user_email"].as_str().unwrap_or_default().to_string();
-
     // Extrahiere den Argon2-Hash des aktuellen Master-Passworts aus der Serverantwort
     let old_master_password_hash = user_response["master_password"].as_str().unwrap_or_default().to_string();
 
@@ -157,7 +141,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
     });
 
     // Setze den JWT-Token für die Authentifizierung (sollte aus dem Kontext kommen)
-    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwiaWF0IjoxNzYyODY5NjMyLCJleHAiOjE3NjI4Njk5MzJ9.5cSELGvs_T1OP_uOkqfEgIBtgpnq-rt_uXjLi716NVE";
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwiaWF0IjoxNzYyODczMzMwLCJleHAiOjE3NjI4NzM2MzB9.bCorKvKp1dnOnz0faSsK18u_XIQIuoxi-GMHDIs1Km4";
 
     // Sende die Änderungen an den Server und erhalte die Bestätigung als JSON zurück
     let response = client

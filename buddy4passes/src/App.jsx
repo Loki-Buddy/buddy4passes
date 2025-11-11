@@ -25,10 +25,10 @@ function App() {
     console.log("message", response.message);
   }
   async function chmastercreds() {
-    const userName = "test";
+    const userName = "TestNEW";
     const data = {
-      new_user_name: "TestNEW",
-      //new_user_email: "testNEWWW223.de",
+      //new_user_name: "Chris",
+      new_user_email: "testemail@mail.com",
       /* old_master_password: "test",
       new_master_password: "testNEW",
       confirm_new_master_password: "testNEW", */
