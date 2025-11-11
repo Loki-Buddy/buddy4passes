@@ -119,20 +119,37 @@ pub async fn login_user(
         {let stored = state.token.lock().unwrap().clone().unwrap_or_default();
         println!("Token zum Ende der Funktion: {:?}", stored);
         }
-        {
+        
+        
             let appdata = env::var("LOCALAPPDATA")
                 .or_else(|_| env::var("USER"))
                 .unwrap_or_else(|_| "Unbekannt".to_string());
-            let test = fs::read(&format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, &user_set.user_name.as_str())).map_err(|_| format!("Fehler beim Lesen!"));
-            let test2=String::from_utf8(test?);
-            println!("key: {:?}", test2);
-        }
+            let path = format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, user_set.user_name);
+            let bytes = fs::read(&path).map_err(|_| "Fehler beim Lesen!")?;
+            let key_test = String::from_utf8(bytes).map_err(|_| "Fehler beim Konvertieren zu UTF-8!")?;
+            println!("key: {}", key_test);
+        
         {let stored = state.key.lock().unwrap().clone().unwrap_or_default();
         println!("Key zum Ende der Funktion: {:?}", stored);
         }
+            if let Some(key)= &key_test {
+            // Token im Speicher ablegen
+                if let Ok(mut stored_key) = state.key.lock() {
+                    *stored_key = Some(key);
+                } else {
+                    eprintln!("Warnung: Key konnte nicht in MemoryStore gespeichert werden!");
+                }
+                {let stored = state.token.lock().unwrap().clone().unwrap_or_default();
+                println!("Token zum Ende der Funktion: {:?}", stored);
+                }
+                
+                {let stored = state.key.lock().unwrap().clone().unwrap_or_default();
+                println!("Key zum Ende der Funktion: {:?}", stored);
+                }}
         Ok(LoginResult {
             success: true,
             message: format!("{} (Token gespeichert)", login_response.message),
+
         })
     } else {
         Ok(LoginResult {
