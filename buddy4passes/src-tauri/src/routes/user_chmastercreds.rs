@@ -35,6 +35,58 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
         .await
         .map_err(|e| e.to_string())?;
 
+    // Nur prüfen, wenn ein neuer Benutzername angegeben wurde
+    if let Some(new_name) = &data.new_user_name {
+        let existing_user = client
+            .get("http://3.74.73.164:3000/user/data")
+            .query(&[("user_name", new_name)])
+            .send()
+            .await
+            .map_err(|e| e.to_string())?
+            .json::<Value>()
+            .await
+            .map_err(|e| e.to_string())?;
+
+        // Wenn der neue Name bereits existiert → Fehler
+        if !existing_user["user_name"].is_null() && existing_user["user_name"].as_str().unwrap_or("") != user_name {
+            return Err("Benutzername bereits vergeben.".to_string());
+        }
+    }
+
+    // Validierung für neue Email-Adresse
+    if let Some(new_email) = &data.new_user_email {
+        let existing_email_user = client
+            .get("http://3.74.73.164:3000/user/data")
+            .query(&[("user_email", new_email)])
+            .send()
+            .await
+            .map_err(|e| e.to_string())?
+            .json::<Value>()
+            .await
+            .map_err(|e| e.to_string())?;
+
+        // Wenn die neue Email bereits existiert → Fehler
+        if !existing_email_user["user_email"].is_null() && existing_email_user["user_email"].as_str().unwrap_or("") != user_response["user_email"].as_str().unwrap_or("") {
+            return Err("Es existiert bereits ein Account mit dieser Email.".to_string());
+        }
+    }
+
+    let existing_user_name = client
+        .get("http://3.74.73.164:3000/user/data")
+        .query(&data.new_user_name.as_ref().map(|s| ("user_name", s)))
+        .send()
+        .await
+        .map_err(|e| e.to_string())?
+        .json::<Value>()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if existing_user_name["user_name"].as_str().unwrap_or_default().to_string() != user_name {
+        return Err("Benutzername bereits vergeben.".to_string());
+    }
+
+    let existing_user_email = user_response["user_email"].as_str().unwrap_or_default().to_string();
+
     // Extrahiere den Argon2-Hash des aktuellen Master-Passworts aus der Serverantwort
     let old_master_password_hash = user_response["master_password"].as_str().unwrap_or_default().to_string();
 
