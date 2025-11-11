@@ -12,11 +12,23 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
 
+  async function registerUser() {
+    const data = {
+      name: "test",
+      email: "test@testtest.de",
+      masterpassword: "test",
+    };
+
+    const response = await invoke("register_user_test", { name: data.name, email: data.email, masterpassword: data.masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
   async function chmastercreds() {
     const data = {
-      new_user_name: "lokiiNEW3",
-      new_master_password: "1234567",
-      confirm_new_master_password: "1234567",
+      old_master_password: "test",
+      new_master_password: "testNEW",
+      confirm_new_master_password: "testNEW",
     };
 
     const response = await invoke("change_master_creds", { data });
@@ -53,6 +65,7 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
+          //registerUser();
           chmastercreds();
           //deleteUser();
         }}
