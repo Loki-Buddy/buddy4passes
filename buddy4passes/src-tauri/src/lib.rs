@@ -9,7 +9,7 @@ use routes::user_login::MemoryStore;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let client = Arc::new(Client::new());
-    let token = Arc::new(MemoryStore {token: Mutex::new(None)});
+    let token = Arc::new(MemoryStore {token: Mutex::new(None), key: Mutex::new(None)});
     tauri::Builder::default()
         .manage(client)
         .manage(token)

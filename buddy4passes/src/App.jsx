@@ -17,7 +17,7 @@ function App() {
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
-    console.log("message", response.message);
+    // console.log("message", response.message);
   }
 
   return (
