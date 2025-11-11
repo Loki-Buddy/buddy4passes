@@ -5,7 +5,7 @@ const pool = require("../pool");
 require("dotenv").config();
 
 router.get("/user/data", async (req, res) => {
-    const { user_name } = req.body;
+    const { user_name } = req.query;
 
     try {
         const user = await pool.query(

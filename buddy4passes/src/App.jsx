@@ -15,7 +15,7 @@ function App() {
   async function registerUser() {
     const data = {
       name: "test",
-      email: "test@testtest.de",
+      email: "test@testtest23.de",
       masterpassword: "test",
     };
 
@@ -27,11 +27,11 @@ function App() {
   async function chmastercreds() {
     const userName = "test";
     const data = {
-      new_user_name: "testNEWW",
-      new_user_email: "testNEWWW.de",
-      /* old_master_password: "testNEW",
-      new_master_password: "testNEWW",
-      confirm_new_master_password: "testNE", */
+      new_user_name: "testNEW",
+      //new_user_email: "testNEWWW223.de",
+      /* old_master_password: "test",
+      new_master_password: "testNEW",
+      confirm_new_master_password: "testNEW", */
     };
 
     const response = await invoke("change_master_creds", { data, userName });

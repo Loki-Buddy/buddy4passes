@@ -24,10 +24,10 @@ pub struct MasterData {
 #[tauri::command]
 pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterData, user_name: String) -> Result<Value, String> {
     
-    // Rufe die aktuellen Benutzerdaten vom Server ab, um den gespeicherten Master-Passwort-Hash zu erhalten
+    // Rufe die aktuellen Benutzerdaten vom Server ab - mit Query-Parameter statt JSON-Body
     let user_response = client
         .get("http://3.74.73.164:3000/user/data")
-        .json(&json!({"user_name": user_name}))
+        .query(&[("user_name", &user_name)])
         .send()
         .await
         .map_err(|e| e.to_string())?
@@ -105,7 +105,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
     });
 
     // Setze den JWT-Token für die Authentifizierung (sollte aus dem Kontext kommen)
-    let token = "";
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwiaWF0IjoxNzYyODY4MzgyLCJleHAiOjE3NjI4Njg2ODJ9.RLAmEVpceVNkxQ_s_QgikxJKpfRhvVK2l-0VvVb8e0Q";
 
     // Sende die Änderungen an den Server und erhalte die Bestätigung als JSON zurück
     let response = client
