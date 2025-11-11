@@ -61,6 +61,10 @@ app.use(masterAccChangesRoute);
 const getUserDataRoute = require("./routes/getUserData");
 app.use(getUserDataRoute);
 
+// Get user Data with auth
+const getUserDataAuthRoute = require("./routes/getUserDataAuth");
+app.use(getUserDataAuthRoute);
+
 initDB().then(() => {
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
