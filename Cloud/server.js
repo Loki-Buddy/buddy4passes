@@ -30,7 +30,7 @@ const userRegRoute = require("./routes/userRegistration");
 app.use(userRegRoute);
 
 // User löschen
-const userDelRoute = require("./routes/userDelete")
+const userDelRoute = require("./routes/userDelete");
 app.use(userDelRoute);
 
 // User Login
@@ -55,6 +55,11 @@ app.use(accountEditRoute);
 
 const masterAccChangesRoute = require("./routes/chmastercreds");
 app.use(masterAccChangesRoute);
+
+// Get user Data
+
+const getUserDataRoute = require("./routes/getUserData");
+app.use(getUserDataRoute);
 
 initDB().then(() => {
   app.listen(port, () => {
