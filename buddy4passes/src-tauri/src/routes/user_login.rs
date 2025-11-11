@@ -44,13 +44,7 @@ pub async fn login_user(
     username: String,
     masterpassword: String,
 ) -> Result<LoginResult, String> {
-    {let stored = state.token.lock().unwrap();
-        println!("Token zu Beginn der Funktion: {:?}", *stored);
-    }
-    {let stored = state.key.lock().unwrap();
-        println!("Key zu Beginn der Funktion: {:?}", *stored);
-    }
-
+    
     // gehashtes Passwort anfordern
     let hash_response = client
         .get("http://3.74.73.164:3000/user/data")
@@ -72,10 +66,9 @@ pub async fn login_user(
         .json::<Value>()
         .await
         .map_err(|_| format!("Antwort konnte nicht gelesen werden"))?;
-    // let mut login_response: Value = hash_response
     let old_master_password_hash = user_json["master_password"].as_str().unwrap_or_default().to_string();
-    // println!("Password: {}", old_master_password_hash);
-
+    let verification = verify_password(&masterpassword, &old_master_password_hash);
+    verification.map_err(|e| format!("Login fehlgeschlagen: {}", e))?;
     
     
     // Cloud-Backend-Endpunkt
@@ -115,37 +108,23 @@ pub async fn login_user(
             *stored_token = Some(token);
         } else {
             eprintln!("Warnung: Token konnte nicht in MemoryStore gespeichert werden!");
-        }
-        {let stored = state.token.lock().unwrap().clone().unwrap_or_default();
-        println!("Token zum Ende der Funktion: {:?}", stored);
-        }
-        
+        }        
         
             let appdata = env::var("LOCALAPPDATA")
                 .or_else(|_| env::var("USER"))
                 .unwrap_or_else(|_| "Unbekannt".to_string());
             let path = format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, user_set.user_name);
             let bytes = fs::read(&path).map_err(|_| "Fehler beim Lesen!")?;
-            let key_test = String::from_utf8(bytes).map_err(|_| "Fehler beim Konvertieren zu UTF-8!")?;
-            println!("key: {}", key_test);
+            let key = String::from_utf8(bytes).map_err(|_| "Fehler beim Konvertieren zu UTF-8!")?;
+            println!("key: {}", key);
         
-        {let stored = state.key.lock().unwrap().clone().unwrap_or_default();
-        println!("Key zum Ende der Funktion: {:?}", stored);
-        }
-            if let Some(key)= &key_test {
             // Token im Speicher ablegen
                 if let Ok(mut stored_key) = state.key.lock() {
                     *stored_key = Some(key);
                 } else {
                     eprintln!("Warnung: Key konnte nicht in MemoryStore gespeichert werden!");
                 }
-                {let stored = state.token.lock().unwrap().clone().unwrap_or_default();
-                println!("Token zum Ende der Funktion: {:?}", stored);
-                }
                 
-                {let stored = state.key.lock().unwrap().clone().unwrap_or_default();
-                println!("Key zum Ende der Funktion: {:?}", stored);
-                }}
         Ok(LoginResult {
             success: true,
             message: format!("{} (Token gespeichert)", login_response.message),
