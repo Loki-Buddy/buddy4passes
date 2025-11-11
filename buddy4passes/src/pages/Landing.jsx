@@ -1,13 +1,15 @@
 // src/pages/Landing.jsx
 import { Link } from "react-router-dom";
 import "../styles/Landing.css";
-// import Header from './Header';
-// import Footer from './Footer';
+import {Header} from '../components/Header';
+import {Footer} from '../components/Footer';
 
 export function Landing() {
   return (
     <main className="landing-hero">
-    {/* <Header /> */}
+    <div className="header">
+        <Header />
+      </div>
 
       <div className="hero-content">
         <h1>Willkommen bei Mellon</h1>
@@ -17,7 +19,7 @@ export function Landing() {
           <Link to="/register" className="btn secondary">Registrieren</Link>
         </div>
       </div>
-    {/* <Footer /> */}
+    <div className="footer"><Footer /></div>
     </main>
   );
 }

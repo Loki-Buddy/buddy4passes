@@ -1,11 +1,28 @@
+
 .landing-hero {
   display:flex;
+  align-content: center;
   align-items:center;
   justify-content:center;
   min-height:70vh;
   padding:2rem;
   text-align:center;
+  background-image: url("../assets/mellonwo.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
+
+.hero-content {
+    background-color: rgba(255, 255, 255, 0.75);
+    padding: 2rem; 
+    border-radius: 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+
 .hero-content h1 { 
     font-size:2rem;
     margin-bottom:0.5rem; 
