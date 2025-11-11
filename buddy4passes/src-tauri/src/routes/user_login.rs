@@ -2,6 +2,9 @@ use tauri::State;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
+use std::fs;
+use std::env;
+use crate::crypt::crypt::verify_password;
 
 #[derive(Serialize)]
 struct LoginRequest {
@@ -23,6 +26,7 @@ pub struct LoginResult {
 
 // Token wird im RAM gespeichert
 pub struct MemoryStore {
+    pub key: Mutex<Option<String>>,
     pub token: Mutex<Option<String>>,
 }
 
@@ -36,6 +40,9 @@ pub async fn login_user(
 ) -> Result<LoginResult, String> {
     {let stored = state.token.lock().unwrap();
         println!("Token zu Beginn der Funktion: {:?}", *stored);
+    }
+    {let stored = state.key.lock().unwrap();
+        println!("Key zu Beginn der Funktion: {:?}", *stored);
     }
     // Cloud-Backend-Endpunkt
     let api_url="http://3.74.73.164:3000/user/login";
@@ -74,6 +81,16 @@ pub async fn login_user(
         }
         {let stored = state.token.lock().unwrap().clone().unwrap_or_default();
         println!("Token zum Ende der Funktion: {:?}", stored);
+        }
+        {
+            let appdata = env::var("LOCALAPPDATA")
+                .or_else(|_| env::var("USER"))
+                .unwrap_or_else(|_| "Unbekannt".to_string());
+            let test = fs::read(&format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, &username.as_str()));
+            println!("key: {}", test);
+        }
+        {let stored = state.key.lock().unwrap().clone().unwrap_or_default();
+        println!("Key zum Ende der Funktion: {:?}", stored);
         }
         Ok(LoginResult {
             success: true,
