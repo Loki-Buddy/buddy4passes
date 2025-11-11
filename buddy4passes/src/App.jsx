@@ -27,7 +27,7 @@ function App() {
   async function chmastercreds() {
     const userName = "test";
     const data = {
-      new_user_name: "testNEW",
+      new_user_name: "TestNEW",
       //new_user_email: "testNEWWW223.de",
       /* old_master_password: "test",
       new_master_password: "testNEW",

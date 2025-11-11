@@ -105,7 +105,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
     });
 
     // Setze den JWT-Token für die Authentifizierung (sollte aus dem Kontext kommen)
-    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwiaWF0IjoxNzYyODY4MzgyLCJleHAiOjE3NjI4Njg2ODJ9.RLAmEVpceVNkxQ_s_QgikxJKpfRhvVK2l-0VvVb8e0Q";
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwiaWF0IjoxNzYyODY4ODM3LCJleHAiOjE3NjI4NjkxMzd9.NMBMVSSHkWqOOYZRz3Bf14recsbqOqbCmRIA-3k2muw";
 
     // Sende die Änderungen an den Server und erhalte die Bestätigung als JSON zurück
     let response = client
