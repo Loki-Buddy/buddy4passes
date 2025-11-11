@@ -1,0 +1,33 @@
+.landing-hero {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:70vh;
+  padding:2rem;
+  text-align:center;
+}
+.hero-content h1 { 
+    font-size:2rem;
+    margin-bottom:0.5rem; 
+}
+.hero-ctas { 
+    margin-top:1rem; 
+    display:flex; 
+    gap:0.75rem; 
+    justify-content:center; 
+}
+
+
+.btn.primary {
+    background:#2563EB;
+    color:white;
+    padding:0.6rem 1rem;
+    border-radius:6px;
+    text-decoration:none; 
+}
+.btn.secondary {
+    border:1px solid #2563EB;
+    color:#2563EB;
+    padding:0.55rem 0.9rem;
+    border-radius:6px;
+    text-decoration:none; }
