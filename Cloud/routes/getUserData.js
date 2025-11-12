@@ -22,9 +22,9 @@ router.get("/user/data", async (req, res) => {
             );
         }
 
-        /* if (user.rows.length === 0) {
+        if (user.rows.length === 0) {
             return res.status(404).json({ message: "Nutzer nicht gefunden" });
-        } */
+        }
         console.log(user.rows[0]);
         res.json(user.rows[0]);
     } catch (err) {

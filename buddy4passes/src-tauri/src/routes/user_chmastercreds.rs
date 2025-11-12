@@ -45,16 +45,24 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
             .query(&[("user_name", new_name)])
             .send()
             .await
-            .map_err(|e| e.to_string())?
-            .json::<Value>()
-            .await
             .map_err(|e| e.to_string())?;
+
+            if existing_user.status().is_success() {
+                return Err("Benutzername bereits vergeben.".to_string());    
+            }
+
+            let existing_user = existing_user
+                .json::<Value>()
+                .await
+                .map_err(|e| e.to_string())?;
+            
         
             println!("new_user_name: {}", existing_user);
         // Wenn der neue Name bereits existiert → Fehler
-        if !existing_user["user_name"].is_null() && existing_user["user_name"].as_str().unwrap_or("") != username {
+        /* if !existing_user["user_name"].is_null() && existing_user["user_name"].as_str().unwrap_or("") != username {
             return Err("Benutzername bereits vergeben.".to_string());
-        }
+        } */
+
     }
     
     // Validierung für neue Email-Adresse
