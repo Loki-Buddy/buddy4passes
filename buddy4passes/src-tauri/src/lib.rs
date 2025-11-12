@@ -20,7 +20,8 @@ pub fn run() {
             routes::user_chmastercreds::change_master_creds,
             routes::user_registration::register_user_test,
             routes::user_login::login_user,
-            routes::account_add::add_account
+            routes::account_add::add_account,
+            routes::account_chcreds::change_account_creds
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

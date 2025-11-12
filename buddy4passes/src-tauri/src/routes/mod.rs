@@ -4,3 +4,4 @@ pub mod user_registration;
 pub mod account_add;
 pub mod account_display;
 pub mod user_chmastercreds;
+pub mod account_chcreds;
