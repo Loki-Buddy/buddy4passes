@@ -112,29 +112,29 @@ pub mod crypt {
             String::from_utf8(plaintext).map_err(|_| CryptoError::DecryptionError)
         }
 
-        /// Erstellt einen sicheren Hash eines Passworts
-        pub fn hash_password(password: &str) -> Result<String, CryptoError> {
-            let salt = SaltString::generate(&mut ArgonRng);
-            let argon2 = Argon2::default();
-        
-            let hash = argon2
-                .hash_password(password.as_bytes(), &salt)
-                .map_err(|_| CryptoError::HashingError)?
-                .to_string();
-        
-            Ok(hash)
-        }
-
-        /// Überprüft ein Passwort gegen einen gespeicherten Hash
-        pub fn verify_password(password: &str, hash: &str) -> Result<(), CryptoError> {
-            let parsed_hash = PasswordHash::new(hash).map_err(|_| CryptoError::VerificationError)?;
-        
-            Argon2::default()
-                .verify_password(password.as_bytes(), &parsed_hash)
-                .map_err(|_| CryptoError::VerificationError)
-        }
+    }
+    
+    /// Erstellt einen sicheren Hash eines Passworts
+    pub fn hash_password(password: &str) -> Result<String, CryptoError> {
+        let salt = SaltString::generate(&mut ArgonRng);
+        let argon2 = Argon2::default();
+    
+        let hash = argon2
+            .hash_password(password.as_bytes(), &salt)
+            .map_err(|_| CryptoError::HashingError)?
+            .to_string();
+    
+        Ok(hash)
     }
 
+    /// Überprüft ein Passwort gegen einen gespeicherten Hash
+    pub fn verify_password(password: &str, hash: &str) -> Result<(), CryptoError> {
+        let parsed_hash = PasswordHash::new(hash).map_err(|_| CryptoError::VerificationError)?;
+    
+        Argon2::default()
+            .verify_password(password.as_bytes(), &parsed_hash)
+            .map_err(|_| CryptoError::VerificationError)
+    }
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -154,14 +154,14 @@ pub mod crypt {
         fn test_password_hashing() {
             let password = "sicheres_passwort123!";
         
-            let hash = CryptoService::hash_password(password).unwrap();
+            let hash = hash_password(password).unwrap();
             assert_ne!(password, hash);
         
-            let result = CryptoService::verify_password(password, &hash);
+            let result = verify_password(password, &hash);
             assert!(result.is_ok());
         
             let wrong_password = "falsches_passwort";
-            let result = CryptoService::verify_password(wrong_password, &hash);
+            let result = verify_password(wrong_password, &hash);
             assert!(result.is_err());
         }
     }

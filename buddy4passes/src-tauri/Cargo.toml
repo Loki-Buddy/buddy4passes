@@ -37,5 +37,5 @@ thiserror = "1.0"
 
 # Requests
 
-reqwest = { version = "0.12", features = ["json"] }
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
