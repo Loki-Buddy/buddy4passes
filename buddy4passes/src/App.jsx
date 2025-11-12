@@ -25,15 +25,15 @@ function App() {
     console.log("message", response.message);
   }
   async function chmastercreds() {
-    const userName = "test";
+    const username = "lokii";
     const data = {
-      /* new_user_name: "Chris", */
-      old_master_password: "test",
+      new_user_name: "Jan",
+      /* old_master_password: "test",
       new_master_password: "testNEW",
-      confirm_new_master_password: "testNEW",
+      confirm_new_master_password: "testNEW", */
     };
 
-    const response = await invoke("change_master_creds", { data, userName });
+    const response = await invoke("change_master_creds", { username, data });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
@@ -44,14 +44,26 @@ function App() {
     console.log("message", response.message);
   }
 
-async function registerUser() {
+  async function registerUser() {
     const data = {
-      name: "Sebs1",
-      email: "test@testtest23.de",
-      masterpassword: "test",
+      name: "lokii",
+      email: "test@lokii.de",
+      masterpassword: "jany1001!",
     };
 
     const response = await invoke("register_user_test", { name: data.name, email: data.email, masterpassword: data.masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
+  async function login() {
+    const data = {
+      username: "lokii",
+      masterpassword: "jany1001!",
+    };
+
+    const response = await invoke("login_user", { username: data.username, masterpassword: data.masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
@@ -78,6 +90,7 @@ async function registerUser() {
         onSubmit={(e) => {
           e.preventDefault();
           //registerUser();
+          //login();
           chmastercreds();
           //deleteUser();
         }}

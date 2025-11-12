@@ -5,10 +5,10 @@ require("dotenv").config();
 
 router.get("/user/data", async (req, res) => {
     const { user_name, user_email } = req.query;
-
+    
     try {
         let user;
-
+        console.log(user_name, user_email);
         // Suche nach user_name ODER user_email
         if (user_name) {
             user = await pool.query(
@@ -25,7 +25,7 @@ router.get("/user/data", async (req, res) => {
         /* if (user.rows.length === 0) {
             return res.status(404).json({ message: "Nutzer nicht gefunden" });
         } */
-
+        console.log(user.rows[0]);
         res.json(user.rows[0]);
     } catch (err) {
         console.error(err);

@@ -23,19 +23,21 @@ pub struct MasterData {
 }
 
 #[tauri::command]
-pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_, Arc<MemoryStore>>, data: MasterData, user_name: String) -> Result<Value, String> {
+pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_, Arc<MemoryStore>>, data: MasterData, username: String) -> Result<Value, String> {
     
+    println!("Start");
     // Rufe die aktuellen Benutzerdaten vom Server ab - mit Query-Parameter statt JSON-Body
     let user_response = client
         .get("http://3.74.73.164:3000/user/data")
-        .query(&[("user_name", &user_name)])
+        .query(&[("user_name", &username)])
         .send()
         .await
         .map_err(|e| e.to_string())?
         .json::<Value>()
         .await
         .map_err(|e| e.to_string())?;
-
+    println!("user_response: {}", user_response);
+    
     // Nur prüfen, wenn ein neuer Benutzername angegeben wurde
     if let Some(new_name) = &data.new_user_name {
         let existing_user = client
@@ -47,13 +49,14 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
             .json::<Value>()
             .await
             .map_err(|e| e.to_string())?;
-
+        
+            println!("new_user_name: {}", existing_user);
         // Wenn der neue Name bereits existiert → Fehler
-        if !existing_user["user_name"].is_null() && existing_user["user_name"].as_str().unwrap_or("") != user_name {
+        if !existing_user["user_name"].is_null() && existing_user["user_name"].as_str().unwrap_or("") != username {
             return Err("Benutzername bereits vergeben.".to_string());
         }
     }
-
+    
     // Validierung für neue Email-Adresse
     if let Some(new_email) = &data.new_user_email {
         let existing_email_user = client
@@ -141,8 +144,6 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
         "new_master_password": hashed_new_master_password,
     });
 
-    // Setze den JWT-Token für die Authentifizierung (sollte aus dem Kontext kommen)
-    //let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMCwiaWF0IjoxNzYyOTM3MTczLCJleHAiOjE3NjI5Mzc0NzN9.NaUs1XPHasQWRyAgIfYt7tsw78B1TpDg8dS2LG3WnWI";
 
     let token = state.token.lock().unwrap().clone().unwrap_or_default();
 

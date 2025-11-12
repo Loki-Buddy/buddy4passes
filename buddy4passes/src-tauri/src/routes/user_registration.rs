@@ -31,7 +31,6 @@ pub async fn register_user_test(
     email: String,
     masterpassword: String,
 ) -> Result<Value, String> {
-    println!("test");
     let masterpw_str: &str = &masterpassword;
     let master_password_hash = hash_password(masterpw_str);
 
