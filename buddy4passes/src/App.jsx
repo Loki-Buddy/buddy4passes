@@ -39,13 +39,23 @@ function App() {
     console.log("message", response.message);
   }
   async function deleteUser() {
-    const email = "test@testtestNEWWW.de";
-    const response = await invoke("delete_user", { email });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
 
+async function registerUser() {
+    const data = {
+      name: "Sebs1",
+      email: "test@testtest23.de",
+      masterpassword: "test",
+    };
+
+    const response = await invoke("register_user_test", { name: data.name, email: data.email, masterpassword: data.masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
   return (
     <main className="container">
       <h1>Welcome to buddy4passes</h1>
