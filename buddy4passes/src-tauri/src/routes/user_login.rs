@@ -116,7 +116,6 @@ pub async fn login_user(
             let path = format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, user_set.user_name);
             let bytes = fs::read(&path).map_err(|_| "Fehler beim Lesen!")?;
             let key = String::from_utf8(bytes).map_err(|_| "Fehler beim Konvertieren zu UTF-8!")?;
-            println!("key: {}", key);
         
             // Token im Speicher ablegen
                 if let Ok(mut stored_key) = state.key.lock() {
