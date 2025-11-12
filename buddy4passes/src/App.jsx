@@ -96,7 +96,7 @@ async function registerUser() {
           // deleteUser();
           // registerUser();
           // addAccount();
-          // loginUser();
+          loginUser();
         }}
       >
         <input

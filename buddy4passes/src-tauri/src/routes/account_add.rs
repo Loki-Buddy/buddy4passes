@@ -43,9 +43,10 @@ pub async fn add_account(
     let key = state.key.lock().unwrap().clone().unwrap_or_default();
 
     // Passwort verschlüsseln
-    let crypto = CryptoService::from_key(&key.as_str());
-    let encrypted_password = crypto.encrypt(&service_password)?
+    let crypto = CryptoService::from_key(&key.as_str()).unwrap();
+    let encrypted_password = crypto.encrypt(&service_password)
         .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
+    println!("Passwort: {}", encrypted_password);
 
     // API-Endpunkt
     let api_url = "http://3.74.73.164:3000/account/add";
