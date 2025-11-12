@@ -1,9 +1,11 @@
 import "../styles/Header.css"; 
+import mellonwo from "../assets/mellonwo.png";
 
 export function Header() {
   return (
     <main className="header">
-      <h1>Mellon a minno</h1>
+      
+        <div className="logo"><img src={mellonwo} alt="mellonwo" /></div>
     </main>
   );
 }
