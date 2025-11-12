@@ -40,37 +40,36 @@ function App() {
   }
 
   async function addAccount() {
-  const data = {
-    service: "Google",
-    service_email: "Sebs@gmail.com",
-    service_username: "Sebs",
-    service_password: "PW123",
-  };
+    const data = {
+      service: "Google",
+      service_email: "Sebs@gmail.com",
+      service_username: "Sebs",
+      service_password: "PW123",
+    };
 
-  try {
-    const response = await invoke("add_account", {
-      servicename: data.service,
-      serviceemail: data.service_email,
-      serviceusername: data.service_username,
-      servicepassword: data.service_password,
-    });
+    try {
+      const response = await invoke("add_account", {
+        servicename: data.service,
+        serviceemail: data.service_email,
+        serviceusername: data.service_username,
+        servicepassword: data.service_password,
+      });
 
-    console.log("Server response:", response);
-    console.log("Typ der response:", typeof response);
-    console.log("message:", response.message);
+      console.log("Server response:", response);
+      console.log("Typ der response:", typeof response);
+      console.log("message:", response.message);
 
-    if (response.success) {
-      alert(`${response.message}`);
-    } else {
-      alert(`${response.message}`);
+      if (response.success) {
+        alert(`${response.message}`);
+      } else {
+        alert(`${response.message}`);
+      }
+    } catch (error) {
+      console.error("Fehler beim Hinzufügen des Accounts:", error);
+      alert(`Fehler: ${error}`);
     }
-  } catch (error) {
-    console.error("Fehler beim Hinzufügen des Accounts:", error);
-    alert(`Fehler: ${error}`);
   }
-}
 
-async function registerUser() {
   async function registerUser() {
     const data = {
       name: "lokii",
