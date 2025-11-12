@@ -11,13 +11,32 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
   }
-  async function deleteUser() {
-    const username = "Sebs1";
+
+  async function chmastercreds() {
+    const username = "lokii";
+    const data = {
+      new_user_name: "lokii2",
+      new_user_email: "test@lokiiTEST2.de",
+      old_master_password: "test",
+      new_master_password: "test2",
+      confirm_new_master_password: "test2",
+    };
+
+    const response = await invoke("change_master_creds", {
+      username,
+      data,
+    });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+  async function loginUser() {
+    const username = "lokii";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
-    // console.log("message", response.message);
+    console.log("message", response.message);
   }
 
   async function addAccount() {
@@ -52,13 +71,27 @@ function App() {
 }
 
 async function registerUser() {
+  async function registerUser() {
     const data = {
-      name: "Sebs1",
-      email: "test@testtest23.de",
+      name: "lokii",
+      email: "test@lokiiTEST.de",
       masterpassword: "test",
     };
 
-    const response = await invoke("register_user_test", { name: data.name, email: data.email, masterpassword: data.masterpassword });
+    const response = await invoke("register_user_test", {
+      name: data.name,
+      email: data.email,
+      masterpassword: data.masterpassword,
+    });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
+  async function deleteUser() {
+    const email = "test@test.de";
+    const username = "Chris1";
+    const response = await invoke("delete_user", { email, username });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
