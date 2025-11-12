@@ -63,10 +63,41 @@ pub async fn add_account(
     // API-Endpunkt
     let api_url = "http://3.74.73.164:3000/account/add";
 
+    // Anfrage-Body
     let account_data = AccountRequest {
         service,
         service_email,
         service_username,
         service_password: encrypted_password,
     };
+
+    // Anfrage absenden
+    let response = client
+        .post(api_url)
+        .header("Authorization", format!("Bearer {}", token))
+        .json(&account_data)
+        .send()
+        .await
+        .map_err(|e| format!("Fehler beim Senden der Anfrage: {}", e))?;
+
+    let status = response.status();
+
+    if !status.is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Ok(AccountResult {
+            success: false,
+            message: format!("Fehler beim Erstellen des Accounts (HTTP {}): {}", status.as_u16(), error_text),
+        });
+    }
+
+    // Account auswerten
+    let account_response: AccountResponse = response
+        .json()
+        .await
+        .map_err(|_| "Antwort konnte nicht gelesen werden".to_string())?;
+
+    Ok(AccountResult {
+        success: true,
+        message: account_response.message,
+    })
 }
