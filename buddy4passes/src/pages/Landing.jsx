@@ -15,14 +15,14 @@ export function Landing() {
         <h1>Neu hier? </h1>
         <p>Registriere dich um Mellon zu nutzen.</p>
         <div className="hero-ctas">
-          <Link to="/register" className="btn secondary">Registrieren</Link>
+          <Link to="/register" className="btn">Registrieren</Link>
         </div>
       </div>
       <div className="hero-content-login">
         <h1>Schon registriert?</h1>
         <p>Melde dich an um Mellon zu nutzen.</p>
         <div className="hero-ctas">
-          <Link to="/login" className="btn primary">Login</Link>
+          <Link to="/login" className="btn">Login</Link>
         </div>
       </div>
       </div>

@@ -61,16 +61,14 @@ body {
 }
 
 
-.btn.primary {
-    background:#2563EB;
-    color:white;
-    padding:0.6rem 1rem;
-    border-radius:6px;
-    text-decoration:none; 
-}
-.btn.secondary {
+.btn {
     border:1px solid #2563EB;
     color:#2563EB;
     padding:0.55rem 0.9rem;
     border-radius:6px;
     text-decoration:none; }
+
+.btn:hover{
+    background:#2563EB;
+    color:white;
+}
