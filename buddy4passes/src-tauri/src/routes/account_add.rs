@@ -2,7 +2,7 @@ use tauri::State;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 // use serde_json::Value;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use crate::routes::user_login::MemoryStore;
 use crate::crypt::crypt::CryptoService;
 
@@ -30,10 +30,10 @@ pub struct AccountResult {
 pub async fn add_account(
     client: State<'_, Arc<Client>>,
     state: State<'_, Arc<MemoryStore>>,
-    service: String,
-    service_email: String,
-    service_username: String,
-    service_password: String,
+    servicename: String,
+    serviceemail: String,
+    serviceusername: String,
+    servicepassword: String,
 ) -> Result<AccountResult, String> {
 
     // Token abrufen
@@ -42,20 +42,25 @@ pub async fn add_account(
     // Key abrufen zum Verschlüsseln
     let key = state.key.lock().unwrap().clone().unwrap_or_default();
 
-    // Passwort verschlüsseln
+    // Verschlüsselung der Parameter
     let crypto = CryptoService::from_key(&key.as_str()).unwrap();
-    let encrypted_password = crypto.encrypt(&service_password)
+    let encrypted_email = crypto.encrypt(&serviceemail)
+        .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
+    let encrypted_username = crypto.encrypt(&serviceusername)
+        .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
+    let encrypted_password = crypto.encrypt(&servicepassword)
         .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
     println!("Passwort: {}", encrypted_password);
+
 
     // API-Endpunkt
     let api_url = "http://3.74.73.164:3000/account/add";
 
-    // Anfrage-Body
+    // Anfrage-Rumpf
     let account_data = AccountRequest {
-        service,
-        service_email,
-        service_username,
+        service: servicename,
+        service_email: encrypted_email,
+        service_username: encrypted_username,
         service_password: encrypted_password,
     };
 

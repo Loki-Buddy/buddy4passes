@@ -30,10 +30,10 @@ function App() {
 
   try {
     const response = await invoke("add_account", {
-      service: data.service,
-      service_email: data.service_email,
-      service_username: data.service_username,
-      service_password: data.service_password,
+      servicename: data.service,
+      serviceemail: data.service_email,
+      serviceusername: data.service_username,
+      servicepassword: data.service_password,
     });
 
     console.log("Server response:", response);
@@ -95,8 +95,8 @@ async function registerUser() {
           e.preventDefault();
           // deleteUser();
           // registerUser();
-          // addAccount();
-          loginUser();
+          addAccount();
+          // loginUser();
         }}
       >
         <input
