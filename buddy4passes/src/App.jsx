@@ -11,8 +11,27 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
   }
+
+  async function chmastercreds() {
+    const username = "lokii";
+    const data = {
+      new_user_name: "lokii2",
+      new_user_email: "test@lokiiTEST2.de",
+      old_master_password: "test",
+      new_master_password: "test2",
+      confirm_new_master_password: "test2",
+    };
+
+    const response = await invoke("change_master_creds", {
+      username,
+      data,
+    });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
   async function loginUser() {
-    const username = "Chris1";
+    const username = "lokii";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
@@ -22,8 +41,8 @@ function App() {
 
   async function registerUser() {
     const data = {
-      name: "Chris1",
-      email: "test@test.de",
+      name: "lokii",
+      email: "test@lokiiTEST.de",
       masterpassword: "test",
     };
 
@@ -67,10 +86,10 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          // registerUser();
-          // loginUser();
-          deleteUser();
-          chmastercreds();
+          //registerUser();
+          //loginUser();
+          //deleteUser();
+          //chmastercreds();
         }}
       >
         <input
