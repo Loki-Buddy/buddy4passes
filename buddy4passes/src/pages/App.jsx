@@ -1,8 +1,8 @@
 // src/pages/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {Landing} from "./Landing";
-import {Login} from "./Login"; // existiert bereits
-import {Register} from "./Register"; // existiert bereits
+import {Login} from "./Login";
+import {Register} from "./Register";
 
 function App() {
   return (
