@@ -50,7 +50,6 @@ pub async fn add_account(
         .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
     let encrypted_password = crypto.encrypt(&servicepassword)
         .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
-    println!("Passwort: {}", encrypted_password);
 
 
     // API-Endpunkt

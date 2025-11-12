@@ -12,6 +12,10 @@ router.get("/accounts", auth, async (req, res) => {
       [userId]
     );
 
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Keine Einträge gefunden!" });
+    }
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);

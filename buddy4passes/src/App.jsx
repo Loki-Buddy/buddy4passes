@@ -72,8 +72,8 @@ function App() {
 
   async function registerUser() {
     const data = {
-      name: "lokii",
-      email: "lokii@lokii.de",
+      name: "Chris1",
+      email: "Chris1@test.de",
       masterpassword: "test",
     };
 
@@ -88,7 +88,7 @@ function App() {
   }
 
   async function deleteUser() {
-    const email = "test@test.de";
+    const email = "Chris1@test.de";
     const username = "Chris1";
     const response = await invoke("delete_user", { email, username });
     console.log("Server response:", response);
@@ -96,9 +96,16 @@ function App() {
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "lokii";
+    const username = "Chris1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
+  async function getAccounts() {
+    const response = await invoke("display_accounts");
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
@@ -126,9 +133,10 @@ function App() {
         onSubmit={(e) => {
           e.preventDefault();
           // deleteUser();
-          //registerUser();
-          addAccount();
-          //loginUser();
+          // registerUser();
+          // addAccount();
+          // loginUser();
+          getAccounts();
         }}
       >
         <input
