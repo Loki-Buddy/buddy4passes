@@ -5,7 +5,7 @@ use std::sync::Arc;
 use std::fs;
 use std::env;
 use serde_json::{Value, json};
-use crate::crypt::crypt::CryptoError;
+use crate::crypt::crypt::Cryptomessage;
 use crate::crypt::crypt::hash_password;
 use crate::crypt::crypt::verify_password;
 use crate::routes::user_login::MemoryStore;
@@ -47,7 +47,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
             .map_err(|e| e.to_string())?;
 
             if existing_user.status().is_success() {
-                return Err("Benutzername bereits vergeben.".to_string());    
+                return Ok(json!({"message": "Benutzername bereits vergeben."}));    
             }
 
             let _existing_user = existing_user
@@ -70,7 +70,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
 
         // Wenn die neue Email bereits existiert → Fehler
         if !existing_email_user["user_email"].is_null() && existing_email_user["user_email"].as_str().unwrap_or("") != user_response["user_email"].as_str().unwrap_or("") {
-            return Err("Es existiert bereits ein Account mit dieser Email.".to_string());
+            return Ok(json!({"message": "Es existiert bereits ein Account mit dieser Email."}));
         }
     }
 
@@ -78,7 +78,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
     let old_master_password_hash = user_response["master_password"].as_str().unwrap_or_default().to_string();
 
     // Validiere die Eingabedaten und verifiziere das alte Passwort, falls ein neues Passwort angegeben wurde
-    let result: Result<(), CryptoError> = if data
+    let result: Result<(), Cryptomessage> = if data
         .new_master_password
         .as_deref()
         .map(|s| !s.trim().is_empty())
@@ -91,12 +91,12 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
             .map(|s| !s.trim().is_empty())
             .unwrap_or(false)
         {
-            return Err("Bitte Bestätigung für das neue Passwort angeben.".to_string());
+            return Ok(json!({"message": "Bitte Bestätigung für das neue Passwort angeben."}));
         }
 
         // Vergleiche das neue Passwort mit der Bestätigung (Klartext)
         if data.new_master_password != data.confirm_new_master_password {
-            return Err("Die neuen Passwörter stimmen nicht überein!".to_string());
+            return Ok(json!({"message": "Die neuen Passwörter stimmen nicht überein!"}));
         }
 
         // Prüfe, ob das alte Passwort angegeben und nicht leer ist
@@ -106,7 +106,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
             .map(|s| !s.trim().is_empty())
             .unwrap_or(false)
         {
-            return Err("Altes Passwort erforderlich!".to_string());
+            return Ok(json!({"message" : "Altes Passwort erforderlich!"}));
         }
 
         // Verifiziere das alte Passwort gegen den gespeicherten Hash (Argon2-Vergleich)
