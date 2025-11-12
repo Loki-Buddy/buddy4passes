@@ -39,6 +39,38 @@ function App() {
     console.log("message", response.message);
   }
 
+  async function addAccount() {
+  const data = {
+    service: "Google",
+    service_email: "Sebs@gmail.com",
+    service_username: "Sebs",
+    service_password: "PW123",
+  };
+
+  try {
+    const response = await invoke("add_account", {
+      servicename: data.service,
+      serviceemail: data.service_email,
+      serviceusername: data.service_username,
+      servicepassword: data.service_password,
+    });
+
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message:", response.message);
+
+    if (response.success) {
+      alert(`${response.message}`);
+    } else {
+      alert(`${response.message}`);
+    }
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen des Accounts:", error);
+    alert(`Fehler: ${error}`);
+  }
+}
+
+async function registerUser() {
   async function registerUser() {
     const data = {
       name: "lokii",
@@ -60,6 +92,14 @@ function App() {
     const email = "test@test.de";
     const username = "Chris1";
     const response = await invoke("delete_user", { email, username });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+  async function loginUser() {
+    const username = "Sebs1";
+    const masterpassword = "test";
+    const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
@@ -86,10 +126,10 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          //registerUser();
-          //loginUser();
-          //deleteUser();
-          //chmastercreds();
+          // deleteUser();
+          // registerUser();
+          addAccount();
+          // loginUser();
         }}
       >
         <input

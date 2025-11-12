@@ -15,7 +15,7 @@ router.post("/account/add", auth, async (req, res) => {
       "INSERT INTO accounts (user_id, service, service_email, service_username, service_password) VALUES ($1, $2, $3, $4, $5)",
       [user_id, service, service_email, service_username, service_password]
     );
-    res.status(201).json({ message: "Account erfolgreich hinzugefügen!" });
+    res.status(201).json({ message: "Account erfolgreich hinzugefügt!" });
   } catch (err) {
     console.error(err.message);
     res

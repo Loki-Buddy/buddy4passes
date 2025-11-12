@@ -19,7 +19,8 @@ pub fn run() {
             routes::account_display::display_accounts,
             routes::user_chmastercreds::change_master_creds,
             routes::user_registration::register_user_test,
-            routes::user_login::login_user
+            routes::user_login::login_user,
+            routes::account_add::add_account
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
