@@ -6,6 +6,7 @@ use serde_json::{Value, json};
 use crate::crypt::crypt::CryptoError;
 use crate::crypt::crypt::hash_password;
 use crate::crypt::crypt::verify_password;
+use crate::routes::user_login::MemoryStore;
 
 #[derive(Serialize, Deserialize)]
 pub struct MasterData {
@@ -22,7 +23,7 @@ pub struct MasterData {
 }
 
 #[tauri::command]
-pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterData, user_name: String) -> Result<Value, String> {
+pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_, Arc<MemoryStore>>, data: MasterData, user_name: String) -> Result<Value, String> {
     
     // Rufe die aktuellen Benutzerdaten vom Server ab - mit Query-Parameter statt JSON-Body
     let user_response = client
@@ -141,7 +142,10 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>, data: MasterDat
     });
 
     // Setze den JWT-Token für die Authentifizierung (sollte aus dem Kontext kommen)
-    let token = "";
+    //let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMCwiaWF0IjoxNzYyOTM3MTczLCJleHAiOjE3NjI5Mzc0NzN9.NaUs1XPHasQWRyAgIfYt7tsw78B1TpDg8dS2LG3WnWI";
+
+    let token = state.token.lock().unwrap().clone().unwrap_or_default();
+
 
     // Sende die Änderungen an den Server und erhalte die Bestätigung als JSON zurück
     let response = client
