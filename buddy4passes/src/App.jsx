@@ -42,9 +42,9 @@ function App() {
   async function addAccount() {
     const data = {
       service: "Google",
-      service_email: "Sebs@gmail.com",
-      service_username: "Sebs",
-      service_password: "PW123",
+      service_email: "testLokii@google.de",
+      service_username: "LokinatorZ",
+      service_password: "test123",
     };
 
     try {
@@ -72,8 +72,8 @@ function App() {
 
   async function registerUser() {
     const data = {
-      name: "lokii",
-      email: "test@lokiiTEST.de",
+      name: "Chris1",
+      email: "Chris1@test.de",
       masterpassword: "test",
     };
 
@@ -88,7 +88,7 @@ function App() {
   }
 
   async function deleteUser() {
-    const email = "test@test.de";
+    const email = "Chris1@test.de";
     const username = "Chris1";
     const response = await invoke("delete_user", { email, username });
     console.log("Server response:", response);
@@ -96,9 +96,16 @@ function App() {
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "Sebs1";
+    const username = "Chris1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
+  async function getAccounts() {
+    const response = await invoke("display_accounts");
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
@@ -127,8 +134,9 @@ function App() {
           e.preventDefault();
           // deleteUser();
           // registerUser();
-          addAccount();
+          // addAccount();
           // loginUser();
+          getAccounts();
         }}
       >
         <input
