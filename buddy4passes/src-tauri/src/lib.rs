@@ -17,7 +17,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             routes::user_delete::delete_user,
             routes::user_registration::register_user_test,
-            routes::user_login::login_user
+            routes::user_login::login_user,
+            routes::account_add::add_account
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

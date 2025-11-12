@@ -1,10 +1,10 @@
 use tauri::State;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+// use serde_json::Value;
 use std::sync::{Arc, Mutex};
-use crate::commands::login::MemoryStore;
-use crate::crypt::crypt::encrypt_text;
+use crate::routes::user_login::MemoryStore;
+use crate::crypt::crypt::CryptoService;
 
 #[derive(Serialize)]
 struct AccountRequest {
@@ -37,28 +37,15 @@ pub async fn add_account(
 ) -> Result<AccountResult, String> {
 
     // Token abrufen
-    let token_guard = state
-        .token
-        .lock()
-        .map_err(|_| "Kein Zugriff auf Token")?;
-    let token = token_guard
-        .clone()
-        .ok_or("Kein gültiger Token gefunden. Bitte einloggen!")?;
-    drop(token_guard);
+    let token = state.token.lock().unwrap().clone().unwrap_or_default();
 
     // Key abrufen zum Verschlüsseln
-    let key_guard = state
-        .key
-        .lock()
-        .map_err(|_| "Zugriff auf Key fehlgeschlagen")?;
-    let key = key_guard
-        .clone()
-        .ok_or("kein gültiger Schlüssel gefunden. Bitte einloggen!")?;
-    drop(key_guard);
+    let key = state.key.lock().unwrap().clone().unwrap_or_default();
 
     // Passwort verschlüsseln
-    let encrypted_password = encrypt_text(&service_password, &key)
-        .map_err(|_| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
+    let crypto = CryptoService::from_key(&key.as_str());
+    let encrypted_password = crypto.encrypt(&service_password)?
+        .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e))?;
 
     // API-Endpunkt
     let api_url = "http://3.74.73.164:3000/account/add";

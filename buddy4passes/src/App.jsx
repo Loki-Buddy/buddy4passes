@@ -20,6 +20,37 @@ function App() {
     // console.log("message", response.message);
   }
 
+  async function addAccount() {
+  const data = {
+    service: "Google",
+    service_email: "Sebs@gmail.com",
+    service_username: "Sebs",
+    service_password: "PW123",
+  };
+
+  try {
+    const response = await invoke("add_account", {
+      service: data.service,
+      service_email: data.service_email,
+      service_username: data.service_username,
+      service_password: data.service_password,
+    });
+
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message:", response.message);
+
+    if (response.success) {
+      alert(`${response.message}`);
+    } else {
+      alert(`${response.message}`);
+    }
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen des Accounts:", error);
+    alert(`Fehler: ${error}`);
+  }
+}
+
 async function registerUser() {
     const data = {
       name: "Sebs1",
@@ -32,6 +63,15 @@ async function registerUser() {
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
+  async function loginUser() {
+    const username = "Sebs1";
+    const masterpassword = "test";
+    const response = await invoke("login_user", { username, masterpassword });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
   return (
     <main className="container">
       <h1>Welcome to buddy4passes</h1>
@@ -53,8 +93,10 @@ async function registerUser() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          deleteUser();
+          // deleteUser();
           // registerUser();
+          // addAccount();
+          // loginUser();
         }}
       >
         <input
