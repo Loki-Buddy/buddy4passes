@@ -5,7 +5,7 @@ use std::sync::Arc;
 use std::fs;
 use std::env;
 use serde_json::{Value, json};
-use crate::crypt::crypt::Cryptomessage;
+use crate::crypt::crypt::CryptoError;
 use crate::crypt::crypt::hash_password;
 use crate::crypt::crypt::verify_password;
 use crate::routes::user_login::MemoryStore;
@@ -78,7 +78,7 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
     let old_master_password_hash = user_response["master_password"].as_str().unwrap_or_default().to_string();
 
     // Validiere die Eingabedaten und verifiziere das alte Passwort, falls ein neues Passwort angegeben wurde
-    let result: Result<(), Cryptomessage> = if data
+    let result: Result<(), CryptoError> = if data
         .new_master_password
         .as_deref()
         .map(|s| !s.trim().is_empty())
