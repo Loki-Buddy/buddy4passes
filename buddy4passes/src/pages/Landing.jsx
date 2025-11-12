@@ -10,15 +10,23 @@ export function Landing() {
     <div className="header">
         <Header />
       </div>
-
-      <div className="hero-content">
-        <h1>Willkommen bei Mellon</h1>
-        <p>Mit Mellon kannst du deine Passwörter sicher speichern und verwalten.</p>
+      <div className="hero-wrapper">
+      <div className="hero-content-register">
+        <h1>Neu hier? </h1>
+        <p>Registriere dich um Mellon zu nutzen.</p>
         <div className="hero-ctas">
-          <Link to="/login" className="btn primary">Login</Link>
           <Link to="/register" className="btn secondary">Registrieren</Link>
         </div>
       </div>
+      <div className="hero-content-login">
+        <h1>Schon registriert?</h1>
+        <p>Melde dich an um Mellon zu nutzen.</p>
+        <div className="hero-ctas">
+          <Link to="/login" className="btn primary">Login</Link>
+        </div>
+      </div>
+      </div>
+
     <div className="footer"><Footer /></div>
     </main>
   );
