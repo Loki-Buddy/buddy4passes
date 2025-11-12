@@ -46,6 +46,15 @@ function App() {
     console.log("message", response.message);
   }
 
+  async function getAccounts() {
+    const email = "test@test.de";
+    const username = "Chris1";
+    const response = await invoke("display_accounts");
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
   return (
     <main className="container">
       <h1>Welcome to buddy4passes</h1>
@@ -69,7 +78,8 @@ function App() {
           e.preventDefault();
           // registerUser();
           // loginUser();
-          deleteUser();
+          // deleteUser();
+          getAccounts();
         }}
       >
         <input
