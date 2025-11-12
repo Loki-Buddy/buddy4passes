@@ -70,6 +70,7 @@ function App() {
           // registerUser();
           // loginUser();
           deleteUser();
+          chmastercreds();
         }}
       >
         <input

@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 require("dotenv").config();
 
 router.put("/user/chmastercreds", auth, async (req, res) => {
-  const { new_user_name, new_user_email, old_master_password, new_master_password, confirm_new_master_password } = req.body;
+  const { new_user_name, new_user_email, new_master_password } = req.body;
 
   try {
     const { user_id } = req.user;
@@ -15,7 +15,7 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
       [user_id]
     );
 
-    if (new_master_password) {
+    /* if (new_master_password) {
       if (old_master_password !== user.rows[0].master_password) {
         return res.status(400).json({ message: "Altes Passwort ist falsch!" });
       }
@@ -25,25 +25,25 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
       if (!old_master_password) {
         return res.status(400).json({ message: "Altes Passwort erforderlich!" });
       }
-    }
+    } */
 
     const sets = [];
     const values = [];
     let index = 1;
 
     if (new_user_name) {
-      if(new_user_name === user.rows[0].user_name) {
+      /* if(new_user_name === user.rows[0].user_name) {
         return res.status(400).json({ message: "Benutzername ist gleich!" });
-      }
+      } */
       sets.push(`user_name = $${index}`);
       values.push(new_user_name);
       index++;
     }
 
     if (new_user_email) {
-      if(new_user_email === user.rows[0].user_email) {
+      /* if(new_user_email === user.rows[0].user_email) {
         return res.status(400).json({ message: "E-Mail ist gleich!" });
-      }
+      } */
       sets.push(`user_email = $${index}`);
       values.push(new_user_email);
       index++;
