@@ -70,9 +70,8 @@ function App() {
     }
   }
 
-  async function registerUser() {
     async function registerUser() {
-      const data = {
+        const data = {
         name: "lokii",
         email: "test@lokiiTEST.de",
         masterpassword: "test",
