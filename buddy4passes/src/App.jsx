@@ -25,12 +25,13 @@ function App() {
     console.log("message", response.message);
   }
   async function chmastercreds() {
-    const username = "lokii";
+    const username = "";
     const data = {
-      new_user_name: "Jan",
-      /* old_master_password: "test",
-      new_master_password: "testNEW",
-      confirm_new_master_password: "testNEW", */
+      new_user_name: "",
+      new_user_email: "",
+      old_master_password: "",
+      new_master_password: "",
+      confirm_new_master_password: "",
     };
 
     const response = await invoke("change_master_creds", { username, data });
@@ -46,8 +47,8 @@ function App() {
 
   async function registerUser() {
     const data = {
-      name: "lokii",
-      email: "test@lokii.de",
+      name: "lokii2",
+      email: "test@lokii2.de",
       masterpassword: "jany1001!",
     };
 
@@ -59,8 +60,8 @@ function App() {
 
   async function login() {
     const data = {
-      username: "lokii",
-      masterpassword: "jany1001!",
+      username: "lokii4",
+      masterpassword: "test",
     };
 
     const response = await invoke("login_user", { username: data.username, masterpassword: data.masterpassword });

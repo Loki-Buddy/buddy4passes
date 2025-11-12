@@ -2,6 +2,8 @@ use serde::{Serialize, Deserialize};
 use tauri::State;
 use reqwest::Client;
 use std::sync::Arc;
+use std::fs;
+use std::env;
 use serde_json::{Value, json};
 use crate::crypt::crypt::CryptoError;
 use crate::crypt::crypt::hash_password;
@@ -24,8 +26,6 @@ pub struct MasterData {
 
 #[tauri::command]
 pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_, Arc<MemoryStore>>, data: MasterData, username: String) -> Result<Value, String> {
-    
-    println!("Start");
     // Rufe die aktuellen Benutzerdaten vom Server ab - mit Query-Parameter statt JSON-Body
     let user_response = client
         .get("http://3.74.73.164:3000/user/data")
@@ -36,7 +36,6 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
         .json::<Value>()
         .await
         .map_err(|e| e.to_string())?;
-    println!("user_response: {}", user_response);
     
     // Nur prüfen, wenn ein neuer Benutzername angegeben wurde
     if let Some(new_name) = &data.new_user_name {
@@ -51,18 +50,10 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
                 return Err("Benutzername bereits vergeben.".to_string());    
             }
 
-            let existing_user = existing_user
+            let _existing_user = existing_user
                 .json::<Value>()
                 .await
                 .map_err(|e| e.to_string())?;
-            
-        
-            println!("new_user_name: {}", existing_user);
-        // Wenn der neue Name bereits existiert → Fehler
-        /* if !existing_user["user_name"].is_null() && existing_user["user_name"].as_str().unwrap_or("") != username {
-            return Err("Benutzername bereits vergeben.".to_string());
-        } */
-
     }
     
     // Validierung für neue Email-Adresse
@@ -163,11 +154,19 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
         .json(&request_data)
         .send()
         .await
-        .map_err(|e| e.to_string())?
-        .json::<Value>()
-        .await
         .map_err(|e| e.to_string())?;
 
+        if request_data["new_user_name"].as_str() != None {
+            let appdata = env::var("LOCALAPPDATA")
+            .or_else(|_| env::var("USER"))
+            .unwrap_or_else(|_| "Unbekannt".to_string());
+            fs::rename(&format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, user_response["user_name"].as_str().unwrap_or("")), &format!("{}\\Buddy4Passes\\user_key_{}.txt", appdata, data.new_user_name.expect("Empty String").as_str())).expect("Failed to rename file");
+        }
+
+    let response = response.json::<Value>()
+        .await
+        .map_err(|e| e.to_string())?;
+    
     // Gebe die Serverantwort an den Client zurück
     Ok(response)
 }
