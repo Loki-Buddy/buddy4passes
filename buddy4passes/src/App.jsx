@@ -11,27 +11,41 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
   }
-  async function deleteUser() {
-    const username = "Sebs1";
+  async function loginUser() {
+    const username = "Chris1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
-    // console.log("message", response.message);
+    console.log("message", response.message);
   }
 
-async function registerUser() {
+  async function registerUser() {
     const data = {
-      name: "Sebs1",
-      email: "test@testtest23.de",
+      name: "Chris1",
+      email: "test@test.de",
       masterpassword: "test",
     };
 
-    const response = await invoke("register_user_test", { name: data.name, email: data.email, masterpassword: data.masterpassword });
+    const response = await invoke("register_user_test", {
+      name: data.name,
+      email: data.email,
+      masterpassword: data.masterpassword,
+    });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
+
+  async function deleteUser() {
+    const email = "test@test.de";
+    const username = "Chris1";
+    const response = await invoke("delete_user", { email, username });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
   return (
     <main className="container">
       <h1>Welcome to buddy4passes</h1>
@@ -53,8 +67,9 @@ async function registerUser() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          deleteUser();
           // registerUser();
+          // loginUser();
+          deleteUser();
         }}
       >
         <input
