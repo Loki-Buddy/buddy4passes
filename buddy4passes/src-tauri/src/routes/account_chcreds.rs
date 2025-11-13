@@ -53,7 +53,7 @@ pub async fn change_account_creds(client: State<'_, Arc<Client>>, state: State<'
     let response = client
         .put("http://3.74.73.164:3000/account/edit")
         .header("Authorization", format!("Bearer {}", token))
-        .json(&json!({"account_id": accountid, "service_name": data.new_servicename, "service_email": encrypted_email, "service_username": encrypted_username, "service_password": encrypted_password}))
+        .json(&json!({"account_id": accountid, "service": data.new_servicename, "service_email": encrypted_email, "service_username": encrypted_username, "service_password": encrypted_password}))
         .send()
         .await
         .map_err(|e| e.to_string())?
