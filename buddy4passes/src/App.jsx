@@ -13,10 +13,10 @@ function App() {
   }
 
   async function chmastercreds() {
-    const username = "lokii";
+    const username = "Sebs1";
     const data = {
-      new_user_name: "lokii2",
-      new_user_email: "test@lokiiTEST2.de",
+      new_user_name: "Sebs2",
+      new_user_email: "sebs@mail.de",
       old_master_password: "test",
       new_master_password: "test2",
       confirm_new_master_password: "test2",
@@ -31,7 +31,7 @@ function App() {
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "lokii";
+    const username = "Sebs1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
@@ -69,11 +69,32 @@ function App() {
       alert(`Fehler: ${error}`);
     }
   }
+  async function deleteAccount() {
+  const account_id = 7;
 
+  try {
+    const response = await invoke("delete_account", {
+      accountid: account_id,
+    });
+
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message:", response.message);
+
+    if (response.success) {
+      alert(`${response.message}`);
+    } else {
+      alert(`${response.message}`);
+    }
+  } catch (error) {
+    console.error("Fehler beim Löschen des Accounts:", error);
+    alert(`Fehler: ${error}`);
+  }
+}
   async function registerUser() {
     const data = {
-      name: "Chris1",
-      email: "Chris1@test.de",
+      name: "Sebs1",
+      email: "sebs@mail.de",
       masterpassword: "test",
     };
 
@@ -88,22 +109,21 @@ function App() {
   }
 
   async function deleteUser() {
-    const email = "Chris1@test.de";
-    const username = "Chris1";
+    const email = "sebs@mail.de";
+    const username = "Sebs1";
     const response = await invoke("delete_user", { email, username });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "Chris1";
+    const username = "Sebs1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
-
   async function getAccounts() {
     const response = await invoke("display_accounts");
     console.log("Server response:", response);
@@ -135,7 +155,9 @@ function App() {
           // deleteUser();
           // registerUser();
           // addAccount();
+          
           // loginUser();
+          // deleteAccount();
           getAccounts();
         }}
       >
