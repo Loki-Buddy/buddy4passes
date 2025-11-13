@@ -35,7 +35,7 @@ pub async fn delete_account(
     let api_url = "http://3.74.73.164:3000/account/delete";
 
     // Anfrage-Rumpf
-    let delete_data = DeleteAccountRequest { accountid };
+    let delete_data = DeleteAccountRequest { account_id: accountid };
 
     // DELETE absenden mit JSON-Body
     let response = client
@@ -49,13 +49,10 @@ pub async fn delete_account(
     let status = response.status();
 
     if !status.is_success() {
-        let error_text = response.text().await.unwrap_or_default();
         return Ok(DeleteAccountResult {
             success: false,
             message: format!(
-                "Fehler beim Löschen des Accounts (HTTP {}): {}",
-                status.as_u16(),
-                error_text
+                "Fehler beim Löschen des Accounts",
             ),
         });
     }
