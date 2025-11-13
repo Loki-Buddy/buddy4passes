@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 // PUT /account/edit
 // Body: {  service_email, service_username, service_password }
 router.put("/account/edit", auth, async (req, res) => {
-    const { account_id, service_email, service_username, service_password } = req.body;
+    const { account_id, service ,service_email, service_username, service_password } = req.body;
 
     try {
         const { user_id } = req.user;
@@ -24,6 +24,11 @@ router.put("/account/edit", auth, async (req, res) => {
         const values = [];
         let index = 1;
 
+        if (service) {
+            sets.push(`service = $${index}`);
+            values.push(service);
+            index++;
+        }
 
         if (service_email) {
             sets.push(`service_email = $${index}`);

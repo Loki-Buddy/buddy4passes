@@ -39,10 +39,27 @@ function App() {
     console.log("message", response.message);
   }
 
+  async function chaccountcreds() {
+    const accountid = 17;
+    const data = {
+      service_name: "Google",
+      /* service_email: "lokii@test.de",
+      service_username: "Lokii",
+      service_password: "test", */
+    };
+
+    const response = await invoke("change_account_creds", {
+      data, accountid
+    });
+    console.log("Server response:", response);
+    console.log("Typ der response:", typeof response);
+    console.log("message", response.message);
+  }
+
   async function addAccount() {
     const data = {
-      service: "Google",
-      service_email: "test@testlokii.de",
+      service: "Youtube",
+      service_email: "lokii@test.de",
       service_username: "Lokii",
       service_password: "test",
     };
@@ -72,8 +89,8 @@ function App() {
 
   async function registerUser() {
     const data = {
-      name: "Chris1",
-      email: "Chris1@test.de",
+      name: "Lokii",
+      email: "lokii@test.de",
       masterpassword: "test",
     };
 
@@ -88,15 +105,15 @@ function App() {
   }
 
   async function deleteUser() {
-    const email = "Chris1@test.de";
-    const username = "Chris1";
+    const email = "lokii@test.de";
+    const username = "Lokii";
     const response = await invoke("delete_user", { email, username });
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "Chris1";
+    const username = "Lokii";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
@@ -132,11 +149,12 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          // deleteUser();
-          // registerUser();
-          // addAccount();
-          // loginUser();
-          getAccounts();
+           //deleteUser();
+          //registerUser();
+           //addAccount();
+          //loginUser();
+          // getAccounts();
+          chaccountcreds();
         }}
       >
         <input
