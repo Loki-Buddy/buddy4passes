@@ -1,0 +1,92 @@
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
+import "../styles/Dashboard.css";
+import { invoke } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
+import AccountCard from "../components/AccountCard";
+import Box from "@mui/material/Box";
+
+export function Dashboard() {
+  const [accounts, setAccounts] = useState([
+    {
+      account_id: 1,
+      user_id: 1,
+      service: "Google",
+      service_email: "Rtj1a@example.com",
+      service_username: "username",
+      service_password: "password123",
+    },
+    {
+      account_id: 2,
+      user_id: 2,
+      service: "Youtube",
+      service_email: "Rtj1a@example.com",
+      service_username: "username",
+      service_password: "password123",
+    },
+    {
+      account_id: 3,
+      user_id: 3,
+      service: "Amazon",
+      service_email: "Rtj1a@example.com",
+      service_username: "username",
+      service_password: "password123",
+    },
+  ]);
+  const [message, setMessage] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState(null);
+
+  //   async function fetchAccounts() {
+  //     try {
+  //       const response = await invoke("display_accounts");
+  //       console.log(response);
+
+  //       if (response.message) {
+  //         setMessage(response.message);
+  //         return;
+  //       }
+
+  //       setAccounts(response);
+  //     } catch (error) {
+  //       console.error("Error fetching accounts:", error);
+  //     }
+  //   }
+
+  //   useEffect(() => {
+  //     fetchAccounts();
+  //   }, []);
+
+  return (
+    <main className="Dashboard">
+      <Header />
+      <h2>Dashboard</h2>
+      <Box
+        sx={{
+          p: 2,
+        }}
+      >
+        <div className="account-list">
+          {message ? (
+            <p>{message}</p>
+          ) : (
+            accounts.map((account) => (
+              <AccountCard
+                key={account.account_id}
+                account_id={account.account_id}
+                service={account.service}
+                service_email={account.service_email}
+                service_username={account.service_username}
+                service_password={account.service_password}
+                selected={selectedAccount === account.account_id}
+                onSelect={setSelectedAccount}
+              />
+            ))
+          )}
+        </div>
+      </Box>
+      <Footer />
+    </main>
+  );
+}
+
+export default Dashboard;
