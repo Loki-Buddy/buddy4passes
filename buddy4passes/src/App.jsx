@@ -70,7 +70,7 @@ function App() {
     }
   }
   async function deleteAccount() {
-  const account_id = 18;
+  const account_id = 7;
 
   try {
     const response = await invoke("delete_account", {
@@ -117,7 +117,7 @@ function App() {
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "Chris1";
+    const username = "Sebs1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
@@ -152,13 +152,13 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          deleteUser();
+          // deleteUser();
           // registerUser();
           // addAccount();
-          // addAccount();
+          
           // loginUser();
           // deleteAccount();
-          // getAccounts();
+          getAccounts();
         }}
       >
         <input
