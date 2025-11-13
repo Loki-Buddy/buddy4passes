@@ -1,0 +1,22 @@
+.login {
+    position: fixed;
+    top: var(--header-height);
+    bottom: var(--footer-height);
+    left: 0;
+    right: 0;
+    z-index: 1;
+    display:flex;
+    align-content: center;
+    align-items:center;
+    justify-content:center;
+    height: auto;
+    min-height: 90vh;
+    width:100%;
+    padding:2rem;
+    text-align:center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background-color: rgba(167, 159, 159, 0.75);
+    box-sizing: border-box;
+
+}
