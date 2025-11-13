@@ -124,7 +124,7 @@ function App() {
     console.log("Typ der response:", typeof response);
     console.log("message", response.message);
   }
-  async function getAccount() {
+  async function getAccounts() {
     const response = await invoke("display_accounts");
     console.log("Server response:", response);
     console.log("Typ der response:", typeof response);
@@ -157,7 +157,7 @@ function App() {
           // addAccount();
           // loginUser();
           // deleteAccount();
-          // getAccount();
+          // getAccounts();
         }}
       >
         <input
