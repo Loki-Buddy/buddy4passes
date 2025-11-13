@@ -42,10 +42,10 @@ function App() {
   async function chaccountcreds() {
     const accountid = 19;
     const data = {
-      service: "Google",
-      /* service_email: "lokii@test.de",
-      service_username: "Lokii",
-      service_password: "test", */
+      //service: "Google",
+      /* service_email: "lokii@testNEW2.de",
+      service_username: "LokiiNEW2", */
+      service_password: "test",
     };
 
     const response = await invoke("change_account_creds", {
@@ -153,8 +153,8 @@ function App() {
           //registerUser();
            //addAccount();
           //loginUser();
-          // getAccounts();
-          chaccountcreds();
+          getAccounts();
+          //chaccountcreds();
         }}
       >
         <input

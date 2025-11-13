@@ -10,13 +10,13 @@ use crate::crypt::crypt::CryptoService;
 #[derive(Serialize, Deserialize)]
 pub struct AccountCredentialsResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
-    new_servicename: Option<String>,
+    service: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    new_serviceemail: Option<String>,
+    service_email: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    new_serviceusername: Option<String>,
+    service_username: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    new_servicepassword: Option<String>,
+    service_password: Option<String>,
 }
 
 #[tauri::command]
@@ -31,19 +31,19 @@ pub async fn change_account_creds(client: State<'_, Arc<Client>>, state: State<'
     // Verschlüsselung der Parameter
     let crypto = CryptoService::from_key(&key.as_str()).unwrap();
     
-    let encrypted_email = data.new_serviceemail
+    let encrypted_email = data.service_email
         .as_ref()
         .map(|email| crypto.encrypt(email)
             .map_err(|e| format!("Fehler beim Verschlüsseln der E-Mail: {}", e)))
         .transpose()?;
     
-    let encrypted_username = data.new_serviceusername
+    let encrypted_username = data.service_username
         .as_ref()
         .map(|username| crypto.encrypt(username)
             .map_err(|e| format!("Fehler beim Verschlüsseln des Benutzernamens: {}", e)))
         .transpose()?;
     
-    let encrypted_password = data.new_servicepassword
+    let encrypted_password = data.service_password
         .as_ref()
         .map(|password| crypto.encrypt(password)
             .map_err(|e| format!("Fehler beim Verschlüsseln des Passworts: {}", e)))
@@ -53,7 +53,7 @@ pub async fn change_account_creds(client: State<'_, Arc<Client>>, state: State<'
     let response = client
         .put("http://3.74.73.164:3000/account/edit")
         .header("Authorization", format!("Bearer {}", token))
-        .json(&json!({"account_id": accountid, "service": data.new_servicename, "service_email": encrypted_email, "service_username": encrypted_username, "service_password": encrypted_password}))
+        .json(&json!({"account_id": accountid, "service": data.service, "service_email": encrypted_email, "service_username": encrypted_username, "service_password": encrypted_password}))
         .send()
         .await
         .map_err(|e| e.to_string())?
