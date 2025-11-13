@@ -42,9 +42,9 @@ function App() {
   async function addAccount() {
     const data = {
       service: "Google",
-      service_email: "Sebs@gmail.com",
-      service_username: "Sebs",
-      service_password: "PW123",
+      service_email: "testLokii@google.de",
+      service_username: "LokinatorZ",
+      service_password: "test123",
     };
 
     try {
@@ -117,7 +117,7 @@ function App() {
     console.log("message", response.message);
   }
   async function loginUser() {
-    const username = "Sebs1";
+    const username = "Chris1";
     const masterpassword = "test";
     const response = await invoke("login_user", { username, masterpassword });
     console.log("Server response:", response);
@@ -154,6 +154,7 @@ function App() {
           e.preventDefault();
           deleteUser();
           // registerUser();
+          // addAccount();
           // addAccount();
           // loginUser();
           // deleteAccount();
