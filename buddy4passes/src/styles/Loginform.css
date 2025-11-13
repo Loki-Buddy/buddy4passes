@@ -1,0 +1,22 @@
+.login-form {
+    background-color: rgba(255, 255, 255, 0.75);
+    flex: 1;
+    padding: 2rem; 
+    border-radius: 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.btn {
+    border:1px solid #2563EB;
+    color:#2563EB;
+    padding:0.55rem 0.9rem;
+    border-radius:6px;
+    text-decoration:none; 
+    margin-bottom: 1px;
+}
+
+
+.btn:hover{
+    background:#2563EB;
+    color:white;
+}
