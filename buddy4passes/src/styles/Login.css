@@ -7,10 +7,10 @@ body {
   height: 100vh;            
   font-family: system-ui, sans-serif;
   text-align: center;
-  background-color: #f5f5f5;  
+  background-color: rgba(167, 159, 159, 0.75);
 }
 
-.login {
+.Login {
   max-width: 400px;
   padding: 20px;
   background-color: #fff;
