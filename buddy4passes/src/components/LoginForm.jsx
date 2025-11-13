@@ -1,31 +1,139 @@
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import { useState } from "react";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import "../styles/Loginform.css";
+import { invoke } from "@tauri-apps/api/core";
+import Snackbar from "@mui/material/Snackbar";
+import { useNavigate } from "react-router-dom";
 
-export function LoginForm() {
-return (
-<main className="login-form">
-      <p>
-<TextField
-helperText=" "
-id="demo-helper-text-aligned-no-helper"
-label="Username"
-/>
-    </p>
-    <p>
-<TextField 
-helperText=" "
-id="demo-helper-text-aligned-no-helper"
-label="Passwort"
-/>
-</p>
-<p>
-    <Link to="/" className="btn">Login</Link>
-</p>
-<p>
-    <Link to="/" className="btn">zurück</Link>
-</p>
-    </main>
-);
+function RegistrationForm() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [emailValidationError, setEmailValidationError] = useState("");
+  const [usernameValidationError, setUsernameValidationError] = useState("");
+  const [passwordValidationError, setPasswordValidationError] = useState("");
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setPasswordValidationError("Passwörter stimmen nicht überein");
+      return;
+    } else {
+      setPasswordValidationError("");
+    }
+
+    const data = {
+      email,
+      username,
+      password,
+    };
+    try {
+      const response = await invoke("register_user_test", {
+        name: data.username,
+        email: data.email,
+        masterpassword: data.password,
+      });
+
+      switch (response.message) {
+        case "Dieser Benutzername wird bereits von einem anderen User verwendet.":
+          setUsernameValidationError("Nutzername wird bereits verwendet");
+          return;
+        case "Diese E-Mail wird bereits von einem anderen User verwendet.":
+          setEmailValidationError("E-Mail wird bereits verwendet");
+          return;
+        default:
+          break;
+      }
+
+      setSnackbarMessage(
+        `Registrierung erfolgreich! Du wirst zum Login weitergeleitet und kannst dich mit ${data.username} anmelden`
+      );
+      setSnackbarOpen(true);
+    } catch (err) {
+      console.error("Fehler beim Aufruf:", err);
+    }
+  }
+
+  return (
+    <div className="registration-form">
+      <form onSubmit={handleSubmit}>
+        <TextField
+          error={emailValidationError !== ""}
+          helperText={emailValidationError}
+          style={{ width: "200px", margin: "5px" }}
+          type="email"
+          label="Email"
+          variant="outlined"
+          required
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setEmailValidationError("");
+          }}
+        />
+        <TextField
+          error={usernameValidationError !== ""}
+          helperText={usernameValidationError}
+          style={{ width: "200px", margin: "5px" }}
+          type="text"
+          label="Username"
+          variant="outlined"
+          required
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setUsernameValidationError("");
+          }}
+        />
+        <TextField
+          error={passwordValidationError !== ""}
+          style={{ width: "200px", margin: "5px" }}
+          type="password"
+          label="Passwort"
+          variant="outlined"
+          required
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setPasswordValidationError("");
+          }}
+        />
+        
+        <br />
+        <Button
+          sx={{ margin: "5px" }}
+          component={Link}
+          to="/"
+          variant="outlined"
+          color="primary"
+        >
+          Zurück
+        </Button>
+        <Button
+          sx={{ margin: "5px" }}
+          variant="contained"
+          color="primary"
+          type="submit"
+        >
+          Einloggen
+        </Button>
+      </form>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => {
+          setSnackbarOpen(false);
+          navigate("/dashboard");
+        }}
+        message={snackbarMessage}
+      />
+    </div>
+  );
 }
+
+export default RegistrationForm;
