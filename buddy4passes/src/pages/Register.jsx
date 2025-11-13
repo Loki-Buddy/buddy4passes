@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
-import {Header} from '../components/Header';
-import {Footer} from '../components/Footer';
-
-
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
+import RegistrationForm from "../components/RegistrationForm";
+import "../styles/Register.css";
 
 export function Register() {
   return (
     <main className="Register">
       <Header />
-      <h2>Register</h2>
-      <p>Diese Registrierungs-Seite ist noch ein Platzhalter. Implementiere hier das Formular.</p>
-        <Link to="/" className="btn primary">zurück</Link>
+      <h2>Registrierung</h2>
+      <RegistrationForm />
       <Footer />
     </main>
   );
