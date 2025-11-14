@@ -30,15 +30,6 @@ export default function AccountCard({
           <Typography variant="h6" component="div">
             {service}
           </Typography>
-          {/* <Typography variant="body2" color="text.secondary">
-            Email: {service_email}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Username: {service_username}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Passwort: {service_password}
-          </Typography> */}
         </CardContent>
       </CardActionArea>
     </Card>

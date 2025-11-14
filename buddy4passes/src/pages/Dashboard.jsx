@@ -8,12 +8,16 @@ import Box from "@mui/material/Box";
 import AddAccountDialogSlide from "../components/addAccountDialog";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
 
 export function Dashboard() {
   const [accounts, setAccounts] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedAccountInfo, setSelectedAccountsInfo] = useState(null);
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
+  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] =
+    useState(false);
 
   async function fetchAccounts() {
     try {
@@ -24,8 +28,11 @@ export function Dashboard() {
         setMessage(response.message);
         return;
       }
+      const sortedAccounts = response.sort(
+        (a, b) => a.account_id - b.account_id
+      );
 
-      setAccounts(response);
+      setAccounts(sortedAccounts);
     } catch (error) {
       console.error("Error fetching accounts:", error);
     }
@@ -70,7 +77,11 @@ export function Dashboard() {
                 service_username={account.service_username}
                 service_password={account.service_password}
                 selected={selectedAccount === account.account_id}
-                onSelect={setSelectedAccount}
+                onSelect={() => {
+                  setSelectedAccount(account.account_id);
+                  setSelectedAccountsInfo(account);
+                  setOpenDisplayAccountDialog(true);
+                }}
               />
             ))
           )}
@@ -80,6 +91,21 @@ export function Dashboard() {
         open={openAddAccountDialog}
         onClose={() => setOpenAddAccountDialog(false)}
         onSubmit={fetchAccounts}
+      />
+      <DisplayAccountDialogSlide
+        open={selectedAccount !== null}
+        onClose={() => setSelectedAccount(null)}
+        onSubmit={fetchAccounts}
+        account_id={selectedAccount}
+      />
+      <DisplayAccountDialogSlide
+        open={selectedAccount !== null}
+        onClose={() => {
+          setSelectedAccount(null);
+          setSelectedAccountsInfo(null);
+        }}
+        onSubmit={fetchAccounts}
+        account={selectedAccountInfo} // <-- hier das ganze Objekt
       />
       <Footer />
     </main>
