@@ -27,7 +27,7 @@ export default function AccountCard({
     >
       <CardActionArea onClick={() => onSelect?.(account_id)}>
         <CardContent>
-          <Typography variant="h5" component="div">
+          <Typography variant="h6" component="div">
             {service}
           </Typography>
           {/* <Typography variant="body2" color="text.secondary">

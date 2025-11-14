@@ -5,56 +5,35 @@ import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 import AccountCard from "../components/AccountCard";
 import Box from "@mui/material/Box";
+import AddAccountDialogSlide from "../components/addAccountDialog";
+import Tooltip from "@mui/material/Tooltip";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 export function Dashboard() {
-  const [accounts, setAccounts] = useState([
-    {
-      account_id: 1,
-      user_id: 1,
-      service: "Google",
-      service_email: "Rtj1a@example.com",
-      service_username: "username",
-      service_password: "password123",
-    },
-    {
-      account_id: 2,
-      user_id: 2,
-      service: "Youtube",
-      service_email: "Rtj1a@example.com",
-      service_username: "username",
-      service_password: "password123",
-    },
-    {
-      account_id: 3,
-      user_id: 3,
-      service: "Amazon",
-      service_email: "Rtj1a@example.com",
-      service_username: "username",
-      service_password: "password123",
-    },
-  ]);
+  const [accounts, setAccounts] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
 
-  //   async function fetchAccounts() {
-  //     try {
-  //       const response = await invoke("display_accounts");
-  //       console.log(response);
+  async function fetchAccounts() {
+    try {
+      const response = await invoke("display_accounts");
+      console.log(response);
 
-  //       if (response.message) {
-  //         setMessage(response.message);
-  //         return;
-  //       }
+      if (response.message) {
+        setMessage(response.message);
+        return;
+      }
 
-  //       setAccounts(response);
-  //     } catch (error) {
-  //       console.error("Error fetching accounts:", error);
-  //     }
-  //   }
+      setAccounts(response);
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  }
 
-  //   useEffect(() => {
-  //     fetchAccounts();
-  //   }, []);
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
 
   return (
     <main className="Dashboard">
@@ -66,6 +45,19 @@ export function Dashboard() {
         }}
       >
         <div className="account-list">
+          <Tooltip title="Eintrag hinzufügen">
+            <AddCircleIcon
+              fontSize="large"
+              onClick={() => setOpenAddAccountDialog(true)}
+              sx={{
+                color: "rgba(255, 255, 255, 0.75)",
+                cursor: "pointer",
+                "&:hover": {
+                  color: "rgb(135, 206, 250)",
+                },
+              }}
+            />
+          </Tooltip>
           {message ? (
             <p>{message}</p>
           ) : (
@@ -84,6 +76,11 @@ export function Dashboard() {
           )}
         </div>
       </Box>
+      <AddAccountDialogSlide
+        open={openAddAccountDialog}
+        onClose={() => setOpenAddAccountDialog(false)}
+        onSubmit={fetchAccounts}
+      />
       <Footer />
     </main>
   );
