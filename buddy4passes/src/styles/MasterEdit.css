@@ -1,0 +1,7 @@
+body {
+  margin: 0;
+  padding: 1rem;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+  background-color: rgba(122, 117, 117, 0.75);
+}
