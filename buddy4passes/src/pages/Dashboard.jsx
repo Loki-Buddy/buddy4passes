@@ -22,7 +22,6 @@ export function Dashboard() {
   async function fetchAccounts() {
     try {
       const response = await invoke("display_accounts");
-      console.log(response);
 
       if (response.message) {
         setMessage(response.message);
@@ -31,7 +30,7 @@ export function Dashboard() {
       const sortedAccounts = response.sort(
         (a, b) => a.account_id - b.account_id
       );
-
+      setMessage("");
       setAccounts(sortedAccounts);
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -93,19 +92,14 @@ export function Dashboard() {
         onSubmit={fetchAccounts}
       />
       <DisplayAccountDialogSlide
-        open={selectedAccount !== null}
-        onClose={() => setSelectedAccount(null)}
-        onSubmit={fetchAccounts}
-        account_id={selectedAccount}
-      />
-      <DisplayAccountDialogSlide
-        open={selectedAccount !== null}
+        open={openDisplayAccountDialog}
         onClose={() => {
+          setOpenDisplayAccountDialog(false);
           setSelectedAccount(null);
           setSelectedAccountsInfo(null);
         }}
         onSubmit={fetchAccounts}
-        account={selectedAccountInfo} // <-- hier das ganze Objekt
+        account={selectedAccountInfo}
       />
       <Footer />
     </main>
