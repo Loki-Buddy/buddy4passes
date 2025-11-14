@@ -1,7 +1,6 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
@@ -9,9 +8,7 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
-import Snackbar from "@mui/material/Snackbar";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useSnackbar } from "./SnackbarContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -23,8 +20,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const { showSnackbar } = useSnackbar();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -52,8 +48,9 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         await onSubmit();
       }
 
-      setSnackbarMessage(`Eintrag erfolgreich hinzugefügt!`);
-      setSnackbarOpen(true);
+      showSnackbar(`Eintrag erfolgreich hinzugefügt!`);
+
+      onClose();
     } catch (err) {
       console.error("Fehler beim Aufruf:", err);
     }
@@ -114,15 +111,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
           </Button>
         </form>
       </DialogContent>
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => {
-          setSnackbarOpen(false);
-          onClose();
-        }}
-        autoHideDuration={2000}
-        message={snackbarMessage}
-      />
     </Dialog>
   );
 }

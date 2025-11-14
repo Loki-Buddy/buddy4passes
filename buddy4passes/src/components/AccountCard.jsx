@@ -7,9 +7,6 @@ import CardActionArea from "@mui/material/CardActionArea";
 export default function AccountCard({
   account_id,
   service,
-  service_email,
-  service_username,
-  service_password,
   selected,
   onSelect,
 }) {

@@ -5,6 +5,7 @@ import { invoke } from "@tauri-apps/api/core";
 import Snackbar from "@mui/material/Snackbar";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useSnackbar } from "./SnackbarContext";
 
 function LoginForm() {
   const navigate = useNavigate();
@@ -12,10 +13,9 @@ function LoginForm() {
   const [masterpassword, setMasterpassword] = useState("");
 
   const [userNameValidationError, setUsernameValidationError] = useState("");
-  const [masterPasswordValidationError, setPasswordValidationError] = useState("");
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [masterPasswordValidationError, setPasswordValidationError] =
+    useState("");
+  const { showSnackbar } = useSnackbar();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,17 +41,14 @@ function LoginForm() {
     try {
       const response = await invoke("login_user", data);
       if (response.message === "Login erfolgreich! (Token gespeichert)") {
-        setSnackbarMessage("Login erfolgreich!");
-        setSnackbarOpen(true);
+        showSnackbar("Login erfolgreich!");
         navigate("/dashboard");
-      } else
-        {
+      } else {
         setPasswordValidationError(response.message);
       }
     } catch (err) {
       console.error("Fehler beim Aufruf:", err);
-      setSnackbarMessage("Fehler beim Login. Bitte überprüfe deine Eingaben.");
-      setSnackbarOpen(true);
+      showSnackbar("Fehler beim Login. Bitte überprüfe deine Eingaben.");
     }
   }
 
@@ -83,22 +80,17 @@ function LoginForm() {
         to="/"
         variant="outlined"
         color="primary"
-        >
+      >
         Zurück
       </Button>
-      <Button 
-        sx={{ margin: "5px" }} 
+      <Button
+        sx={{ margin: "5px" }}
         type="submit"
-        variant="contained" 
-        color="primary">
+        variant="contained"
+        color="primary"
+      >
         Login
       </Button>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        message={snackbarMessage}
-      />
     </form>
   );
 }
