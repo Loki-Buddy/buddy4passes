@@ -23,6 +23,7 @@ pub fn run() {
             routes::account_add::add_account,
             routes::account_chcreds::change_account_creds,
             routes::account_delete::delete_account,
+            routes::user_fetchdataauth::fetch_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

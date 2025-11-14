@@ -3,21 +3,23 @@ import { Footer } from "../components/Footer";
 import "../styles/Dashboard.css";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AccountCard from "../components/AccountCard";
 import Box from "@mui/material/Box";
 import AddAccountDialogSlide from "../components/addAccountDialog";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
+import { Button } from "@mui/material";
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [accounts, setAccounts] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountInfo, setSelectedAccountsInfo] = useState(null);
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
-  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] =
-    useState(false);
+  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] = useState(false);
 
   async function fetchAccounts() {
     try {
@@ -49,6 +51,9 @@ export function Dashboard() {
       <Box
         sx={{
           p: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
         }}
       >
         <div className="account-list">
@@ -86,6 +91,14 @@ export function Dashboard() {
             ))
           )}
         </div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/masteredit")}
+          sx={{ ml: 2 }}
+        >
+          MasterEdit
+        </Button>
       </Box>
       <AddAccountDialogSlide
         open={openAddAccountDialog}

@@ -6,3 +6,4 @@ pub mod account_display;
 pub mod user_chmastercreds;
 pub mod account_chcreds;
 pub mod account_delete;
+pub mod user_fetchdataauth;
