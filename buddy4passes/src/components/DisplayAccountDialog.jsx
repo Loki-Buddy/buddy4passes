@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useSnackbar } from "./SnackbarContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -42,10 +43,9 @@ export default function DisplayAccountDialogSlide({
   const [editPassword, setEditPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (account) {
@@ -79,14 +79,14 @@ export default function DisplayAccountDialogSlide({
         accountid: account.account_id,
       });
 
-      setSnackbarMessage("Eintrag erfolgreich geändert!");
-      setSnackbarOpen(true);
+      showSnackbar("Eintrag erfolgreich geändert!");
+
+      onClose();
 
       if (onSubmit) await onSubmit();
     } catch (err) {
       console.error("Fehler beim Ändern:", err);
-      setSnackbarMessage("Fehler beim Ändern des Eintrags.");
-      setSnackbarOpen(true);
+      showSnackbar("Fehler beim Ändern des Eintrags.");
     }
   }
 
@@ -96,16 +96,14 @@ export default function DisplayAccountDialogSlide({
         accountid: account.account_id,
       });
 
-      setSnackbarMessage("Eintrag erfolgreich gelöscht!");
-      setSnackbarOpen(true);
-
+      showSnackbar("Eintrag erfolgreich gelöscht!");
       setConfirmOpen(false);
 
       if (onSubmit) await onSubmit();
+      onClose();
     } catch (err) {
       console.error("Fehler beim Löschen:", err);
-      setSnackbarMessage("Fehler beim Löschen des Eintrags.");
-      setSnackbarOpen(true);
+      showSnackbar("Fehler beim Löschen des Eintrags.");
     }
   }
 
@@ -147,7 +145,6 @@ export default function DisplayAccountDialogSlide({
               <TextField
                 label="Service"
                 variant="outlined"
-                required
                 disabled={!editService}
                 value={service}
                 onChange={(e) => setService(e.target.value)}
@@ -173,7 +170,6 @@ export default function DisplayAccountDialogSlide({
                 label="Email"
                 type="email"
                 variant="outlined"
-                required
                 disabled={!editEmail}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -181,6 +177,16 @@ export default function DisplayAccountDialogSlide({
                   endAdornment: (
                     <InputAdornment position="end">
                       {" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => navigator.clipboard.writeText(email)}
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
                       <Tooltip title="Bearbeiten">
                         {" "}
                         <IconButton
@@ -205,6 +211,18 @@ export default function DisplayAccountDialogSlide({
                   endAdornment: (
                     <InputAdornment position="end">
                       {" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            navigator.clipboard.writeText(username)
+                          }
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
                       <Tooltip title="Bearbeiten">
                         {" "}
                         <IconButton
@@ -223,7 +241,6 @@ export default function DisplayAccountDialogSlide({
                 label="Passwort"
                 type={showPassword ? "text" : "password"}
                 variant="outlined"
-                required
                 disabled={!editPassword}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -300,22 +317,14 @@ export default function DisplayAccountDialogSlide({
           gemacht werden.
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>Abbrechen</Button>
-          <Button color="error" onClick={handleDelete}>
+          <Button variant="outlined" onClick={() => setConfirmOpen(false)}>
+            Abbrechen
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete}>
             Löschen
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => {
-          setSnackbarOpen(false);
-          onClose();
-        }}
-        autoHideDuration={2000}
-        message={snackbarMessage}
-      />
     </>
   );
 }
