@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import Snackbar from "@mui/material/Snackbar";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "./SnackbarContext";
 
 function RegistrationForm() {
   const navigate = useNavigate();
@@ -17,8 +18,7 @@ function RegistrationForm() {
   const [usernameValidationError, setUsernameValidationError] = useState("");
   const [passwordValidationError, setPasswordValidationError] = useState("");
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const { showSnackbar } = useSnackbar();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -53,10 +53,10 @@ function RegistrationForm() {
           break;
       }
 
-      setSnackbarMessage(
-        `Registrierung erfolgreich! Du wirst zum Login weitergeleitet und kannst dich mit ${data.username} anmelden`
+      showSnackbar(
+        `Registrierung erfolgreich! Du dich mit ${data.username} anmelden`
       );
-      setSnackbarOpen(true);
+      navigate("/login");
     } catch (err) {
       console.error("Fehler beim Aufruf:", err);
     }
@@ -135,15 +135,6 @@ function RegistrationForm() {
           Registrieren
         </Button>
       </form>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => {
-          setSnackbarOpen(false);
-          navigate("/login");
-        }}
-        message={snackbarMessage}
-      />
     </div>
   );
 }

@@ -54,7 +54,10 @@ export function Dashboard() {
           <Tooltip title="Eintrag hinzufügen">
             <AddCircleIcon
               fontSize="large"
-              onClick={() => setOpenAddAccountDialog(true)}
+              onClick={() => {
+                setOpenAddAccountDialog(true);
+                setSelectedAccount(null);
+              }}
               sx={{
                 color: "rgba(255, 255, 255, 0.75)",
                 cursor: "pointer",
@@ -72,9 +75,6 @@ export function Dashboard() {
                 key={account.account_id}
                 account_id={account.account_id}
                 service={account.service}
-                service_email={account.service_email}
-                service_username={account.service_username}
-                service_password={account.service_password}
                 selected={selectedAccount === account.account_id}
                 onSelect={() => {
                   setSelectedAccount(account.account_id);
@@ -95,7 +95,6 @@ export function Dashboard() {
         open={openDisplayAccountDialog}
         onClose={() => {
           setOpenDisplayAccountDialog(false);
-          setSelectedAccount(null);
           setSelectedAccountsInfo(null);
         }}
         onSubmit={fetchAccounts}
