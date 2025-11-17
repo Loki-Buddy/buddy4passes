@@ -3,9 +3,9 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const pool = require("../pool");
 require("dotenv").config();
-const auth = require("..middleware/auth");
+const auth = require("../middleware/auth");
 
-router.post("groups/add", auth, async (req, res) => {
+router.post("/groups/add", auth, async (req, res) => {
     const { group_name } = req.body;
     const { user_id } = req.user;
 
@@ -15,7 +15,7 @@ router.post("groups/add", auth, async (req, res) => {
 
     try {
         const newGroup = await pool.query(
-            "INSERT INTO groups (group_name, user_id) VALUES ($1, $2) RETURNING *",
+            "INSERT INTO groups (group_name, user_id) VALUES ($1, $2)",
             [group_name, user_id]
         );
 
