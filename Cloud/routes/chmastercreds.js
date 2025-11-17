@@ -55,11 +55,14 @@ router.put("/user/chmastercreds", auth, async (req, res) => {
       index++;
     }
 
+    if (sets.length === 0) {
+      return res.status(400).json({ message: "Keine Daten gegeben!" });
+    }
+
     const updateQuery = `UPDATE b4puser SET ${sets.join(", ")} WHERE user_id = $${index}`;
     values.push(user_id);
 
     await pool.query(updateQuery, values);
-
 
     res.status(200).json({ message: "Änderungen erfolgreich gespeichert!" });
   } catch (error) {

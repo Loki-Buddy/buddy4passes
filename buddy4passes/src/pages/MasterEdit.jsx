@@ -18,6 +18,7 @@ export function MasterEdit({ onSubmit }) {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [oldusername, setOldUsername] = useState("");
+    const [oldemail, setOldEmail] = useState("");
 
     const [newpassword, setPassword] = useState("");
     const [oldpassword, setOldPassword] = useState("");
@@ -42,6 +43,7 @@ export function MasterEdit({ onSubmit }) {
             setEmail(response.user_email);
             setUsername(response.user_name);
             setOldUsername(response.user_name);
+            setOldEmail(response.user_email);
             return response;
         } catch (error) {
             console.error("Error fetching MasterCreds:", error);
@@ -63,14 +65,17 @@ export function MasterEdit({ onSubmit }) {
         }
 
         let data = {
-            new_user_email: email,
-            new_master_password: newpassword,
+            /* new_master_password: newpassword,
             old_master_password: oldpassword,
-            confirm_new_master_Password: confirmPassword,
+            confirm_new_master_Password: confirmPassword, */
         };
 
         if (username !== oldusername) {
             data.new_user_name = username;
+        }
+
+        if (email !== oldemail) {
+            data.new_user_email = email;
         }
         console.log(data, username);
         const response = await invoke("change_master_creds", {
