@@ -4,17 +4,18 @@ import { invoke } from "@tauri-apps/api/core";
 import EditIcon from "@mui/icons-material/Edit";
 import InputAdornment from "@mui/material/InputAdornment";
 import { IconButton } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Snackbar from "@mui/material/Snackbar";
 import { useState, useEffect } from "react";
+import { useSnackbar } from "../components/SnackbarContext";
+import { useNavigate } from "react-router-dom";
+import dashboardIcon from "../assets/dashboard.png";
 import "./../styles/MasterEdit.css";
 
 export function MasterEdit({ onSubmit }) {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [oldusername, setOldUsername] = useState("");
@@ -33,12 +34,13 @@ export function MasterEdit({ onSubmit }) {
     const [emailValidationError, setEmailValidationError] = useState("");
     const [usernameValidationError, setUsernameValidationError] = useState("");
     const [passwordValidationError, setPasswordValidationError] = useState("");
+    const [oldpasswortValidationError, setOldPasswordValidationError] = useState("");
+
+    const { showSnackbar } = useSnackbar();
 
     async function fetchData() {
         try {
             const response = await invoke("fetch_data");
-
-            //console.log("MasterCreds geladen:", response);
 
             setEmail(response.user_email);
             setUsername(response.user_name);
@@ -55,55 +57,90 @@ export function MasterEdit({ onSubmit }) {
 
     const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
     async function handleSubmit(e) {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        if (newpassword !== confirmPassword) {
-            setPasswordValidationError("Passwörter stimmen nicht überein");
-            return;
-        } else {
-            setPasswordValidationError("");
-        }
+            let data = {};
 
-        let data = {
-            /* new_master_password: newpassword,
-            old_master_password: oldpassword,
-            confirm_new_master_Password: confirmPassword, */
-        };
+            if (username !== oldusername) {
+                data.new_user_name = username;
+            }
 
-        if (username !== oldusername) {
-            data.new_user_name = username;
-        }
+            if (email !== oldemail) {
+                data.new_user_email = email;
+            }
 
-        if (email !== oldemail) {
-            data.new_user_email = email;
-        }
-        console.log(data, username);
-        const response = await invoke("change_master_creds", {
-            data,
-            username: oldusername,
-        });
-
-        if (response.message){
-            switch (response.message) {
-                case "Dieser Benutzername wird bereits von einem anderen User verwendet.":
-                    setUsernameValidationError("Nutzername wird bereits verwendet");
+            if (changePassword) {
+                if (newpassword !== confirmPassword) {
+                    setPasswordValidationError("Passwörter stimmen nicht überein");
                     return;
-                case "Diese E-Mail wird bereits von einem anderen User verwendet.":
-                    setEmailValidationError("E-Mail wird bereits verwendet");
-                    return;
+                }
+
+                data.old_master_password = oldpassword;
+                data.new_master_password = newpassword;
+                data.confirm_new_master_password = confirmPassword;
+            }
+
+            const response = await invoke("change_master_creds", {
+                data,
+                username: oldusername,
+            });
+
+            if (response.message) {
+                switch (response.message) {
+                    case "Benutzername bereits vergeben.":
+                        setUsernameValidationError("Nutzername wird bereits verwendet");
+                        return;
+                    case "Es existiert bereits ein Account mit dieser Email.":
+                        setEmailValidationError("E-Mail wird bereits verwendet");
+                        return;
+                    case "Änderungen erfolgreich gespeichert!":
+                        showSnackbar("Änderungen erfolgreich gespeichert!");
+                        break;
+                    case "Keine Daten gegeben!":
+                        showSnackbar("Keine Daten gegeben!");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            setEditEmail(false);
+            setEditUsername(false);
+            changePassword && setChangePassword(false);
+            fetchData();
+        } catch (error) {
+            switch (error) {
+                case "Verification failed":
+                    setOldPasswordValidationError("Altes Passwort ist falsch!");
+                    break;
+
                 default:
+                    console.error("Error changing MasterCreds:", error);
                     break;
             }
         }
-        setEditEmail(false);
-        setEditUsername(false);
-        fetchData();
-        console.log("MasterCreds geändert:", response);
     }
 
     return (
         <main className="MasterEdit">
             <Header />
+            <Button
+                onClick={() => navigate("/dashboard")}
+                sx={{
+                    position: "fixed",
+                    top: "1rem",
+                    left: "1rem",
+                    zIndex: 1000
+                }}
+            >
+                <img
+                    src={dashboardIcon}
+                    className="logo"
+                    alt="dashboard"
+                    style={{ width: "24px", height: "24px", marginRight: "8px", opacity: 0.6 }}
+                />
+                Dashboard
+            </Button>
             <h2>MasterEdit</h2>
             <div className="master">
                 <form onSubmit={handleSubmit}>
@@ -112,7 +149,9 @@ export function MasterEdit({ onSubmit }) {
                         type="email"
                         value={email}
                         disabled={!editEmail}
-                        onChange={(e) => setEmail(e.target.value)}
+                        error={emailValidationError !== ""}
+                        helperText={emailValidationError}
+                        onChange={(e) => { setEmail(e.target.value); setEmailValidationError("") }}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
@@ -133,7 +172,9 @@ export function MasterEdit({ onSubmit }) {
                         variant="outlined"
                         type="text"
                         value={username}
-                        onChange={(e) => {setUsername(e.target.value); console.log("Username:", e.target.value);}}
+                        error={usernameValidationError !== ""}
+                        helperText={usernameValidationError}
+                        onChange={(e) => { setUsername(e.target.value); setUsernameValidationError("") }}
                         disabled={!editUsername}
                         InputProps={{
                             endAdornment: (
@@ -156,24 +197,35 @@ export function MasterEdit({ onSubmit }) {
                             <TextField
                                 label="Altes Passwort"
                                 type="password"
-                                onChange={(e) => setOldPassword(e.target.value)}
+                                error={oldpasswortValidationError !== ""}
+                                helperText={oldpasswortValidationError}
+                                onChange={(e) => { setOldPassword(e.target.value); setOldPasswordValidationError("") }}
                                 required
+                                fullWidth
                             />
-                            <TextField
-                                label="Neues Passwort"
-                                type="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                            <TextField
-                                label="Passwort bestätigen"
-                                type="password"
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                            />
+                            <div>
+                                <TextField
+                                    label="Neues Passwort"
+                                    type="password"
+                                    error={passwordValidationError !== ""}
+                                    helperText={passwordValidationError}
+                                    onChange={(e) => { setPassword(e.target.value); setPasswordValidationError("") }}
+                                    required
+                                    fullWidth
+                                />
+                                <TextField
+                                    label="Passwort bestätigen"
+                                    type="password"
+                                    error={passwordValidationError !== ""}
+                                    helperText={passwordValidationError}
+                                    onChange={(e) => { setConfirmPassword(e.target.value); setPasswordValidationError("") }}
+                                    required
+                                    fullWidth
+                                />
+                            </div>
                         </div>
                     )}
-                    <Button type="submit">Speichern</Button>                    
+                    <Button type="submit">Speichern</Button>
                 </form>
             </div>
             <Footer />

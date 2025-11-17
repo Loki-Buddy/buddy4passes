@@ -11,6 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
 import { Button } from "@mui/material";
+import benutzerIcon from "../assets/benutzer.png";
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -46,6 +47,23 @@ export function Dashboard() {
   return (
     <main className="Dashboard">
       <Header />
+      <Button 
+        onClick={() => navigate("/masteredit")}
+        sx={{ 
+          position: "fixed",
+          top: "1rem",
+          right: "1rem",
+          zIndex: 1000
+        }}
+      >
+        <img 
+          src={benutzerIcon} 
+          className="logo" 
+          alt="dashboard"
+          style={{ width: "24px", height: "24px", marginRight: "8px", opacity: 0.6 }}
+        />
+        Profil
+      </Button>
       <h2>Dashboard</h2>
       <Box
         sx={{
@@ -90,14 +108,6 @@ export function Dashboard() {
             ))
           )}
         </div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate("/masteredit")}
-          sx={{ ml: 2 }}
-        >
-          MasterEdit
-        </Button>
       </Box>
       <AddAccountDialogSlide
         open={openAddAccountDialog}
