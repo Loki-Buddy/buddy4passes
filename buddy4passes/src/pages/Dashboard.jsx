@@ -9,6 +9,7 @@ import AddAccountDialogSlide from "../components/addAccountDialog";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
+import NestedList from "../components/NestedList";
 
 export function Dashboard() {
   const [accounts, setAccounts] = useState([]);
@@ -42,14 +43,18 @@ export function Dashboard() {
   }, []);
 
   return (
-    <main className="Dashboard">
-      <Header />
-      <h2>Dashboard</h2>
-      <Box
-        sx={{
-          p: 2,
-        }}
-      >
+<main className="Dashboard">
+  <Header />
+
+  <h2>Dashboard</h2>
+<div className="layout">
+
+    <div className="sidebar">
+      <NestedList />
+    </div>
+
+  <div className="content">
+      <Box sx={{ p: 2 }}>
         <div className="account-list">
           <Tooltip title="Eintrag hinzufügen">
             <AddCircleIcon
@@ -67,6 +72,7 @@ export function Dashboard() {
               }}
             />
           </Tooltip>
+
           {message ? (
             <p>{message}</p>
           ) : (
@@ -86,22 +92,29 @@ export function Dashboard() {
           )}
         </div>
       </Box>
-      <AddAccountDialogSlide
-        open={openAddAccountDialog}
-        onClose={() => setOpenAddAccountDialog(false)}
-        onSubmit={fetchAccounts}
-      />
-      <DisplayAccountDialogSlide
-        open={openDisplayAccountDialog}
-        onClose={() => {
-          setOpenDisplayAccountDialog(false);
-          setSelectedAccountsInfo(null);
-        }}
-        onSubmit={fetchAccounts}
-        account={selectedAccountInfo}
-      />
-      <Footer />
-    </main>
+  </div>
+</div>
+
+  {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
+  <AddAccountDialogSlide
+    open={openAddAccountDialog}
+    onClose={() => setOpenAddAccountDialog(false)}
+    onSubmit={fetchAccounts}
+  />
+  
+  <DisplayAccountDialogSlide
+    open={openDisplayAccountDialog}
+    onClose={() => {
+      setOpenDisplayAccountDialog(false);
+      setSelectedAccountsInfo(null);
+    }}
+    onSubmit={fetchAccounts}
+    account={selectedAccountInfo}
+  />
+
+  <Footer />
+</main>
+
   );
 }
 
