@@ -64,7 +64,7 @@ app.use(accountEditRoute);
 
 // Gruppe hinzufügen
 const groupsAddRoute = require("./routes/groupsAdd");
-app.use(groupsAddRoute);
+app.use("/groupsAdd", groupsAddRoute);
 
 // Gruppen anzeigen
 const groupsDisplayRoute = require("./routes/groupsDisplay");
