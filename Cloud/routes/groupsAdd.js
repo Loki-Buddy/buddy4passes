@@ -5,7 +5,7 @@ const pool = require("../pool");
 require("dotenv").config();
 const auth = require("..middleware/auth");
 
-router.post("/group/add", auth, async (req, res) => {
+router.post("groups/add", auth, async (req, res) => {
     const { group_name } = req.body;
     const { user_id } = req.user;
 

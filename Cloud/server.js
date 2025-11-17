@@ -64,7 +64,7 @@ app.use(accountEditRoute);
 
 // Gruppe hinzufügen
 const groupsAddRoute = require("./routes/groupsAdd");
-app.use("/groupsAdd", groupsAddRoute);
+app.use("/groups/add", groupsAddRoute);
 
 // Gruppen anzeigen
 const groupsDisplayRoute = require("./routes/groupsDisplay");
@@ -83,7 +83,6 @@ const masterAccChangesRoute = require("./routes/chmastercreds");
 app.use(masterAccChangesRoute);
 
 // Get user Data
-
 const getUserDataRoute = require("./routes/getUserData");
 app.use(getUserDataRoute);
 
