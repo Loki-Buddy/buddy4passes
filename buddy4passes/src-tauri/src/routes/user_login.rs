@@ -22,6 +22,7 @@ struct LoginRequest {
 struct LoginResponse {
     message: String,
     token: Option<String>,
+    refresh_token: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -34,6 +35,7 @@ pub struct LoginResult {
 pub struct MemoryStore {
     pub key: Mutex<Option<String>>,
     pub token: Mutex<Option<String>>,
+    pub refresh_token: Mutex<Option<String>>,
 }
 
 // Tauri command für den Login
@@ -117,12 +119,19 @@ pub async fn login_user(
             let bytes = fs::read(&path).map_err(|_| "Fehler beim Lesen!")?;
             let key = String::from_utf8(bytes).map_err(|_| "Fehler beim Konvertieren zu UTF-8!")?;
         
-            // Token im Speicher ablegen
+            // Key im Speicher ablegen
                 if let Ok(mut stored_key) = state.key.lock() {
                     *stored_key = Some(key);
                 } else {
                     eprintln!("Warnung: Key konnte nicht in MemoryStore gespeichert werden!");
                 }
+
+                if let Some(refresh_token) = login_response.refresh_token {
+                    if let Ok(mut stored) = state.refresh_token.lock() {
+                        *stored = Some(refresh_token);
+                    }
+                }
+
                 
         Ok(LoginResult {
             success: true,
