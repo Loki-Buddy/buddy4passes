@@ -1,13 +1,47 @@
 body {
   margin: 0;
   padding: 1rem;
-  font-family: system-ui, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
   background-color: rgba(122, 117, 117, 0.75);
+
+}
+
+.layout {
+  display: flex;
+  flex-direction: row;     /* nebeneinander */
+  gap: 1rem;               /* Abstand zwischen Sidebar & Content */
+  width: 100%;
+  align-items: stretch;
+}
+
+
+.sidebar {
+  background-color: rgba(255, 255, 255, 0.75);
+  min-height: 60vh;
+  min-width: 15vw;
+  padding-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  display:flex;
+  flex-direction: column;
+  padding: 15px 0;
+  z-index: 1000;
+
+}
+
+.content {
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .account-list {
-  background-color: rgba(255, 255, 255, 0.75);
   min-height: 60vh;
   min-width: 80vw;
   display: flex;
@@ -16,10 +50,8 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+
+
 }
 
 
