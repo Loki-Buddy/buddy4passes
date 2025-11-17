@@ -16,9 +16,11 @@ import {
 } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useSnackbar } from "./SnackbarContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -41,8 +43,9 @@ export default function DisplayAccountDialogSlide({
   const [editPassword, setEditPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (account) {
@@ -76,14 +79,31 @@ export default function DisplayAccountDialogSlide({
         accountid: account.account_id,
       });
 
-      setSnackbarMessage("Eintrag erfolgreich geändert!");
-      setSnackbarOpen(true);
+      showSnackbar("Eintrag erfolgreich geändert!");
+
+      onClose();
 
       if (onSubmit) await onSubmit();
     } catch (err) {
       console.error("Fehler beim Ändern:", err);
-      setSnackbarMessage("Fehler beim Ändern des Eintrags.");
-      setSnackbarOpen(true);
+      showSnackbar("Fehler beim Ändern des Eintrags.");
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      await invoke("delete_account", {
+        accountid: account.account_id,
+      });
+
+      showSnackbar("Eintrag erfolgreich gelöscht!");
+      setConfirmOpen(false);
+
+      if (onSubmit) await onSubmit();
+      onClose();
+    } catch (err) {
+      console.error("Fehler beim Löschen:", err);
+      showSnackbar("Fehler beim Löschen des Eintrags.");
     }
   }
 
@@ -92,159 +112,219 @@ export default function DisplayAccountDialogSlide({
   const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      keepMounted
-      aria-describedby="alert-dialog-slide-description"
-      slots={{ transition: Transition }}
-    >
-      <DialogTitle>{account.service}</DialogTitle>
-      <DialogContent>
-        <form onSubmit={handleUpdate}>
-          <Stack spacing={2} sx={{ width: "300px", mt: 1 }}>
-            <TextField
-              label="Service"
-              variant="outlined"
-              required
-              disabled={!editService}
-              value={service}
-              onChange={(e) => setService(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title="Bearbeiten">
-                      <IconButton
-                        size="small"
-                        onClick={() => setEditService(true)}
-                      >
-                        <EditIcon sx={iconStyle} />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        keepMounted
+        aria-describedby="alert-dialog-slide-description"
+        slots={{ transition: Transition }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {account.service}
+          <Tooltip title="Löschen">
+            <IconButton
+              sx={{ cursor: "pointer", "&:hover": { color: "red" } }}
+              onClick={() => setConfirmOpen(true)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </DialogTitle>
 
-            <TextField
-              label="Email"
-              type="email"
-              variant="outlined"
-              required
-              disabled={!editEmail}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title="Bearbeiten">
-                      <IconButton
-                        size="small"
-                        onClick={() => setEditEmail(true)}
+        <DialogContent>
+          <form onSubmit={handleUpdate}>
+            <Stack spacing={2} sx={{ width: "300px", mt: 1 }}>
+              {" "}
+              <TextField
+                label="Service"
+                variant="outlined"
+                disabled={!editService}
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditService(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
+              />{" "}
+              <TextField
+                label="Email"
+                type="email"
+                variant="outlined"
+                disabled={!editEmail}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => navigator.clipboard.writeText(email)}
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditEmail(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
+              />{" "}
+              <TextField
+                label="Username"
+                variant="outlined"
+                disabled={!editUsername}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            navigator.clipboard.writeText(username)
+                          }
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditUsername(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
+              />{" "}
+              <TextField
+                label="Passwort"
+                type={showPassword ? "text" : "password"}
+                variant="outlined"
+                disabled={!editPassword}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip
+                        title={
+                          showPassword
+                            ? "Passwort verbergen"
+                            : "Passwort anzeigen"
+                        }
                       >
-                        <EditIcon sx={iconStyle} />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                        >
+                          {" "}
+                          {showPassword ? (
+                            <VisibilityOffIcon />
+                          ) : (
+                            <VisibilityIcon />
+                          )}{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            navigator.clipboard.writeText(password)
+                          }
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditPassword(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
+              />{" "}
+            </Stack>
 
-            <TextField
-              label="Username"
-              variant="outlined"
-              disabled={!editUsername}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title="Bearbeiten">
-                      <IconButton
-                        size="small"
-                        onClick={() => setEditUsername(true)}
-                      >
-                        <EditIcon sx={iconStyle} />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              label="Passwort"
-              type={showPassword ? "text" : "password"}
-              variant="outlined"
-              required
-              disabled={!editPassword}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip
-                      title={
-                        showPassword
-                          ? "Passwort verbergen"
-                          : "Passwort anzeigen"
-                      }
-                    >
-                      <IconButton
-                        size="small"
-                        onClick={() => setShowPassword((prev) => !prev)}
-                      >
-                        {showPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
-                          <VisibilityIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-
-                    <Tooltip title="In Zwischenablage kopieren">
-                      <IconButton
-                        size="small"
-                        onClick={() => navigator.clipboard.writeText(password)}
-                      >
-                        <ContentCopyIcon sx={iconStyle} />
-                      </IconButton>
-                    </Tooltip>
-
-                    <Tooltip title="Bearbeiten">
-                      <IconButton
-                        size="small"
-                        onClick={() => setEditPassword(true)}
-                      >
-                        <EditIcon sx={iconStyle} />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Stack>
-          <DialogActions>
-            <Button variant="outlined" onClick={onClose}>
-              Abbrechen
-            </Button>
-            {isEdited && (
-              <Button variant="contained" type="submit">
-                Ändern
+            <DialogActions>
+              <Button variant="outlined" onClick={onClose}>
+                Abbrechen
               </Button>
-            )}
-          </DialogActions>
-        </form>
-      </DialogContent>
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => {
-          setSnackbarOpen(false);
-          onClose();
-        }}
-        autoHideDuration={2000}
-        message={snackbarMessage}
-      />
-    </Dialog>
+              {isEdited && (
+                <Button variant="contained" type="submit">
+                  Ändern
+                </Button>
+              )}
+            </DialogActions>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Eintrag löschen?</DialogTitle>
+        <DialogContent>
+          Willst du diesen Eintrag wirklich löschen? Dies kann nicht rückgängig
+          gemacht werden.
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setConfirmOpen(false)}>
+            Abbrechen
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Löschen
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

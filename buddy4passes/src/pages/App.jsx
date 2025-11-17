@@ -5,17 +5,20 @@ import { Login } from "./Login";
 import { Register } from "./Register";
 import Dashboard from "./Dashboard";
 import { MasterEdit } from "./MasterEdit";
+import { SnackbarProvider } from "../components/SnackbarContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/masteredit" element={<MasterEdit />} />
-      </Routes>
+      <SnackbarProvider>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/masteredit" element={<MasterEdit />} />
+        </Routes>
+      </SnackbarProvider>
     </BrowserRouter>
   );
 }

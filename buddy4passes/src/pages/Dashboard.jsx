@@ -24,7 +24,6 @@ export function Dashboard() {
   async function fetchAccounts() {
     try {
       const response = await invoke("display_accounts");
-      console.log(response);
 
       if (response.message) {
         setMessage(response.message);
@@ -33,7 +32,7 @@ export function Dashboard() {
       const sortedAccounts = response.sort(
         (a, b) => a.account_id - b.account_id
       );
-
+      setMessage("");
       setAccounts(sortedAccounts);
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -60,7 +59,10 @@ export function Dashboard() {
           <Tooltip title="Eintrag hinzufügen">
             <AddCircleIcon
               fontSize="large"
-              onClick={() => setOpenAddAccountDialog(true)}
+              onClick={() => {
+                setOpenAddAccountDialog(true);
+                setSelectedAccount(null);
+              }}
               sx={{
                 color: "rgba(255, 255, 255, 0.75)",
                 cursor: "pointer",
@@ -78,9 +80,6 @@ export function Dashboard() {
                 key={account.account_id}
                 account_id={account.account_id}
                 service={account.service}
-                service_email={account.service_email}
-                service_username={account.service_username}
-                service_password={account.service_password}
                 selected={selectedAccount === account.account_id}
                 onSelect={() => {
                   setSelectedAccount(account.account_id);
@@ -106,19 +105,13 @@ export function Dashboard() {
         onSubmit={fetchAccounts}
       />
       <DisplayAccountDialogSlide
-        open={selectedAccount !== null}
-        onClose={() => setSelectedAccount(null)}
-        onSubmit={fetchAccounts}
-        account_id={selectedAccount}
-      />
-      <DisplayAccountDialogSlide
-        open={selectedAccount !== null}
+        open={openDisplayAccountDialog}
         onClose={() => {
-          setSelectedAccount(null);
+          setOpenDisplayAccountDialog(false);
           setSelectedAccountsInfo(null);
         }}
         onSubmit={fetchAccounts}
-        account={selectedAccountInfo} // <-- hier das ganze Objekt
+        account={selectedAccountInfo}
       />
       <Footer />
     </main>
