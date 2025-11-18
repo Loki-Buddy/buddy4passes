@@ -41,10 +41,35 @@ export function Dashboard() {
     fetchAccounts();
   }, []);
 
+async function handleAddTestGroup() {
+    try {
+      const response = await invoke("add_group", { groupname: "Testgruppe" });
+
+      if (response.success) {
+        console.log(`Erfolg: ${response.message}`);
+      } else {
+        console.error(`Fehler: ${response.message}`);
+      }
+    } catch (error) {
+      console.error("Unerwarteter Fehler:", error);
+    }
+  }
+
   return (
     <main className="Dashboard">
       <Header />
       <h2>Dashboard</h2>
+ <button 
+        onClick={handleAddTestGroup} 
+        style={{
+          marginBottom: "20px",
+          padding: "8px 14px",
+          cursor: "pointer"
+        }}
+      >
+        Testgruppe hinzufügen
+      </button>
+      
       <Box
         sx={{
           p: 2,
