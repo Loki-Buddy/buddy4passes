@@ -71,12 +71,12 @@ const groupsDisplayRoute = require("./routes/groupsDisplay");
 app.use(groupsDisplayRoute);
 
 // Gruppen bearbeiten
-const groupsEditRoute = require("./routes/groupsEdit");
-app.use(groupsEditRoute);
+// const groupsEditRoute = require("./routes/groupsEdit");
+// app.use(groupsEditRoute);
 
 // Gruppen löschen
-const groupsDeleteRoute = require("./routes/groupsDelete");
-app.use(groupsDeleteRoute);
+// const groupsDeleteRoute = require("./routes/groupsDelete");
+// app.use(groupsDeleteRoute);
 
 // Master-Account bearbeiten
 const masterAccChangesRoute = require("./routes/chmastercreds");

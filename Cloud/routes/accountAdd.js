@@ -20,7 +20,7 @@ router.post("/account/add", auth, async (req, res) => {
     console.error(err.message);
     res
       .status(500)
-      .json({ message: "Serverfehler, verusche es später nochmal!" });
+      .json({ message: "Serverfehler, versuche es später nochmal!" });
   }
 });
 
