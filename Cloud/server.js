@@ -75,8 +75,8 @@ app.use(groupsDisplayRoute);
 // app.use(groupsEditRoute);
 
 // Gruppen löschen
-// const groupsDeleteRoute = require("./routes/groupsDelete");
-// app.use(groupsDeleteRoute);
+const groupsDeleteRoute = require("./routes/groupsDelete");
+app.use(groupsDeleteRoute);
 
 // Master-Account bearbeiten
 const masterAccChangesRoute = require("./routes/chmastercreds");
