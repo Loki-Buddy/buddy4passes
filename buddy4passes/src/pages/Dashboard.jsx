@@ -67,10 +67,7 @@ export function Dashboard() {
       <h2>Dashboard</h2>
       <Box
         sx={{
-          p: 2,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
+          p: 2
         }}
       >
         <div className="account-list">

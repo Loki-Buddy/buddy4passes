@@ -3,12 +3,13 @@ body {
   padding: 1rem;
   font-family: system-ui, sans-serif;
   text-align: center;
+  justify-content: center;
   background-color: rgba(122, 117, 117, 0.75);
 }
 
 .master {
   background-color: rgba(255, 255, 255, 0.75);
-  height: fit-content;
+  min-height: 60vh;
   min-width: 80vw;
   display: flex;
   flex-direction: column;

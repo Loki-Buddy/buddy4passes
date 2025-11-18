@@ -1,6 +1,7 @@
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { invoke } from "@tauri-apps/api/core";
+import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import InputAdornment from "@mui/material/InputAdornment";
 import { IconButton } from "@mui/material";
@@ -27,7 +28,6 @@ export function MasterEdit({ onSubmit }) {
 
     const [editEmail, setEditEmail] = useState(false);
     const [editUsername, setEditUsername] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
 
     const [changePassword, setChangePassword] = useState(false);
 
@@ -142,92 +142,98 @@ export function MasterEdit({ onSubmit }) {
                 Dashboard
             </Button>
             <h2>MasterEdit</h2>
-            <div className="master">
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="E-Mail"
-                        type="email"
-                        value={email}
-                        disabled={!editEmail}
-                        error={emailValidationError !== ""}
-                        helperText={emailValidationError}
-                        onChange={(e) => { setEmail(e.target.value); setEmailValidationError("") }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <Tooltip title="Bearbeiten">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setEditEmail(true)}
-                                        >
-                                            <EditIcon sx={iconStyle} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <TextField
-                        label="Benutzername"
-                        variant="outlined"
-                        type="text"
-                        value={username}
-                        error={usernameValidationError !== ""}
-                        helperText={usernameValidationError}
-                        onChange={(e) => { setUsername(e.target.value); setUsernameValidationError("") }}
-                        disabled={!editUsername}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <Tooltip title="Bearbeiten">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setEditUsername(true)}
-                                        >
-                                            <EditIcon sx={iconStyle} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <Button onClick={() => setChangePassword(!changePassword)}>Passwort Ändern</Button>
-                    {changePassword && (
-                        <div>
-                            <TextField
-                                label="Altes Passwort"
-                                type="password"
-                                error={oldpasswortValidationError !== ""}
-                                helperText={oldpasswortValidationError}
-                                onChange={(e) => { setOldPassword(e.target.value); setOldPasswordValidationError("") }}
-                                required
-                                fullWidth
-                            />
+            <Box
+                sx={{
+                    p: 2,
+                }}
+            >
+                <div className="master">
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            label="E-Mail"
+                            type="email"
+                            value={email}
+                            disabled={!editEmail}
+                            error={emailValidationError !== ""}
+                            helperText={emailValidationError}
+                            onChange={(e) => { setEmail(e.target.value); setEmailValidationError("") }}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Tooltip title="Bearbeiten">
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => setEditEmail(true)}
+                                            >
+                                                <EditIcon sx={iconStyle} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <TextField
+                            label="Benutzername"
+                            variant="outlined"
+                            type="text"
+                            value={username}
+                            error={usernameValidationError !== ""}
+                            helperText={usernameValidationError}
+                            onChange={(e) => { setUsername(e.target.value); setUsernameValidationError("") }}
+                            disabled={!editUsername}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Tooltip title="Bearbeiten">
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => setEditUsername(true)}
+                                            >
+                                                <EditIcon sx={iconStyle} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <Button onClick={() => setChangePassword(!changePassword)}>Passwort Ändern</Button>
+                        {changePassword && (
                             <div>
                                 <TextField
-                                    label="Neues Passwort"
+                                    label="Altes Passwort"
                                     type="password"
-                                    error={passwordValidationError !== ""}
-                                    helperText={passwordValidationError}
-                                    onChange={(e) => { setPassword(e.target.value); setPasswordValidationError("") }}
+                                    error={oldpasswortValidationError !== ""}
+                                    helperText={oldpasswortValidationError}
+                                    onChange={(e) => { setOldPassword(e.target.value); setOldPasswordValidationError("") }}
                                     required
                                     fullWidth
                                 />
-                                <TextField
-                                    label="Passwort bestätigen"
-                                    type="password"
-                                    error={passwordValidationError !== ""}
-                                    helperText={passwordValidationError}
-                                    onChange={(e) => { setConfirmPassword(e.target.value); setPasswordValidationError("") }}
-                                    required
-                                    fullWidth
-                                />
+                                <div>
+                                    <TextField
+                                        label="Neues Passwort"
+                                        type="password"
+                                        error={passwordValidationError !== ""}
+                                        helperText={passwordValidationError}
+                                        onChange={(e) => { setPassword(e.target.value); setPasswordValidationError("") }}
+                                        required
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        label="Passwort bestätigen"
+                                        type="password"
+                                        error={passwordValidationError !== ""}
+                                        helperText={passwordValidationError}
+                                        onChange={(e) => { setConfirmPassword(e.target.value); setPasswordValidationError("") }}
+                                        required
+                                        fullWidth
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    )}
-                    <Button type="submit">Speichern</Button>
-                </form>
-            </div>
+                        )}
+                        <Button type="submit">Speichern</Button>
+                    </form>
+                </div>
+            </Box>
             <Footer />
         </main>
     );
