@@ -7,3 +7,4 @@ pub mod user_chmastercreds;
 pub mod account_chcreds;
 pub mod account_delete;
 pub mod groups_add;
+pub mod groups_edit;
