@@ -9,10 +9,6 @@ router.post("/user/refresh", async (req, res) => {
   if (!refresh_token)
     return res.status(401).json({ message: "Kein Refresh Token vorhanden" });
 
-  if (user.rows.length === 0) {
-    return res.status(403).json({ message: "Refresh Token ungültig" });
-  }
-
   jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: "Refresh Token ungültig" });
