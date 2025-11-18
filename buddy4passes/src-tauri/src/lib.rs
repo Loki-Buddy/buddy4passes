@@ -24,6 +24,7 @@ pub fn run() {
             routes::account_chcreds::change_account_creds,
             routes::account_delete::delete_account,
             routes::groups_add::add_group,
+            routes::groups_edit::edit_group,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
