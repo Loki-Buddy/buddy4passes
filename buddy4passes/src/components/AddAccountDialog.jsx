@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
 import { useSnackbar } from "./SnackbarContext";
+import { DialogActions } from "@mui/material";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -24,6 +25,9 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   const [groupId, setGroupId] = useState("");
   const [groups, setGroups] = useState("");
 
+  const [newGroupDialog, setNewGroupDialog] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -33,9 +37,35 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         .catch((err) => 
           console.error("Fehler beim Laden der Gruppen: ", err)
         );
-      }
-    }, [open]);
+    }
+  }, [open]);
 
+  // Gruppe erstellen
+  async function handleAddGroup() {
+    if (!newGroupName.trim()) return;
+
+    try {
+      const result = await invoke("add_group", {
+        groupname: newGroupName,
+      });
+
+      setGroups((old) => [
+        ...old,
+        {id: Date.now(), name: newGroupName},
+      ]);
+
+      setGroupId(newGroupName);
+
+      showSnackbar('Gruppe "${newGroupName}" angelegt!');
+      setNewGroupDialog(false);
+      setNewGroupName("");
+    } catch (e) {
+      console.error(e);
+      showSnackbar("Fehler beim Anlegen der Gruppe", "error");
+    }
+  }
+
+  // Account speichern
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -133,14 +163,23 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
                 </MenuItem>
               ))}
             </TextField>
+
+            <Button
+              variant="outlined"
+              onClick={() => setNewGroupDialog(true)}
+              >
+                +
+              </Button>
           </Stack>
           <br />
+          <DialogActions>
           <Button sx={{ margin: "5px" }} variant="outlined" onClick={onClose}>
             Abbrechen
           </Button>
           <Button sx={{ margin: "5px" }} variant="contained" type="submit">
             Hinzufügen
           </Button>
+          </DialogActions>
         </form>
       </DialogContent>
     </Dialog>
