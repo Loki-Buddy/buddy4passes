@@ -28,7 +28,18 @@ router.post("/user/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "5m" }
     );
-    res.json({ message: "Login erfolgreich!", token: token });
+
+    const refresh_token = jwt.sign(
+      { user_id: user.rows[0].user_id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      message: "Login erfolgreich!",
+      token: token,
+      refresh_token: refresh_token,
+    });
   } catch (err) {
     console.error(err.message);
     res
