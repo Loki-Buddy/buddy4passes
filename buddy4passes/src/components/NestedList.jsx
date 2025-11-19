@@ -5,57 +5,43 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
-import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
 
 export default function NestedList() {
-  const [open, setOpen] = React.useState(true);
+const [open, setOpen] = React.useState(true);
 
-  const handleClick = () => {
-    setOpen(!open);
-  };
+const handleClick = () => setOpen(!open);
 
-  return (
-    <List
-      sx={{ maxWidth: "100%",  }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      subheader={
-        <ListSubheader component="div" id="nested-list-subheader">
-        </ListSubheader>
-      }
-    >
-                  <ListItemButton>
-            <ListItemIcon>
-                <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Favoriten" />
-          </ListItemButton>
-      
-      <ListItemButton onClick={handleClick}>
-        <ListItemIcon>
-        </ListItemIcon>
-        <ListItemText primary="Gruppen" />
-        {open ? <ExpandLess /> : <ExpandMore />}
+return (
+<List
+sx={{ width: '100%', maxWidth: '100%', minWidth: 0, p: 0 }}
+component="nav"
+aria-labelledby="nested-list-subheader"
+subheader={<ListSubheader component="div" id="nested-list-subheader" sx={{ p: 0 }} />}
+>
+<ListItemButton sx={{ width: '100%', minWidth: 0 }}>
+<ListItemIcon sx={{ minWidth: '36px' }}> <StarBorder /> </ListItemIcon> <ListItemText primary="Favoriten" /> </ListItemButton>
+
+  <ListItemButton onClick={handleClick} sx={{ width: '100%', minWidth: 0 }}>
+    <ListItemText primary="Gruppen" />
+    {open ? <ExpandLess /> : <ExpandMore />}
+  </ListItemButton>
+
+  <Collapse in={open} timeout="auto" unmountOnExit sx={{ width: '100%', minWidth: 0, display: 'block', overflowX: 'hidden' }}>
+    <List component="div" disablePadding sx={{ width: '100%', minWidth: 0 }}>
+      <ListItemButton sx={{ pl: 4, width: '100%', minWidth: 0 }}>
+        <ListItemText primary="Neue Gruppe hinzufügen" />
       </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <ListItemText primary="Neue Gruppe hinzufügen" />
-          </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-            </ListItemIcon>
-            <ListItemText primary="Gruppe 1" />
-          </ListItemButton>
-        </List>
-      </Collapse>
+
+      <ListItemButton sx={{ pl: 4, width: '100%', minWidth: 0 }}>
+        <ListItemText primary="Gruppe 1" />
+      </ListItemButton>
     </List>
-  );
+  </Collapse>
+</List>
+
+
+);
 }
