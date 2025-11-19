@@ -5,15 +5,28 @@ use reqwest::Client;
 use std::sync::{Arc, Mutex};
 use routes::user_login::MemoryStore;
 
+// Importiere den Manager-Trait für get_webview_window
+use tauri::Manager;
+
+// Importiere das Single Instance Plugin
+use tauri_plugin_single_instance;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let client = Arc::new(Client::new());
     let token = Arc::new(MemoryStore {token: Mutex::new(None), key: Mutex::new(None), refresh_token: Mutex::new(None)});
     tauri::Builder::default()
+        // Das Single Instance Plugin muss als erstes registriert werden
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            println!("Eine Instanz der App läuft bereits!");
+            // Verwende get_webview_window, um das Hauptfenster zu fokussieren
+            if let Some(window) = app.get_webview_window("main") {
+                window.set_focus().unwrap();
+            }
+        }))
         .manage(client.clone())
         .manage(token.clone())
-        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_opener::init()) // Andere Plugins kommen danach
         .setup(move |_| {
             let client_clone = client.clone();
             let state_clone = token.clone();
