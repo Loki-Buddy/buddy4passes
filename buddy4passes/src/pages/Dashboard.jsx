@@ -44,6 +44,28 @@ export function Dashboard() {
     fetchAccounts();
   }, []);
 
+async function handleAddTestGroup() {
+    try {
+    const response = await invoke("get_groups");
+
+    if (!response.success) {
+      console.error(`Fehler: ${response.message}`);
+      return;
+    }
+
+    console.log("Gruppen erfolgreich abgerufen:");
+    console.log(response.groups); // gesamte Liste
+
+    // Optional: schön formatiert ausgeben
+    response.groups.forEach((group) => {
+      console.log(`ID: ${group.group_id} | Name: ${group.group_name}`);
+    });
+
+  } catch (error) {
+    console.error("Unerwarteter Fehler:", error);
+  }
+}
+
   return (
     <main className="Dashboard">
       <Header />
@@ -65,6 +87,17 @@ export function Dashboard() {
         Profil
       </Button>
       <h2>Dashboard</h2>
+ <button 
+        onClick={handleAddTestGroup} 
+        style={{
+          marginBottom: "20px",
+          padding: "8px 14px",
+          cursor: "pointer"
+        }}
+      >
+        Testgruppe hinzufügen
+      </button>
+      
       <Box
         sx={{
           p: 2
