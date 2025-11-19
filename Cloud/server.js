@@ -46,6 +46,10 @@ app.use(userDelRoute);
 const userLoginRoute = require("./routes/userLogin");
 app.use(userLoginRoute);
 
+// User Refresh Token
+const userRefreshRoute = require("./routes/userRefreshToken");
+app.use(userRefreshRoute);
+
 // Accounts anzeigen
 const displayAccountsRoute = require("./routes/accountDisplay");
 app.use(displayAccountsRoute);
