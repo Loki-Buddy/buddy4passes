@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
 import { useSnackbar } from "./SnackbarContext";
 import { DialogActions } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -23,7 +24,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   // Gruppen 
   const [groupId, setGroupId] = useState("");
-  const [groups, setGroups] = useState("");
+  const [groups, setGroups] = useState([]);
 
   const [newGroupDialog, setNewGroupDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -54,9 +55,9 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         {id: Date.now(), name: newGroupName},
       ]);
 
-      setGroupId(newGroupName);
+      setGroupId(result.id);
 
-      showSnackbar('Gruppe "${newGroupName}" angelegt!');
+      showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
       setNewGroupDialog(false);
       setNewGroupName("");
     } catch (e) {
@@ -74,7 +75,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
       email,
       username,
       password,
-      groupid,
+      groupid: groupId,
     };
     try {
       const response = await invoke("add_account", {
