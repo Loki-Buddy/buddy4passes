@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
 import { useSnackbar } from "./SnackbarContext";
@@ -20,7 +20,21 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // Gruppen 
+  const [groupId, setGroupId] = useState("");
+  const [groups, setGroups] = useState("");
+
   const { showSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if(open) {
+      invoke("get_groups")
+        .then((res) => setGroups(res))
+        .catch((err) => 
+          console.error("Fehler beim Laden der Gruppen: ", err)
+        );
+      }
+    }, [open]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -30,6 +44,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
       email,
       username,
       password,
+      groupid,
     };
     try {
       const response = await invoke("add_account", {
@@ -37,12 +52,14 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         serviceemail: data.email,
         serviceusername: data.username,
         servicepassword: data.password,
+        servicegroupid: data.groupid,
       });
 
       setEmail("");
       setService("");
       setUsername("");
       setPassword("");
+      setGroupId("");
 
       if (onSubmit) {
         await onSubmit();
@@ -101,6 +118,21 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+
+            <TextField
+              select
+              label="Gruppe"
+              variant="outlined"
+              required
+              value={groupId}
+              onChange={(e) => setGroupId(e.target.value)}
+            >
+              {groups.map((g) => (
+                <MenuItem key={g.id} value={g.id}>
+                  {g.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Stack>
           <br />
           <Button sx={{ margin: "5px" }} variant="outlined" onClick={onClose}>
