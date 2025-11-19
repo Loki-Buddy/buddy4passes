@@ -45,7 +45,7 @@ export function Dashboard() {
   }, []);
 
 async function handleAddTestGroup() {
-    try {
+      try {
     const response = await invoke("get_groups");
 
     if (!response.success) {
@@ -65,7 +65,6 @@ async function handleAddTestGroup() {
     console.error("Unerwarteter Fehler:", error);
   }
 }
-
   return (
     <main className="Dashboard">
       <Header />
