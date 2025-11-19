@@ -46,9 +46,14 @@ export function Dashboard() {
 
 async function handleAddTestGroup() {
     try {
-      const response = await invoke("add_group", { groupname: "Testgruppe" });
+      const response = await invoke("edit_group", {
+        group: {
+          group_id: 3,
+          new_group_name: "Neuer Gruppenname",
+        },
+      });
 
-      if (response.success) {
+      if (response.message) {
         console.log(`Erfolg: ${response.message}`);
       } else {
         console.error(`Fehler: ${response.message}`);
