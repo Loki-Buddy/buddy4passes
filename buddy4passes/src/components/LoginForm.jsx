@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api/core";
 import Snackbar from "@mui/material/Snackbar";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useSnackbar } from "./SnackbarContext";
+import { useSnackbar } from "../contexts/SnackbarContext";
 
 function LoginForm() {
   const navigate = useNavigate();

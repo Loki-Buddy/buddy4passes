@@ -93,25 +93,20 @@ async function handleAddTestGroup() {
         Profil
       </Button>
       <h2>Dashboard</h2>
- <button 
-        onClick={handleAddTestGroup} 
-        style={{
-          marginBottom: "20px",
-          padding: "8px 14px",
-          cursor: "pointer"
-        }}
-      >
-        Testgruppe hinzufügen
-      </button>
-      
+ <div className="layout">
+      <div className="sidebar">
+        <NestedList/>
+      </div>
+
       <Box
         sx={{
-          minHeight: "70vh",
-          minWidth: "80vw",
+          minWidth: "75%",
           backgroundColor: "rgba(255, 255, 255, 0.75)",
           border: "1px solid #ccc",
           borderRadius: "5px",
           boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
+          boxSizing: "border-box",
         }}
       >
         <div className="account-list">
@@ -152,7 +147,7 @@ async function handleAddTestGroup() {
           )}
         </div>
       </Box>
-
+</div>
 
   {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
   <AddAccountDialogSlide

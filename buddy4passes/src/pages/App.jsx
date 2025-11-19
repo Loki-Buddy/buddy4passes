@@ -5,7 +5,7 @@ import { Login } from "./Login";
 import { Register } from "./Register";
 import Dashboard from "./Dashboard";
 import { MasterEdit } from "./MasterEdit";
-import { SnackbarProvider } from "../components/SnackbarContext";
+import { SnackbarProvider } from "../contexts/SnackbarContext";
 
 function App() {
   return (

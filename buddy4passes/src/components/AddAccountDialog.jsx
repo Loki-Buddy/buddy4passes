@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
-import { useSnackbar } from "./SnackbarContext";
+import { useSnackbar } from "../contexts/SnackbarContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
