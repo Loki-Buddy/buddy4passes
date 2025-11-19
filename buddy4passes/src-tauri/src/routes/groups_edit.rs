@@ -6,9 +6,10 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use crate::routes::user_login::MemoryStore;
 
+
 #[derive(Deserialize, Serialize)]
 pub struct Group {
-    group_id: String,
+    group_id: i32,
     new_group_name: String,
 }
 
@@ -20,11 +21,11 @@ pub async fn edit_group(
 ) -> Result<Value, String> {
     // Token abrufen
     let token = state.token.lock().unwrap().clone().unwrap_or_default();
-    
+
     let response = client
     .put("http://3.74.73.164:3000/groups/edit")
     .header("Authorization", format!("Bearer {}", token))
-    .json(&json!(group))
+    .json(&group)
     .send()
     .await
     .map_err(|e| format!("Fehler beim Senden der Anfrage: {}", e))?;
