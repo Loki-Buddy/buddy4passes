@@ -5,8 +5,8 @@ use std::sync::Arc;
 use crate::routes::user_login::MemoryStore;
 
 #[derive(Serialize, Deserialize, Debug)]
-struct GroupItem {
-    group_id: i32,
+pub struct GroupItem {
+    group_id: u32,
     group_name: String,
 }
 
