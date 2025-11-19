@@ -3,8 +3,17 @@ body {
   padding: 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
+  justify-content: center;
   background-color: rgba(122, 117, 117, 0.75);
 
+}
+
+.Dashboard {
+  min-height: 80vh;
+}
+
+.Dashboard {
+  min-height: 80vh;
 }
 
 .layout {
@@ -42,16 +51,14 @@ body {
 }
 
 .account-list {
-  min-height: 60vh;
-  min-width: 80vw;
+  max-width: calc(80vw - 2rem);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 1rem;
-
-
+  padding: 1rem;
 }
 
 

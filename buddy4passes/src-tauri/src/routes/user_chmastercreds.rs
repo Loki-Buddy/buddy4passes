@@ -63,15 +63,21 @@ pub async fn change_master_creds(client: State<'_, Arc<Client>>,state: State<'_,
             .query(&[("user_email", new_email)])
             .send()
             .await
-            .map_err(|e| e.to_string())?
+            .map_err(|e| e.to_string())?;
+
+            if existing_email_user.status().is_success() {
+                return Ok(json!({"message": "Es existiert bereits ein Account mit dieser Email."}));    
+            }
+
+            let _existing_email_user = existing_email_user
             .json::<Value>()
             .await
             .map_err(|e| e.to_string())?;
 
         // Wenn die neue Email bereits existiert → Fehler
-        if !existing_email_user["user_email"].is_null() && existing_email_user["user_email"].as_str().unwrap_or("") != user_response["user_email"].as_str().unwrap_or("") {
+        /* if !existing_email_user["user_email"].is_null() && existing_email_user["user_email"].as_str().unwrap_or("") != user_response["user_email"].as_str().unwrap_or("") {
             return Ok(json!({"message": "Es existiert bereits ein Account mit dieser Email."}));
-        }
+        } */
     }
 
     // Extrahiere den Argon2-Hash des aktuellen Master-Passworts aus der Serverantwort

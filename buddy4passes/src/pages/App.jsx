@@ -4,6 +4,7 @@ import { Landing } from "./Landing";
 import { Login } from "./Login";
 import { Register } from "./Register";
 import Dashboard from "./Dashboard";
+import { MasterEdit } from "./MasterEdit";
 import { SnackbarProvider } from "../components/SnackbarContext";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/masteredit" element={<MasterEdit />} />
         </Routes>
       </SnackbarProvider>
     </BrowserRouter>

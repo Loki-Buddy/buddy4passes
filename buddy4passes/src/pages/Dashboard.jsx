@@ -3,15 +3,19 @@ import { Footer } from "../components/Footer";
 import "../styles/Dashboard.css";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AccountCard from "../components/AccountCard";
 import Box from "@mui/material/Box";
 import AddAccountDialogSlide from "../components/addAccountDialog";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
+import { Button } from "@mui/material";
+import benutzerIcon from "../assets/benutzer.png";
 import NestedList from "../components/NestedList";
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [accounts, setAccounts] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
@@ -25,7 +29,7 @@ export function Dashboard() {
       const response = await invoke("display_accounts");
 
       if (response.message) {
-        setMessage(response.message);
+        setMessage("Keine Einträge vorhanden");
         return;
       }
       const sortedAccounts = response.sort(
@@ -42,19 +46,74 @@ export function Dashboard() {
     fetchAccounts();
   }, []);
 
+async function handleAddTestGroup() {
+      try {
+    const response = await invoke("get_groups");
+
+    if (!response.success) {
+      console.error(`Fehler: ${response.message}`);
+      return;
+    }
+
+    console.log("Gruppen erfolgreich abgerufen:");
+    console.log(response.groups); // gesamte Liste
+
+    // Optional: schön formatiert ausgeben
+    response.groups.forEach((group) => {
+      console.log(`ID: ${group.group_id} | Name: ${group.group_name}`);
+    });
+
+  } catch (error) {
+    console.error("Unerwarteter Fehler:", error);
+  }
+}
   return (
-<main className="Dashboard">
-  <Header />
-
-  <h2>Dashboard</h2>
-<div className="layout">
-
-    <div className="sidebar">
-      <NestedList />
-    </div>
-
-  <div className="content">
-      <Box sx={{ p: 2 }}>
+    <main className="Dashboard">
+      <Header />
+      <Button
+        onClick={() => navigate("/masteredit")}
+        sx={{
+          position: "fixed",
+          top: "1rem",
+          right: "1rem",
+          zIndex: 1000,
+        }}
+      >
+        <img
+          src={benutzerIcon}
+          className="logo"
+          alt="dashboard"
+          style={{
+            width: "24px",
+            height: "24px",
+            marginRight: "8px",
+            opacity: 0.6,
+          }}
+        />
+        Profil
+      </Button>
+      <h2>Dashboard</h2>
+ <button 
+        onClick={handleAddTestGroup} 
+        style={{
+          marginBottom: "20px",
+          padding: "8px 14px",
+          cursor: "pointer"
+        }}
+      >
+        Testgruppe hinzufügen
+      </button>
+      
+      <Box
+        sx={{
+          minHeight: "70vh",
+          minWidth: "80vw",
+          backgroundColor: "rgba(255, 255, 255, 0.75)",
+          border: "1px solid #ccc",
+          borderRadius: "5px",
+          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+        }}
+      >
         <div className="account-list">
           <Tooltip title="Eintrag hinzufügen">
             <AddCircleIcon
@@ -69,6 +128,7 @@ export function Dashboard() {
                 "&:hover": {
                   color: "rgb(135, 206, 250)",
                 },
+                alignSelf: "center",
               }}
             />
           </Tooltip>
@@ -92,8 +152,7 @@ export function Dashboard() {
           )}
         </div>
       </Box>
-  </div>
-</div>
+
 
   {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
   <AddAccountDialogSlide

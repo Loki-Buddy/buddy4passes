@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  padding: 1rem;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+  justify-content: center;
+  background-color: rgba(122, 117, 117, 0.75);
+}
+
+.MasterEdit {
+  min-height: 80vh;
+}
+
+.master {
+  max-width: calc(80vw - 2rem);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.master form {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  gap: 1rem;
+}
+
+.master form > .MuiTextField-root {
+  width: 60%;
+}
+
+.master form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.master form > div > .MuiTextField-root {
+  width: calc(50% - 0.5rem);
+}
+
+.master form > div > div {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+}
+
+.master form > div > div > .MuiTextField-root {
+  flex: 1;
+  min-width: 0;
+}
+
+.master form > button {
+  align-self: flex-start;
+  margin-top: 1rem;
+}
