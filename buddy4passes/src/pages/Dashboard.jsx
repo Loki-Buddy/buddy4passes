@@ -20,14 +20,15 @@ export function Dashboard() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountInfo, setSelectedAccountsInfo] = useState(null);
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
-  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] = useState(false);
+  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] =
+    useState(false);
 
   async function fetchAccounts() {
     try {
       const response = await invoke("display_accounts");
 
       if (response.message) {
-        setMessage(response.message);
+        setMessage("Keine Einträge vorhanden");
         return;
       }
       const sortedAccounts = response.sort(
@@ -68,20 +69,25 @@ async function handleAddTestGroup() {
   return (
     <main className="Dashboard">
       <Header />
-      <Button 
+      <Button
         onClick={() => navigate("/masteredit")}
-        sx={{ 
+        sx={{
           position: "fixed",
           top: "1rem",
           right: "1rem",
-          zIndex: 1000
+          zIndex: 1000,
         }}
       >
-        <img 
-          src={benutzerIcon} 
-          className="logo" 
+        <img
+          src={benutzerIcon}
+          className="logo"
           alt="dashboard"
-          style={{ width: "24px", height: "24px", marginRight: "8px", opacity: 0.6 }}
+          style={{
+            width: "24px",
+            height: "24px",
+            marginRight: "8px",
+            opacity: 0.6,
+          }}
         />
         Profil
       </Button>
@@ -99,7 +105,12 @@ async function handleAddTestGroup() {
       
       <Box
         sx={{
-          p: 2
+          minHeight: "70vh",
+          minWidth: "80vw",
+          backgroundColor: "rgba(255, 255, 255, 0.75)",
+          border: "1px solid #ccc",
+          borderRadius: "5px",
+          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="account-list">
@@ -116,6 +127,7 @@ async function handleAddTestGroup() {
                 "&:hover": {
                   color: "rgb(135, 206, 250)",
                 },
+                alignSelf: "center",
               }}
             />
           </Tooltip>

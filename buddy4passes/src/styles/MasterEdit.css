@@ -7,19 +7,18 @@ body {
   background-color: rgba(122, 117, 117, 0.75);
 }
 
+.MasterEdit {
+  min-height: 80vh;
+}
+
 .master {
-  background-color: rgba(255, 255, 255, 0.75);
-  min-height: 60vh;
-  min-width: 80vw;
+  max-width: calc(80vw - 2rem);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
 }
 

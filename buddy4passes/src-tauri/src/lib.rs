@@ -31,8 +31,6 @@ pub fn run() {
                         continue;
                     };
 
-                    println!("[REFRESH LOOP] Sende Refresh-Request...");
-
                     let response = client_clone
                         .post("http://3.74.73.164:3000/user/refresh")
                         .json(&serde_json::json!({ "refresh_token": refresh_token }))
@@ -45,10 +43,8 @@ pub fn run() {
                             if resp.status().is_success() {
                                 match resp.json::<serde_json::Value>().await {
                                     Ok(json) => {
-                                        println!("[REFRESH LOOP] Server-Antwort JSON: {}", json);
 
                                         if let Some(new_token) = json["token"].as_str() {
-                                            println!("[REFRESH LOOP] Neuer Token erhalten: {}", new_token);
 
                                             {
                                                 let mut token_lock = state_clone.token.lock().unwrap();
