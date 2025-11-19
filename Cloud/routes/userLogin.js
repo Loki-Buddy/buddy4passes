@@ -32,7 +32,7 @@ router.post("/user/login", async (req, res) => {
     const refresh_token = jwt.sign(
       { user_id: user.rows[0].user_id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "1d" }
     );
 
     res.json({

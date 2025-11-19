@@ -20,18 +20,14 @@ pub fn run() {
 
             tauri::async_runtime::spawn(async move {
                 loop {
-                    println!("[REFRESH LOOP] Warte 30 Sekunden...");
-                    tokio::time::sleep(std::time::Duration::from_secs(30)).await;
+                    tokio::time::sleep(std::time::Duration::from_secs(240)).await;
 
-                    // Refresh Token auslesen
                     let refresh_token = {
                         let rt = state_clone.refresh_token.lock().unwrap().clone();
-                        println!("[REFRESH LOOP] Aktueller Refresh-Token im State: {:?}", rt);
                         rt
                     };
 
                     let Some(refresh_token) = refresh_token else {
-                        println!("[REFRESH LOOP] Kein Refresh-Token vorhanden → überspringe.");
                         continue;
                     };
 
@@ -45,7 +41,6 @@ pub fn run() {
 
                     match response {
                         Ok(resp) => {
-                            println!("[REFRESH LOOP] Antwortstatus: {}", resp.status());
 
                             if resp.status().is_success() {
                                 match resp.json::<serde_json::Value>().await {
@@ -55,18 +50,11 @@ pub fn run() {
                                         if let Some(new_token) = json["token"].as_str() {
                                             println!("[REFRESH LOOP] Neuer Token erhalten: {}", new_token);
 
-                                            // Setzen
                                             {
                                                 let mut token_lock = state_clone.token.lock().unwrap();
                                                 *token_lock = Some(new_token.to_string());
-                                                println!("[REFRESH LOOP] Token im State aktualisiert!");
                                             }
 
-                                            // Nach Kontrolle ausgeben
-                                            let check = state_clone.token.lock().unwrap().clone();
-                                            println!("[REFRESH LOOP] Token im State nach Update: {:?}", check);
-                                        } else {
-                                            println!("[REFRESH LOOP] JSON enthielt keinen 'token'!");
                                         }
                                     }
                                     Err(e) => {
