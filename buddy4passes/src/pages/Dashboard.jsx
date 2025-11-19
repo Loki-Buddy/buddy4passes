@@ -46,22 +46,25 @@ export function Dashboard() {
 
 async function handleAddTestGroup() {
     try {
-      const response = await invoke("edit_group", {
-        group: {
-          group_id: 3,
-          new_group_name: "Neuer Gruppenname",
-        },
-      });
+    const response = await invoke("get_groups");
 
-      if (response.message) {
-        console.log(`Erfolg: ${response.message}`);
-      } else {
-        console.error(`Fehler: ${response.message}`);
-      }
-    } catch (error) {
-      console.error("Unerwarteter Fehler:", error);
+    if (!response.success) {
+      console.error(`Fehler: ${response.message}`);
+      return;
     }
+
+    console.log("Gruppen erfolgreich abgerufen:");
+    console.log(response.groups); // gesamte Liste
+
+    // Optional: schön formatiert ausgeben
+    response.groups.forEach((group) => {
+      console.log(`ID: ${group.group_id} | Name: ${group.group_name}`);
+    });
+
+  } catch (error) {
+    console.error("Unerwarteter Fehler:", error);
   }
+}
 
   return (
     <main className="Dashboard">
