@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
 import { useSnackbar } from "./SnackbarContext";
@@ -21,6 +21,15 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   const [password, setPassword] = useState("");
 
   const { showSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if (open) {
+      setService("");
+      setEmail("");
+      setUsername("");
+      setPassword("");
+    }
+  }, [open]);
 
   async function handleSubmit(e) {
     e.preventDefault();
