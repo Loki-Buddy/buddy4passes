@@ -8,3 +8,4 @@ pub mod account_chcreds;
 pub mod account_delete;
 pub mod groups_add;
 pub mod groups_edit;
+pub mod user_fetchdataauth;
