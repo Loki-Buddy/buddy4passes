@@ -97,18 +97,8 @@ async function handleAddTestGroup() {
       <div className="sidebar">
         <NestedList/>
       </div>
+<div className="content">
 
-      <Box
-        sx={{
-          minWidth: "75%",
-          backgroundColor: "rgba(255, 255, 255, 0.75)",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-          overflow: "hidden",
-          boxSizing: "border-box",
-        }}
-      >
         <div className="account-list">
           <Tooltip title="Eintrag hinzufügen">
             <AddCircleIcon
@@ -146,7 +136,8 @@ async function handleAddTestGroup() {
             ))
           )}
         </div>
-      </Box>
+
+</div>
 </div>
 
   {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
