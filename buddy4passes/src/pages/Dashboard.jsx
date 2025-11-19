@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountCard from "../components/AccountCard";
 import Box from "@mui/material/Box";
-import AddAccountDialogSlide from "../components/addAccountDialog";
+import AddAccountDialogSlide from "../components/AddAccountDialog";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
