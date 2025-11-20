@@ -8,17 +8,23 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tooltip, IconButton } from '@mui/material';
 import { invoke } from "@tauri-apps/api/core";
 import { useSnackbar } from '../contexts/SnackbarContext';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 
 export default function NestedList({ groups, onGroupAdded }) {
   const [open, setOpen] = React.useState(false);
   const [newGroupDialog, setNewGroupDialog] = React.useState(false);
+  const [editGroupDialog, setEditGroupDialog] = React.useState(false);
   const [newGroupName, setNewGroupName] = React.useState("");
+  const [editGroupName, setEditGroupName] = React.useState("");
   const { showSnackbar } = useSnackbar();
 
   const handleClick = () => setOpen(!open);
+  const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
 
   async function handleGroupAdd(e) {
     e.preventDefault();
@@ -31,9 +37,27 @@ export default function NestedList({ groups, onGroupAdded }) {
       return;
     }
     showSnackbar("Gruppe erfolgreich hinzugefügt");
+    onGroupAdded();
+    setNewGroupName("");
     setNewGroupDialog(false);
+  }
 
-    // Optionally, you might want to refresh the groups list here
+  async function handleGroupEdit(e) {
+    e.preventDefault();
+    if (editGroupName.group_name === "") {
+      showSnackbar("Gruppenname darf nicht leer sein");
+      return;
+    }
+    const group_edit = { group_id: editGroupName.group_id, new_group_name: editGroupName.group_name }
+    const result = await invoke("edit_group", { group: group_edit });
+    if (result.success === false) {
+      showSnackbar("Fehler beim Aktualisieren der Gruppe");
+      return;
+    }
+    showSnackbar("Gruppe erfolgreich aktualisiert");
+    onGroupAdded();
+    setEditGroupName("");
+    setEditGroupDialog(false);
   }
 
   return (
@@ -62,6 +86,13 @@ export default function NestedList({ groups, onGroupAdded }) {
           {groups.length > 0 && groups.map((group) => (
             <ListItemButton key={group.group_id} sx={{ pl: 4, width: '100%', minWidth: 0 }}>
               <ListItemText primary={group.group_name} />
+
+              <IconButton
+                size="small"
+              >
+                {" "}
+                <EditIcon sx={iconStyle} onClick={() => { setEditGroupDialog(true); setEditGroupName(group); }} />{" "}
+              </IconButton>{" "}
             </ListItemButton>
           ))}
         </List>
@@ -97,6 +128,33 @@ export default function NestedList({ groups, onGroupAdded }) {
         </DialogContent>
       </Dialog>
 
+      <Dialog
+        open={editGroupDialog}
+        onClose={() => {
+          setEditGroupDialog(false); setEditGroupName("");
+        }}
+      >
+        <DialogTitle>Gruppe umbenennen</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleGroupEdit}>
+            <TextField
+              label="Gruppenname"
+              fullWidth
+              value={editGroupName.group_name}
+              onChange={(e) => setEditGroupName({ ...editGroupName, group_name: e.target.value })}
+              sx={{
+                marginTop: 1
+              }}
+            />
+            <DialogActions>
+              <Button onClick={() => { setEditGroupDialog(false); setEditGroupName(""); }}>Abbrechen</Button>
+              <Button variant="contained" type="submit">
+                Speichern
+              </Button>
+            </DialogActions>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
