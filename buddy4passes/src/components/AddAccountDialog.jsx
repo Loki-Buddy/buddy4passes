@@ -36,29 +36,39 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   // Neue Gruppe anlegen
   async function handleAddGroup() {
-    if (!newGroupName.trim()) return;
+  if (!newGroupName.trim()) {
+    showSnackbar("Bitte Gruppennamen eingeben!", "error");
+    return;
+  };
 
-    try {
-      console.log("Adding new group:", newGroupName);
+  try {
+    const result = await invoke("add_group", {
+      groupname: newGroupName,
+    });
 
-      const result = await invoke("add_group", {
-        groupname: newGroupName,
-      });
-
-      // Gruppe lokal hinzufügen --> useState
-      const newLocalId = Date.now();
-
-      setGroups((old) => [...(Array.isArray(old) ? old : []), { id: newLocalId, name: newGroupName }]);
-      setGroupId(newLocalId);
-
-      showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
-      setNewGroupDialog(false);
-      setNewGroupName("");
-    } catch (e) {
-      console.error("Fehler beim Anlegen der Gruppe:", e);
-      showSnackbar("Fehler beim Anlegen der Gruppe", "error");
+    if (!result?.success) {
+      showSnackbar(result?.message ?? "Fehler", "error");
+      return;
     }
+
+    const newId = result.group_id;
+
+    setGroups((old) => [
+      ...(Array.isArray(old) ? old : []),
+      { id: newId, name: newGroupName },
+    ]);
+
+    setGroupId(newId);
+
+    showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
+    setNewGroupDialog(false);
+    setNewGroupName("");
+  } catch (e) {
+    console.error("Fehler beim Anlegen der Gruppe:", e);
+    showSnackbar("Fehler beim Anlegen der Gruppe", "error");
   }
+}
+
 
   // Account speichern
   async function handleSubmit(e) {
@@ -70,7 +80,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         serviceemail: email,
         serviceusername: username,
         servicepassword: password,
-        servicegroupid: groupId,
+        servicegroupid: groupId ?? null,
       });
 
       // Felder zurücksetzen
@@ -145,6 +155,10 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
                   value={groupId || ""}
                   onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
                 >
+                  <MenuItem value="">
+                    Keine Gruppe
+                  </MenuItem>
+
                   {groups.length > 0 ? (
                     groups.map((g) => (
                       <MenuItem key={g.id} value={g.id}>

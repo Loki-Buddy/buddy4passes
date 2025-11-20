@@ -12,12 +12,14 @@ struct GroupRequest {
 #[derive(Deserialize, Debug)]
 struct GroupResponse {
     message: String,
+    group_id: i64,
 }
 
 #[derive(Serialize)]
 pub struct GroupResult {
     pub success: bool,
     pub message: String,
+    pub group_id: Option<i64>
 }
 
 #[tauri::command]
@@ -60,6 +62,7 @@ pub async fn add_group(
                 status.as_u16(),
                 error_text
             ),
+            group_id: None,
         });
     }
 
@@ -72,5 +75,6 @@ pub async fn add_group(
     Ok(GroupResult {
         success: true,
         message: group_response.message,
+        group_id: Some(group_response.group_id),
     })
 }
