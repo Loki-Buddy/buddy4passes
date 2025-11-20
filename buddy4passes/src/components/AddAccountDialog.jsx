@@ -33,7 +33,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   async function fetchGroups() {
     try {
       const response = await invoke("get_groups");
-      console.log(response.groups);
       if (response.success === false) {
         return;
       }
@@ -41,7 +40,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         (a, b) => a.group_id - b.group_id
       );
       setGroups(sortedGroups);
-      console.log(sortedGroups);
     } catch (error) {
       console.error("Error fetching groups:", error);
     }
@@ -62,15 +60,16 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
       });
 
       showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
-
-      // Erst Dialog schließen, dann State zurücksetzen
+      
+      setNewGroupName("");
       setNewGroupDialog(false);
+      
+      // Gruppenliste nach kurzem Delay aktualisieren
       setTimeout(() => {
-        setNewGroupName("");
-        fetchGroups(); // Gruppenliste aktualisieren
-      }, 100);
+        fetchGroups();
+      }, 150);
     } catch (e) {
-      showSnackbar("Fehler beim Anlegen der Gruppe", "error");
+      showSnackbar("Fehler beim Anlegen der Gruppe: " + e, "error");
     }
   }
 
@@ -78,13 +77,15 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    console.log("Ausgewählte Group ID:", groupId); // <- So siehst du die ID
+
     try {
       await invoke("add_account", {
         servicename: service,
         serviceemail: email,
         serviceusername: username,
         servicepassword: password,
-        servicegroupid: groupId,
+        groupid: groupId,  // <- Wird hier bereits übergeben
       });
 
       // Felder zurücksetzen
@@ -104,6 +105,13 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
     }
   }
 
+  // Beispiel: Ausgewählte Gruppe als Objekt finden
+  const selectedGroup = groups.find(g => g.group_id === groupId);
+
+  // Dann kannst du zugreifen auf:
+  // selectedGroup?.group_id   -> Die ID
+  // selectedGroup?.group_name -> Der Name
+
   return (
     <>
       <Dialog
@@ -111,6 +119,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         onClose={onClose}
         keepMounted
         TransitionComponent={Transition}
+        disableRestoreFocus  // <- Hinzugefügt
       >
         <DialogTitle>Eintrag hinzufügen</DialogTitle>
         <DialogContent>
@@ -194,7 +203,8 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
       <Dialog
         open={newGroupDialog}
         onClose={() => setNewGroupDialog(false)}
-        disableRestoreFocus  // <- Verhindert Fokus-Konflikt
+        disableRestoreFocus
+        disableEnforceFocus  // <- Zusätzlich hinzugefügt
       >
         <DialogTitle>Neue Gruppe anlegen</DialogTitle>
         <DialogContent>
@@ -203,6 +213,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
             fullWidth
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
+            autoFocus  // <- Fokus direkt ins Textfeld
           />
         </DialogContent>
         <DialogActions>

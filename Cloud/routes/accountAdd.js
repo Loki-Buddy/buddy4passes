@@ -6,14 +6,14 @@ require("dotenv").config();
 const auth = require("../middleware/auth");
 
 router.post("/account/add", auth, async (req, res) => {
-  const { service, service_email, service_username, service_password } =
+  const { service, service_email, service_username, service_password, group_id } =
     req.body;
   const { user_id } = req.user;
 
   try {
     const newAccount = await pool.query(
-      "INSERT INTO accounts (user_id, service, service_email, service_username, service_password) VALUES ($1, $2, $3, $4, $5)",
-      [user_id, service, service_email, service_username, service_password]
+      "INSERT INTO accounts (user_id, service, service_email, service_username, service_password, group_id) VALUES ($1, $2, $3, $4, $5, $6)",
+      [user_id, service, service_email, service_username, service_password, group_id]
     );
     res.status(201).json({ message: "Account erfolgreich hinzugefügt!" });
   } catch (err) {
