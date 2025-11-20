@@ -9,8 +9,8 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
 
-export default function NestedList() {
-const [open, setOpen] = React.useState(true);
+export default function NestedList({ groups }) {
+const [open, setOpen] = React.useState(false);
 
 const handleClick = () => setOpen(!open);
 
@@ -35,9 +35,15 @@ subheader={<ListSubheader component="div" id="nested-list-subheader" sx={{ p: 0 
         <ListItemText primary="Neue Gruppe hinzufügen" />
       </ListItemButton>
 
-      <ListItemButton sx={{ pl: 4, width: '100%', minWidth: 0 }}>
-        <ListItemText primary="Gruppe 1" />
+      {groups.length > 0 && groups.map((group) => (
+      <ListItemButton key={group.group_id} sx={{ pl: 4, width: '100%', minWidth: 0 }}>
+        <ListItemText primary={group.group_name} />
       </ListItemButton>
+      ))}
+
+      {/* <ListItemButton sx={{ pl: 4, width: '100%', minWidth: 0 }}>
+        <ListItemText primary="Gruppe 1" />
+      </ListItemButton> */}
     </List>
   </Collapse>
 </List>
