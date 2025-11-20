@@ -15,13 +15,13 @@ router.post("/groups/add", auth, async (req, res) => {
 
     try {
         const newGroup = await pool.query(
-            "INSERT INTO groups (group_name, user_id) VALUES ($1, $2)",
+            "INSERT INTO groups (group_name, user_id) VALUES ($1, $2) RETURNING group_id",
             [group_name, user_id]
         );
-
+        
         res.status(201).json({
             message: "Gruppe erfolgreich hinzugefügt!",
-            // group: newGroup.rows[0],
+            group_id: newGroup.rows[0].group_id
         });
     } catch (err) {
         console.error(err.message);

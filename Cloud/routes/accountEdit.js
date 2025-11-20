@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 // PUT /account/edit
 // Body: {  service_email, service_username, service_password }
 router.put("/account/edit", auth, async (req, res) => {
-    const { account_id, service, service_email, service_username, service_password } = req.body;
+    const { account_id, service, service_email, service_username, service_password, group_id } = req.body;
 
     try {
         const { user_id } = req.user;
@@ -48,6 +48,12 @@ router.put("/account/edit", auth, async (req, res) => {
             index++;
         }
 
+        if (group_id) {
+            sets.push(`group_id = $${index}`);
+            values.push(group_id);
+            index++;
+        }
+        
         if (sets.length === 0) {
             return res.status(400).json({ message: "Keine zu speichernden Änderungen angegeben" });
         }

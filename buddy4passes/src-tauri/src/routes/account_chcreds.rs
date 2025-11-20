@@ -17,6 +17,8 @@ pub struct AccountCredentialsResponse {
     service_username: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     service_password: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    group_id: Option<u32>,
 }
 
 #[tauri::command]
@@ -53,7 +55,7 @@ pub async fn change_account_creds(client: State<'_, Arc<Client>>, state: State<'
     let response = client
         .put("http://3.74.73.164:3000/account/edit")
         .header("Authorization", format!("Bearer {}", token))
-        .json(&json!({"account_id": accountid, "service": data.service, "service_email": encrypted_email, "service_username": encrypted_username, "service_password": encrypted_password}))
+        .json(&json!({"account_id": accountid, "service": data.service, "service_email": encrypted_email, "service_username": encrypted_username, "service_password": encrypted_password, "group_id": data.group_id}))
         .send()
         .await
         .map_err(|e| e.to_string())?
