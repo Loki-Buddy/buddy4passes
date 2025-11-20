@@ -39,7 +39,7 @@ export default function DisplayAccountDialogSlide({
   const [password, setPassword] = useState("");
 
   // Gruppen
-  const [groupName, setGroupName] = useState("");
+  const [groupId, setGroupId] = useState(null);
   const [groups, setGroups] = useState([]);
 
   const [editService, setEditService] = useState(false);
@@ -58,7 +58,7 @@ export default function DisplayAccountDialogSlide({
       setEmail(account.service_email);
       setUsername(account.service_username);
       setPassword(account.service_password);
-      setGroupName(account.service_group_name || ""); 
+      setGroupId(account.service_group_id ?? null); 
 
       setEditService(false);
       setEditEmail(false);
@@ -70,12 +70,16 @@ export default function DisplayAccountDialogSlide({
   }, [account]);
 
   useEffect(() => {
-    if (open) {
-      invoke("get_groups")
-        .then((res) => setGroups(Array.isArray(res) ? res : []))
+  if (open) {
+    invoke("get_groups")
+      .then((res) => {
+        const sorted = res.groups.sort((a, b) => a.group_id - b.group_id);
+        setGroups(sorted);
+        })
         .catch((err) => console.error("Fehler beim Laden der Gruppen: ", err));
     }
   }, [open]);
+
 
   if (!account) return null;
 
@@ -84,15 +88,11 @@ export default function DisplayAccountDialogSlide({
 
     try {
       // Wenn der eingegebene Gruppenname noch nicht existiert, zuerst anlegen
-      let selectedGroupId = null;
-      const existingGroup = groups.find((g) => g.name === groupName);
-      if (existingGroup) {
-        selectedGroupId = existingGroup.id;
-      } else if (groupName.trim()) {
-        const result = await invoke("add_group", { groupname: groupName });
-        // ID?
-        selectedGroupId = Date.now();
-        setGroups((old) => [...old, { id: selectedGroupId, name: groupName }]);
+      let selectedGroupId = groupId;
+      const selectedGroup = groups.find((g) => g.group_id === groupId);
+      if (!selectedGroup && groupId) {
+        const result = await invoke("add_group", {groupname: groupId});
+        selectedGroupId = result.group_id;
       }
 
       const data = {
@@ -210,12 +210,11 @@ export default function DisplayAccountDialogSlide({
               />
 
               <Autocomplete
-                freeSolo
                 disableClearable
-                options={groups.map((g) => g.name)}
-                value={groupName}
-                onChange={(e, newValue) => setGroupName(newValue)}
-                onInputChange={(e, newValue) => setGroupName(newValue)}
+                options={groups}
+                getOptionLabel={(option) => option.group_name}
+                value={groups.find(g => g.group_id === groupId) || null}
+                onChange={(e, newValue) => setGroupId(newValue?.group_id ?? null)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
