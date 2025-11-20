@@ -25,6 +25,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   // Gruppen
   const [groupId, setGroupId] = useState(null);
   const [groups, setGroups] = useState([]);
+  /* const [resultGroupId, setResultGroupId] = useState(null); */
   const [newGroupDialog, setNewGroupDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
 
@@ -60,14 +61,15 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
       });
 
       showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
-      
+
       setNewGroupName("");
       setNewGroupDialog(false);
-      
+
+      if (result.group_id) {
+        setGroupId(result.group_id);
+      }
       // Gruppenliste nach kurzem Delay aktualisieren
-      setTimeout(() => {
-        fetchGroups();
-      }, 150);
+      await fetchGroups();
     } catch (e) {
       showSnackbar("Fehler beim Anlegen der Gruppe: " + e, "error");
     }
@@ -209,6 +211,9 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         <DialogTitle>Neue Gruppe anlegen</DialogTitle>
         <DialogContent>
           <TextField
+            sx={{
+              mt:1
+            }}
             label="Gruppenname"
             fullWidth
             value={newGroupName}
