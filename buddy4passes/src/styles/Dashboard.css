@@ -17,6 +17,7 @@ width: 100%;
 min-height: 70vh;
 align-items: stretch;
 box-sizing: border-box;
+overflow-y: hidden;
 }
 
 .sidebar {
@@ -30,7 +31,7 @@ border: 1px solid #ccc;
 border-radius: 5px;
 box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 overflow-x: hidden;   /* wichtig */
-overflow-y: auto;
+overflow-y: hidden;
 padding: 15px 0;
 box-sizing: border-box;
 }
