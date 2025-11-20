@@ -21,7 +21,7 @@ router.post("/groups/add", auth, async (req, res) => {
         console.log(newGroup);
         res.status(201).json({
             message: "Gruppe erfolgreich hinzugefügt!",
-            group_id: newGroup.rows[0].group_id
+/*             group_id: newGroup.rows[0].group_id */
         });
     } catch (err) {
         console.error(err.message);
