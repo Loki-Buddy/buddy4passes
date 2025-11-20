@@ -21,8 +21,8 @@ export function Dashboard() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountInfo, setSelectedAccountsInfo] = useState(null);
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
-  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] =
-    useState(false);
+  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] = useState(false);
+  const [groups, setGroups] = useState([]);
 
   async function fetchAccounts() {
     try {
@@ -41,8 +41,26 @@ export function Dashboard() {
       console.error("Error fetching accounts:", error);
     }
   }
+  async function fetchGroups() {
+    try {
+      const response = await invoke("get_groups");
+console.log("Gruppen:", response);
+      if (response.success === false) {
+        return;
+      }
+      const sortedGroups = response.groups.sort(
+        (a, b) => a.group_id - b.group_id
+      );
+      setGroups(sortedGroups);
+      console.log("Gruppen gesetzt:", sortedGroups);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  }
+
 
   useEffect(() => {
+    fetchGroups();
     fetchAccounts();
   }, []);
 
@@ -95,7 +113,9 @@ async function handleAddTestGroup() {
       <h2>Dashboard</h2>
  <div className="layout">
       <div className="sidebar">
-        <NestedList/>
+      <NestedList
+      groups={groups}
+      />
       </div>
 <div className="content">
 
