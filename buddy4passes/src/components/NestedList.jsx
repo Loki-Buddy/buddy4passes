@@ -22,6 +22,9 @@ export default function NestedList({ groups, onGroupAdded }) {
   const [newGroupName, setNewGroupName] = React.useState("");
   const [editGroupName, setEditGroupName] = React.useState("");
   const { showSnackbar } = useSnackbar();
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [groupToDelete, setGroupToDelete] = React.useState(null);
+
 
   const handleClick = () => setOpen(!open);
   const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
@@ -31,6 +34,7 @@ export default function NestedList({ groups, onGroupAdded }) {
     if (newGroupName === "") {
       return;
     }
+    console.log("Adding group:", newGroupName);
     const result = await invoke("add_group", { groupname: newGroupName });
     if (result.success === false) {
       showSnackbar("Fehler beim Hinzufügen der Gruppe");
@@ -58,6 +62,16 @@ export default function NestedList({ groups, onGroupAdded }) {
     onGroupAdded();
     setEditGroupName("");
     setEditGroupDialog(false);
+  }
+
+  async function handleGroupDelete() {
+    const result = await invoke("delete_group", { groupid: groupToDelete });
+    if (result.success) {
+      showSnackbar("Gruppe erfolgreich gelöscht");
+      onGroupAdded();
+      setConfirmOpen(false);
+      setGroupToDelete(null);
+    }
   }
 
   return (
@@ -92,7 +106,14 @@ export default function NestedList({ groups, onGroupAdded }) {
               >
                 {" "}
                 <EditIcon sx={iconStyle} onClick={() => { setEditGroupDialog(true); setEditGroupName(group); }} />{" "}
-              </IconButton>{" "}
+              </IconButton>
+              <IconButton
+                size="small"
+              >
+                {" "}
+                <DeleteIcon sx={{ cursor: "pointer", "&:hover": { color: "red" } }} onClick={() => { setGroupToDelete(group.group_id); setConfirmOpen(true); }} />{" "}
+              </IconButton>
+
             </ListItemButton>
           ))}
         </List>
@@ -154,6 +175,22 @@ export default function NestedList({ groups, onGroupAdded }) {
             </DialogActions>
           </form>
         </DialogContent>
+      </Dialog>
+
+      <Dialog open={confirmOpen} onClose={() => { setConfirmOpen(false); setGroupToDelete(null); }}>
+        <DialogTitle>Gruppe löschen?</DialogTitle>
+        <DialogContent>
+          Willst du diese Gruppe wirklich löschen? Dies kann nicht rückgängig
+          gemacht werden.
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => { setConfirmOpen(false); setGroupToDelete(null); }}>
+            Abbrechen
+          </Button>
+          <Button variant="contained" color="error" onClick={() => handleGroupDelete()}>
+            Löschen
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );

@@ -24,7 +24,7 @@ pub struct GroupResult {
 pub async fn delete_group(
     client: State<'_, Arc<Client>>,
     state: State<'_, Arc<MemoryStore>>,
-    group_id: i32,
+    groupid: i32,
 ) -> Result<GroupResult, String> {
 
     // Token abrufen
@@ -34,7 +34,7 @@ pub async fn delete_group(
     let api_url = "http://3.74.73.164:3000/groups/delete";
 
     // JSON-Daten für das Backend
-    let body = DeleteGroupRequest { group_id };
+    let body = DeleteGroupRequest { group_id: groupid };
 
     // Anfrage senden
     let response = client
