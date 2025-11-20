@@ -44,7 +44,7 @@ export function Dashboard() {
   async function fetchGroups() {
     try {
       const response = await invoke("get_groups");
-console.log("Gruppen:", response);
+
       if (response.success === false) {
         return;
       }
@@ -52,7 +52,7 @@ console.log("Gruppen:", response);
         (a, b) => a.group_id - b.group_id
       );
       setGroups(sortedGroups);
-      console.log("Gruppen gesetzt:", sortedGroups);
+
     } catch (error) {
       console.error("Error fetching groups:", error);
     }
@@ -64,27 +64,27 @@ console.log("Gruppen:", response);
     fetchAccounts();
   }, []);
 
-async function handleAddTestGroup() {
-      try {
-    const response = await invoke("get_groups");
+  async function handleAddTestGroup() {
+    try {
+      const response = await invoke("get_groups");
 
-    if (!response.success) {
-      console.error(`Fehler: ${response.message}`);
-      return;
+      if (!response.success) {
+        console.error(`Fehler: ${response.message}`);
+        return;
+      }
+
+      console.log("Gruppen erfolgreich abgerufen:");
+      console.log(response.groups); // gesamte Liste
+
+      // Optional: schön formatiert ausgeben
+      response.groups.forEach((group) => {
+        console.log(`ID: ${group.group_id} | Name: ${group.group_name}`);
+      });
+
+    } catch (error) {
+      console.error("Unerwarteter Fehler:", error);
     }
-
-    console.log("Gruppen erfolgreich abgerufen:");
-    console.log(response.groups); // gesamte Liste
-
-    // Optional: schön formatiert ausgeben
-    response.groups.forEach((group) => {
-      console.log(`ID: ${group.group_id} | Name: ${group.group_name}`);
-    });
-
-  } catch (error) {
-    console.error("Unerwarteter Fehler:", error);
   }
-}
   return (
     <main className="Dashboard">
       <Header />
@@ -111,74 +111,75 @@ async function handleAddTestGroup() {
         Profil
       </Button>
       <h2>Dashboard</h2>
- <div className="layout">
-      <div className="sidebar">
-      <NestedList
-      groups={groups}
-      />
-      </div>
-<div className="content">
+      <div className="layout">
+        <div className="sidebar">
+          <NestedList
+            groups={groups}
+            onGroupAdded={() => fetchGroups()}
+          />
+        </div>
+        <div className="content">
 
-        <div className="account-list">
-          <Tooltip title="Eintrag hinzufügen">
-            <AddCircleIcon
-              fontSize="large"
-              onClick={() => {
-                setOpenAddAccountDialog(true);
-                setSelectedAccount(null);
-              }}
-              sx={{
-                color: "rgba(255, 255, 255, 0.75)",
-                cursor: "pointer",
-                "&:hover": {
-                  color: "rgb(135, 206, 250)",
-                },
-                alignSelf: "center",
-              }}
-            />
-          </Tooltip>
-
-          {message ? (
-            <p>{message}</p>
-          ) : (
-            accounts.map((account) => (
-              <AccountCard
-                key={account.account_id}
-                account_id={account.account_id}
-                service={account.service}
-                selected={selectedAccount === account.account_id}
-                onSelect={() => {
-                  setSelectedAccount(account.account_id);
-                  setSelectedAccountsInfo(account);
-                  setOpenDisplayAccountDialog(true);
+          <div className="account-list">
+            <Tooltip title="Eintrag hinzufügen">
+              <AddCircleIcon
+                fontSize="large"
+                onClick={() => {
+                  setOpenAddAccountDialog(true);
+                  setSelectedAccount(null);
+                }}
+                sx={{
+                  color: "rgba(255, 255, 255, 0.75)",
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "rgb(135, 206, 250)",
+                  },
+                  alignSelf: "center",
                 }}
               />
-            ))
-          )}
+            </Tooltip>
+
+            {message ? (
+              <p>{message}</p>
+            ) : (
+              accounts.map((account) => (
+                <AccountCard
+                  key={account.account_id}
+                  account_id={account.account_id}
+                  service={account.service}
+                  selected={selectedAccount === account.account_id}
+                  onSelect={() => {
+                    setSelectedAccount(account.account_id);
+                    setSelectedAccountsInfo(account);
+                    setOpenDisplayAccountDialog(true);
+                  }}
+                />
+              ))
+            )}
+          </div>
+
         </div>
+      </div>
 
-</div>
-</div>
+      {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
+      <AddAccountDialogSlide
+        open={openAddAccountDialog}
+        onClose={() => setOpenAddAccountDialog(false)}
+        onSubmit={fetchAccounts}
+      />
 
-  {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
-  <AddAccountDialogSlide
-    open={openAddAccountDialog}
-    onClose={() => setOpenAddAccountDialog(false)}
-    onSubmit={fetchAccounts}
-  />
-  
-  <DisplayAccountDialogSlide
-    open={openDisplayAccountDialog}
-    onClose={() => {
-      setOpenDisplayAccountDialog(false);
-      setSelectedAccountsInfo(null);
-    }}
-    onSubmit={fetchAccounts}
-    account={selectedAccountInfo}
-  />
+      <DisplayAccountDialogSlide
+        open={openDisplayAccountDialog}
+        onClose={() => {
+          setOpenDisplayAccountDialog(false);
+          setSelectedAccountsInfo(null);
+        }}
+        onSubmit={fetchAccounts}
+        account={selectedAccountInfo}
+      />
 
-  <Footer />
-</main>
+      <Footer />
+    </main>
 
   );
 }
