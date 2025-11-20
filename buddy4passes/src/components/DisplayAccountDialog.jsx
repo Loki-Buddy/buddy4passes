@@ -109,7 +109,7 @@ export default function DisplayAccountDialogSlide({
         service_email: email,
         service_username: username,
         service_password: password,
-        groupid: groupId,
+        group_id: groupId,
       };
 
       await invoke("change_account_creds", {
