@@ -52,7 +52,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         groupname: newGroupName,
       });
 
-      // Gruppe lokal hinzufügen
+      // Gruppe lokal hinzufügen --> useState
       const newLocalId = Date.now();
 
       setGroups((old) => [...(Array.isArray(old) ? old : []), { id: newLocalId, name: newGroupName }]);
@@ -146,12 +146,11 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
               <Stack direction="row" spacing={1} alignItems="center">
                 <TextField
                   select
-                  label="Gruppe"
+                  label="Gruppe (optional)"
                   variant="outlined"
-                  required
                   fullWidth
                   value={groupId ?? ""}
-                  onChange={(e) => setGroupId(Number(e.target.value))}
+                  onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
                 >
                   {groups.length > 0 ? (
                     groups.map((g) => (
