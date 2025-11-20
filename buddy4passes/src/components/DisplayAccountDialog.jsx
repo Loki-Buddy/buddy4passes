@@ -9,11 +9,12 @@ import {
   Slide,
   TextField,
   Stack,
-  Snackbar,
   InputAdornment,
   Tooltip,
   IconButton,
+  MenuItem,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 import { invoke } from "@tauri-apps/api/core";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,12 +38,16 @@ export default function DisplayAccountDialogSlide({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // Gruppen
+  const [groupName, setGroupName] = useState("");
+  const [groups, setGroups] = useState([]);
+
   const [editService, setEditService] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [editUsername, setEditUsername] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
+  const [editGroup, setEditGroup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { showSnackbar } = useSnackbar();
@@ -53,25 +58,49 @@ export default function DisplayAccountDialogSlide({
       setEmail(account.service_email);
       setUsername(account.service_username);
       setPassword(account.service_password);
+      setGroupName(account.service_group_name || ""); 
 
       setEditService(false);
       setEditEmail(false);
       setEditUsername(false);
       setEditPassword(false);
+      setEditGroup(false);
       setShowPassword(false);
     }
   }, [account]);
+
+  useEffect(() => {
+    if (open) {
+      invoke("get_groups")
+        .then((res) => setGroups(Array.isArray(res) ? res : []))
+        .catch((err) => console.error("Fehler beim Laden der Gruppen: ", err));
+    }
+  }, [open]);
 
   if (!account) return null;
 
   async function handleUpdate(e) {
     e.preventDefault();
+
     try {
-      let data = {
-        service: service,
+      // Wenn der eingegebene Gruppenname noch nicht existiert, zuerst anlegen
+      let selectedGroupId = null;
+      const existingGroup = groups.find((g) => g.name === groupName);
+      if (existingGroup) {
+        selectedGroupId = existingGroup.id;
+      } else if (groupName.trim()) {
+        const result = await invoke("add_group", { groupname: groupName });
+        // ID?
+        selectedGroupId = Date.now();
+        setGroups((old) => [...old, { id: selectedGroupId, name: groupName }]);
+      }
+
+      const data = {
+        service,
         service_email: email,
         service_username: username,
         service_password: password,
+        service_group_id: selectedGroupId,
       };
 
       await invoke("change_account_creds", {
@@ -80,10 +109,8 @@ export default function DisplayAccountDialogSlide({
       });
 
       showSnackbar("Eintrag erfolgreich geändert!");
-
       onClose();
-
-      if (onSubmit) await onSubmit();
+      await onSubmit?.();
     } catch (err) {
       console.error("Fehler beim Ändern:", err);
       showSnackbar("Fehler beim Ändern des Eintrags.");
@@ -92,14 +119,10 @@ export default function DisplayAccountDialogSlide({
 
   async function handleDelete() {
     try {
-      await invoke("delete_account", {
-        accountid: account.account_id,
-      });
-
+      await invoke("delete_account", { accountid: account.account_id });
       showSnackbar("Eintrag erfolgreich gelöscht!");
       setConfirmOpen(false);
-
-      if (onSubmit) await onSubmit();
+      await onSubmit?.();
       onClose();
     } catch (err) {
       console.error("Fehler beim Löschen:", err);
@@ -107,7 +130,8 @@ export default function DisplayAccountDialogSlide({
     }
   }
 
-  const isEdited = editService || editEmail || editUsername || editPassword;
+  const isEdited =
+    editService || editEmail || editUsername || editPassword || editGroup;
 
   const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
 
@@ -117,8 +141,7 @@ export default function DisplayAccountDialogSlide({
         open={open}
         onClose={onClose}
         keepMounted
-        aria-describedby="alert-dialog-slide-description"
-        slots={{ transition: Transition }}
+        TransitionComponent={Transition}
       >
         <DialogTitle
           sx={{
@@ -140,8 +163,7 @@ export default function DisplayAccountDialogSlide({
 
         <DialogContent>
           <form onSubmit={handleUpdate}>
-            <Stack spacing={2} sx={{ width: "300px", mt: 1 }}>
-              {" "}
+            <Stack spacing={2} sx={{ width: 300, mt: 1 }}>
               <TextField
                 label="Service"
                 variant="outlined"
@@ -151,21 +173,16 @@ export default function DisplayAccountDialogSlide({
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      {" "}
                       <Tooltip title="Bearbeiten">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() => setEditService(true)}
-                        >
-                          {" "}
-                          <EditIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
+                        <IconButton size="small" onClick={() => setEditService(true)}>
+                          <EditIcon sx={iconStyle} />
+                        </IconButton>
+                      </Tooltip>
                     </InputAdornment>
                   ),
                 }}
-              />{" "}
+              />
+
               <TextField
                 label="Email"
                 type="email"
@@ -173,70 +190,16 @@ export default function DisplayAccountDialogSlide({
                 disabled={!editEmail}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {" "}
-                      <Tooltip title="In Zwischenablage kopieren">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() => navigator.clipboard.writeText(email)}
-                        >
-                          {" "}
-                          <ContentCopyIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                      <Tooltip title="Bearbeiten">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() => setEditEmail(true)}
-                        >
-                          {" "}
-                          <EditIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                    </InputAdornment>
-                  ),
-                }}
-              />{" "}
+              />
+
               <TextField
                 label="Username"
                 variant="outlined"
                 disabled={!editUsername}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {" "}
-                      <Tooltip title="In Zwischenablage kopieren">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() =>
-                            navigator.clipboard.writeText(username)
-                          }
-                        >
-                          {" "}
-                          <ContentCopyIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                      <Tooltip title="Bearbeiten">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() => setEditUsername(true)}
-                        >
-                          {" "}
-                          <EditIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                    </InputAdornment>
-                  ),
-                }}
-              />{" "}
+              />
+
               <TextField
                 label="Passwort"
                 type={showPassword ? "text" : "password"}
@@ -244,56 +207,36 @@ export default function DisplayAccountDialogSlide({
                 disabled={!editPassword}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {" "}
-                      <Tooltip
-                        title={
-                          showPassword
-                            ? "Passwort verbergen"
-                            : "Passwort anzeigen"
-                        }
-                      >
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() => setShowPassword((prev) => !prev)}
-                        >
-                          {" "}
-                          {showPassword ? (
-                            <VisibilityOffIcon />
-                          ) : (
-                            <VisibilityIcon />
-                          )}{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                      <Tooltip title="In Zwischenablage kopieren">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() =>
-                            navigator.clipboard.writeText(password)
-                          }
-                        >
-                          {" "}
-                          <ContentCopyIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                      <Tooltip title="Bearbeiten">
-                        {" "}
-                        <IconButton
-                          size="small"
-                          onClick={() => setEditPassword(true)}
-                        >
-                          {" "}
-                          <EditIcon sx={iconStyle} />{" "}
-                        </IconButton>{" "}
-                      </Tooltip>{" "}
-                    </InputAdornment>
-                  ),
-                }}
-              />{" "}
+              />
+
+              <Autocomplete
+                freeSolo
+                disableClearable
+                options={groups.map((g) => g.name)}
+                value={groupName}
+                onChange={(e, newValue) => setGroupName(newValue)}
+                onInputChange={(e, newValue) => setGroupName(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Gruppe"
+                    variant="outlined"
+                    disabled={!editGroup}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <Tooltip title="Bearbeiten">
+                            <IconButton size="small" onClick={() => setEditGroup(true)}>
+                              <EditIcon sx={iconStyle} />
+                            </IconButton>
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              />
             </Stack>
 
             <DialogActions>

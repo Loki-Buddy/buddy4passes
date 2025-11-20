@@ -9,59 +9,60 @@ import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
 import { useSnackbar } from "./SnackbarContext";
-import { DialogActions } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
+import { DialogActions, MenuItem } from "@mui/material";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
+  // Account
   const [service, setService] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // Gruppen 
-  const [groupId, setGroupId] = useState("");
+  // Gruppen
+  const [groupId, setGroupId] = useState(null);
   const [groups, setGroups] = useState([]);
-
   const [newGroupDialog, setNewGroupDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
 
   const { showSnackbar } = useSnackbar();
 
+  // Gruppen laden
   useEffect(() => {
-    if(open) {
+    if (open) {
       invoke("get_groups")
-        .then((res) => setGroups(res))
-        .catch((err) => 
+        .then((res) => setGroups(Array.isArray(res) ? res : []))
+        .catch((err) =>
           console.error("Fehler beim Laden der Gruppen: ", err)
         );
     }
   }, [open]);
 
-  // Gruppe erstellen
+  // Neue Gruppe anlegen
   async function handleAddGroup() {
     if (!newGroupName.trim()) return;
 
     try {
+      console.log("Adding new group:", newGroupName);
+
       const result = await invoke("add_group", {
         groupname: newGroupName,
       });
 
-      setGroups((old) => [
-        ...old,
-        {id: Date.now(), name: newGroupName},
-      ]);
+      // Gruppe lokal hinzufügen
+      const newLocalId = Date.now();
 
-      setGroupId(result.id);
+      setGroups((old) => [...(Array.isArray(old) ? old : []), { id: newLocalId, name: newGroupName }]);
+      setGroupId(newLocalId);
 
       showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
       setNewGroupDialog(false);
       setNewGroupName("");
     } catch (e) {
-      console.error(e);
+      console.error("Fehler beim Anlegen der Gruppe:", e);
       showSnackbar("Fehler beim Anlegen der Gruppe", "error");
     }
   }
@@ -70,119 +71,143 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const data = {
-      service,
-      email,
-      username,
-      password,
-      groupid: groupId,
-    };
     try {
-      const response = await invoke("add_account", {
-        servicename: data.service,
-        serviceemail: data.email,
-        serviceusername: data.username,
-        servicepassword: data.password,
-        servicegroupid: data.groupid,
+      await invoke("add_account", {
+        servicename: service,
+        serviceemail: email,
+        serviceusername: username,
+        servicepassword: password,
+        servicegroupid: groupId,
       });
 
-      setEmail("");
+      // Felder zurücksetzen
       setService("");
+      setEmail("");
       setUsername("");
       setPassword("");
-      setGroupId("");
+      setGroupId(null);
 
-      if (onSubmit) {
-        await onSubmit();
-      }
+      await onSubmit?.();
 
-      showSnackbar(`Eintrag erfolgreich hinzugefügt!`);
-
+      showSnackbar("Eintrag erfolgreich hinzugefügt!");
       onClose();
     } catch (err) {
       console.error("Fehler beim Aufruf:", err);
+      showSnackbar("Fehler beim Hinzufügen!", "error");
     }
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      keepMounted
-      aria-describedby="alert-dialog-slide-description"
-      slots={{ transition: Transition }}
-    >
-      <DialogTitle>{"Eintrag hinzufügen"}</DialogTitle>
-      <DialogContent>
-        <form onSubmit={(e) => handleSubmit(e)}>
-          <Stack spacing={2} sx={{ width: "250px", mt: 1 }}>
-            <TextField
-              label="Service"
-              variant="outlined"
-              required
-              value={service}
-              onChange={(e) => setService(e.target.value)}
-            />
+    <>
+      {/* --- Hauptdialog: Account hinzufügen --- */}
+      <Dialog
+        open={open}
+        onClose={onClose}
+        keepMounted
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>Eintrag hinzufügen</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={2} sx={{ width: 250, mt: 1 }}>
+              <TextField
+                label="Service"
+                variant="outlined"
+                required
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+              />
 
-            <TextField
-              label="Email"
-              type="email"
-              variant="outlined"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+              <TextField
+                label="Email"
+                type="email"
+                variant="outlined"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-            <TextField
-              label="Username"
-              type="text"
-              variant="outlined"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
+              <TextField
+                label="Username"
+                type="text"
+                variant="outlined"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
 
-            <TextField
-              label="Passwort"
-              type="password"
-              variant="outlined"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+              <TextField
+                label="Passwort"
+                type="password"
+                variant="outlined"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-            <TextField
-              select
-              label="Gruppe"
-              variant="outlined"
-              required
-              value={groupId}
-              onChange={(e) => setGroupId(e.target.value)}
-            >
-              {groups.map((g) => (
-                <MenuItem key={g.id} value={g.id}>
-                  {g.name}
-                </MenuItem>
-              ))}
-            </TextField>
+              {/* Gruppenauswahl */}
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TextField
+                  select
+                  label="Gruppe"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={groupId ?? ""}
+                  onChange={(e) => setGroupId(Number(e.target.value))}
+                >
+                  {groups.length > 0 ? (
+                    groups.map((g) => (
+                      <MenuItem key={g.id} value={g.id}>
+                        {g.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem disabled>Keine Gruppen vorhanden</MenuItem>
+                  )}
+                </TextField>
 
-            <Button
-              variant="outlined"
-              onClick={() => setNewGroupDialog(true)}
-              >
-                +
+                <Button
+                  variant="outlined"
+                  onClick={() => setNewGroupDialog(true)}
+                >
+                  +
+                </Button>
+              </Stack>
+            </Stack>
+
+            <DialogActions>
+              <Button variant="outlined" onClick={onClose}>
+                Abbrechen
               </Button>
-          </Stack>
-          <br />
-          <DialogActions>
-          <Button sx={{ margin: "5px" }} variant="outlined" onClick={onClose}>
-            Abbrechen
+              <Button variant="contained" type="submit">
+                Hinzufügen
+              </Button>
+            </DialogActions>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* --- Zweiter Dialog: Neue Gruppe anlegen --- */}
+      <Dialog
+        open={newGroupDialog}
+        onClose={() => setNewGroupDialog(false)}
+      >
+        <DialogTitle>Neue Gruppe anlegen</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Gruppenname"
+            fullWidth
+            value={newGroupName}
+            onChange={(e) => setNewGroupName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNewGroupDialog(false)}>Abbrechen</Button>
+          <Button variant="contained" onClick={handleAddGroup}>
+            Speichern
           </Button>
-          <Button sx={{ margin: "5px" }} variant="contained" type="submit">
-            Hinzufügen
-          </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
