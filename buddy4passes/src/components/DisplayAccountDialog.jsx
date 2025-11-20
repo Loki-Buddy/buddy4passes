@@ -89,17 +89,11 @@ export default function DisplayAccountDialogSlide({
   }, [account]);
 
   useEffect(() => {
-    console.log("Account:", account);
-    console.log("Groups:", groups);
-    console.log("Account group_id:", account?.group_id);
-    
     if (account && groups.length > 0) {
       const groupIdToSet = account.group_id || null;
-      console.log("Setting groupId to:", groupIdToSet);
       setGroupId(groupIdToSet);
       
       const group = groups.find((g) => g.group_id === account.group_id);
-      console.log("Found group:", group);
       setGroupName(group ? group.group_name : "");
     }
   }, [account, groups]);
@@ -114,7 +108,8 @@ export default function DisplayAccountDialogSlide({
         service,
         service_email: email,
         service_username: username,
-        service_password: password
+        service_password: password,
+        groupid: groupId,
       };
 
       await invoke("change_account_creds", {
@@ -229,7 +224,7 @@ export default function DisplayAccountDialogSlide({
                 variant="outlined"
                 fullWidth
                 value={groupId ?? ""}
-                onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
+                onChange={(e) => {setGroupId(e.target.value ? Number(e.target.value) : null); setEditGroup(true)}}
               >
                 <MenuItem value="">
                   <em>Keine Gruppe</em>
