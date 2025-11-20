@@ -99,7 +99,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   return (
     <>
-      {/* --- Hauptdialog: Account hinzufügen --- */}
       <Dialog
         open={open}
         onClose={onClose}
@@ -144,7 +143,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
-              {/* Gruppenauswahl */}
               <Stack direction="row" spacing={1} alignItems="center">
                 <TextField
                   select
@@ -187,7 +185,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         </DialogContent>
       </Dialog>
 
-      {/* --- Zweiter Dialog: Neue Gruppe anlegen --- */}
       <Dialog
         open={newGroupDialog}
         onClose={() => setNewGroupDialog(false)}
