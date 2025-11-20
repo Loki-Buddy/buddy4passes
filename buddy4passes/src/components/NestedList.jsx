@@ -36,6 +36,7 @@ export default function NestedList({ groups, onGroupAdded }) {
     }
     console.log("Adding group:", newGroupName);
     const result = await invoke("add_group", { groupname: newGroupName });
+    console.log("Add group result:", result);
     if (result.success === false) {
       showSnackbar("Fehler beim Hinzufügen der Gruppe");
       return;
