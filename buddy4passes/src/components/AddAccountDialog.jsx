@@ -32,43 +32,40 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   // Gruppen laden
   useEffect(() => {
-  }, []);
+    if (open) {
+      invoke("get_groups")
+        .then((res) => setGroups(Array.isArray(res) ? res : []))
+        .catch((err) =>
+          console.error("Fehler beim Laden der Gruppen: ", err)
+        );
+    }
+  }, [open]);
 
   // Neue Gruppe anlegen
   async function handleAddGroup() {
-  if (!newGroupName.trim()) {
-    showSnackbar("Bitte Gruppennamen eingeben!", "error");
-    return;
-  };
+    if (!newGroupName.trim()) return;
 
-  try {
-    const result = await invoke("add_group", {
-      groupname: newGroupName,
-    });
+    try {
+      console.log("Adding new group:", newGroupName);
 
-    if (!result?.success) {
-      showSnackbar(result?.message ?? "Fehler", "error");
-      return;
+      const result = await invoke("add_group", {
+        groupname: newGroupName,
+      });
+
+      // Gruppe lokal hinzufügen --> useState
+      const newLocalId = Date.now();
+
+      setGroups((old) => [...(Array.isArray(old) ? old : []), { id: newLocalId, name: newGroupName }]);
+      setGroupId(newLocalId);
+
+      showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
+      setNewGroupDialog(false);
+      setNewGroupName("");
+    } catch (e) {
+      console.error("Fehler beim Anlegen der Gruppe:", e);
+      showSnackbar("Fehler beim Anlegen der Gruppe", "error");
     }
-
-    const newId = result.group_id;
-
-    setGroups((old) => [
-      ...(Array.isArray(old) ? old : []),
-      { id: newId, name: newGroupName },
-    ]);
-
-    setGroupId(newId);
-
-    showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
-    setNewGroupDialog(false);
-    setNewGroupName("");
-  } catch (e) {
-    console.error("Fehler beim Anlegen der Gruppe:", e);
-    showSnackbar("Fehler beim Anlegen der Gruppe", "error");
   }
-}
-
 
   // Account speichern
   async function handleSubmit(e) {
@@ -80,7 +77,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         serviceemail: email,
         serviceusername: username,
         servicepassword: password,
-        servicegroupid: groupId ?? null,
+        servicegroupid: groupId,
       });
 
       // Felder zurücksetzen
@@ -152,13 +149,9 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
                   label="Gruppe (optional)"
                   variant="outlined"
                   fullWidth
-                  value={groupId || ""}
+                  value={groupId ?? ""}
                   onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
                 >
-                  <MenuItem value="">
-                    Keine Gruppe
-                  </MenuItem>
-
                   {groups.length > 0 ? (
                     groups.map((g) => (
                       <MenuItem key={g.id} value={g.id}>
@@ -202,9 +195,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
             fullWidth
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
-            sx={{
-              marginTop: 1
-            }}
           />
         </DialogContent>
         <DialogActions>
