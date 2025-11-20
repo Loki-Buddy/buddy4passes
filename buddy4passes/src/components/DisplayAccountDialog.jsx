@@ -89,6 +89,7 @@ export default function DisplayAccountDialogSlide({
     }
   }, [account]); // <- Dependency hinzugefügt
 
+
   if (!account) return null;
   async function handleUpdate(e) {
     e.preventDefault();
