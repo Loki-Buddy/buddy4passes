@@ -114,10 +114,12 @@ export function Dashboard() {
       <h2>Dashboard</h2>
       <div className="layout">
         <div className="sidebar">
-          <NestedList
-            groups={groups}
-            onGroupAdded={() => fetchGroups()}
-          />
+          <div className="sidebar-scrollable">
+            <NestedList
+              groups={groups}
+              onGroupAdded={() => fetchGroups()}
+            />
+          </div>
         </div>
         <div className="content">
 
