@@ -69,17 +69,16 @@ export default function DisplayAccountDialogSlide({
   }
 
   useEffect(() => {
-    if (account) {
-      fetchGroups();
+    fetchGroups();
+  }, []);
 
+  useEffect(() => {
+    if (account) {
       setService(account.service);
       setEmail(account.service_email);
       setUsername(account.service_username);
       setPassword(account.service_password);
-      setGroupId(account.group_id);
       
-      const group = groups.find((g) => g.group_id === account.group_id);
-      setGroupName(group ? group.group_name : "");
       setEditService(false);
       setEditEmail(false);
       setEditUsername(false);
@@ -87,7 +86,23 @@ export default function DisplayAccountDialogSlide({
       setEditGroup(false);
       setShowPassword(false);
     }
-  }, [account]); // <- Dependency hinzugefügt
+  }, [account]);
+
+  useEffect(() => {
+    console.log("Account:", account);
+    console.log("Groups:", groups);
+    console.log("Account group_id:", account?.group_id);
+    
+    if (account && groups.length > 0) {
+      const groupIdToSet = account.group_id || null;
+      console.log("Setting groupId to:", groupIdToSet);
+      setGroupId(groupIdToSet);
+      
+      const group = groups.find((g) => g.group_id === account.group_id);
+      console.log("Found group:", group);
+      setGroupName(group ? group.group_name : "");
+    }
+  }, [account, groups]);
 
 
   if (!account) return null;
@@ -213,9 +228,12 @@ export default function DisplayAccountDialogSlide({
                 label="Gruppe (optional)"
                 variant="outlined"
                 fullWidth
-                value={groupName}
+                value={groupId ?? ""}
                 onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
               >
+                <MenuItem value="">
+                  <em>Keine Gruppe</em>
+                </MenuItem>
                 {groups.length > 0 ? (
                   groups.map((g) => (
                     <MenuItem key={g.group_id} value={g.group_id}>
@@ -226,13 +244,6 @@ export default function DisplayAccountDialogSlide({
                   <MenuItem disabled>Keine Gruppen vorhanden</MenuItem>
                 )}
               </TextField>
-
-              <Button
-                variant="outlined"
-                onClick={() => setNewGroupDialog(true)}
-              >
-                +
-              </Button>
             </Stack>
 
             <DialogActions>
@@ -267,36 +278,3 @@ export default function DisplayAccountDialogSlide({
     </>
   );
 }
-
-
-
-/* const [groupId, setGroupId] = useState(null);
-  const [groups, setGroups] = useState([]);
-  const [newGroupDialog, setNewGroupDialog] = useState(false);
-  const [newGroupName, setNewGroupName] = useState("");
-<Dialog
-        open={newGroupDialog}
-        onClose={() => setNewGroupDialog(false)}
-        disableRestoreFocus
-        disableEnforceFocus  // <- Zusätzlich hinzugefügt
-      >
-        <DialogTitle>Neue Gruppe anlegen</DialogTitle>
-        <DialogContent>
-          <TextField
-            sx={{
-              mt:1
-            }}
-            label="Gruppenname"
-            fullWidth
-            value={newGroupName}
-            onChange={(e) => setNewGroupName(e.target.value)}
-            autoFocus  // <- Fokus direkt ins Textfeld
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNewGroupDialog(false)}>Abbrechen</Button>
-          <Button variant="contained" onClick={handleAddGroup}>
-            Speichern
-          </Button>
-        </DialogActions>
-      </Dialog> */

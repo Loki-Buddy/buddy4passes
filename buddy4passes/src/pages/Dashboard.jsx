@@ -34,6 +34,7 @@ export function Dashboard() {
         (a, b) => a.account_id - b.account_id
       );
       setMessage("");
+      console.log(sortedAccounts);
       setAccounts(sortedAccounts);
     } catch (error) {
       console.error("Error fetching accounts:", error);

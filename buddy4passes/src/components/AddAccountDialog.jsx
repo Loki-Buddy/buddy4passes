@@ -25,7 +25,6 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
   // Gruppen
   const [groupId, setGroupId] = useState(null);
   const [groups, setGroups] = useState([]);
-  /* const [resultGroupId, setResultGroupId] = useState(null); */
   const [newGroupDialog, setNewGroupDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
 
