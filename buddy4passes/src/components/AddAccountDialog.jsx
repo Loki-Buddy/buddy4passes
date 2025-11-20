@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { invoke } from "@tauri-apps/api/core";
-import { useSnackbar } from "./SnackbarContext";
+import { useSnackbar } from "../contexts/SnackbarContext";
 import { DialogActions, MenuItem } from "@mui/material";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -211,7 +211,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
         <DialogContent>
           <TextField
             sx={{
-              mt:1
+              mt: 1
             }}
             label="Gruppenname"
             fullWidth
