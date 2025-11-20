@@ -38,12 +38,13 @@ min-height: 80vh;
 .layout {
 display: flex;
 flex-direction: row;
-gap: 1rem;
+gap: 0.125rem; /* Reduced by 50% from 0.25rem */
 width: 100%;
-height: calc(100vh - 200px); /* Adjust based on your header/footer height */
+height: calc(100vh - 200px);
 align-items: flex-start;
 box-sizing: border-box;
 overflow: hidden;
+padding: 0 0.75rem;
 }
 
 .sidebar {
@@ -100,14 +101,52 @@ height: 100%;
 .sidebar .MuiList-root,
 .sidebar .MuiCollapse-root,
 .sidebar .MuiListItemButton-root {
-width: 100% !important;
-min-width: 0 !important;
-box-sizing: border-box;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .sidebar .MuiCollapse-root {
-display: block;
-overflow-x: hidden;
+  display: block;
+  overflow-x: hidden;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Fix for nested list items to prevent shifting */
+.sidebar .MuiListItemButton-root {
+  padding-left: 16px !important;
+  padding-right: 8px !important;
+}
+
+.sidebar .MuiListItemButton-root.Mui-selected {
+  padding-left: 16px !important;
+}
+
+/* Ensure consistent padding for nested items */
+.sidebar .MuiCollapse-root .MuiListItemButton-root {
+  padding-left: 32px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-right: 8px !important;
+  margin: 2px 16px 2px 0 !important;
+  border-radius: 4px !important;
+}
+
+/* Add more space between all list items */
+.sidebar .MuiListItemButton-root {
+  margin: 4px 16px 4px 0 !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-right: 8px !important;
+  border-radius: 4px !important;
+}
+
+/* Hover effect for better visual feedback */
+.sidebar .MuiListItemButton-root:hover {
+  background-color: rgba(25, 118, 210, 0.08) !important;
 }
 
 .content {
@@ -117,10 +156,12 @@ background-color: rgba(255, 255, 255, 0.75);
 border: 1px solid #ccc;
 border-radius: 5px;
 box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-padding: 1rem;
+padding: 1.5rem;
 box-sizing: border-box;
 overflow-y: auto;
 height: 100%;
+max-width: 1200px;
+margin: 0 1rem; /* Reduced from 2rem to 1rem */
 }
 
 /* Ensure content area has the same scrollbar as sidebar */
