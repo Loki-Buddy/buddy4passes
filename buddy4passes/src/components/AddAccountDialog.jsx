@@ -30,39 +30,46 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   const { showSnackbar } = useSnackbar();
 
+  async function fetchGroups() {
+    try {
+      const response = await invoke("get_groups");
+      console.log(response.groups);
+      if (response.success === false) {
+        return;
+      }
+      const sortedGroups = response.groups.sort(
+        (a, b) => a.group_id - b.group_id
+      );
+      setGroups(sortedGroups);
+      console.log(sortedGroups);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  }
+
   // Gruppen laden
   useEffect(() => {
-    if (open) {
-      invoke("get_groups")
-        .then((res) => setGroups(Array.isArray(res) ? res : []))
-        .catch((err) =>
-          console.error("Fehler beim Laden der Gruppen: ", err)
-        );
-    }
-  }, [open]);
+    fetchGroups();
+  }, []);
 
   // Neue Gruppe anlegen
   async function handleAddGroup() {
     if (!newGroupName.trim()) return;
 
     try {
-      console.log("Adding new group:", newGroupName);
-
       const result = await invoke("add_group", {
         groupname: newGroupName,
       });
 
-      // Gruppe lokal hinzufügen --> useState
-      const newLocalId = Date.now();
-
-      setGroups((old) => [...(Array.isArray(old) ? old : []), { id: newLocalId, name: newGroupName }]);
-      setGroupId(newLocalId);
-
       showSnackbar(`Gruppe "${newGroupName}" angelegt!`);
+
+      // Erst Dialog schließen, dann State zurücksetzen
       setNewGroupDialog(false);
-      setNewGroupName("");
+      setTimeout(() => {
+        setNewGroupName("");
+        fetchGroups(); // Gruppenliste aktualisieren
+      }, 100);
     } catch (e) {
-      console.error("Fehler beim Anlegen der Gruppe:", e);
       showSnackbar("Fehler beim Anlegen der Gruppe", "error");
     }
   }
@@ -154,8 +161,8 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
                 >
                   {groups.length > 0 ? (
                     groups.map((g) => (
-                      <MenuItem key={g.id} value={g.id}>
-                        {g.name}
+                      <MenuItem key={g.group_id} value={g.group_id}>
+                        {g.group_name}
                       </MenuItem>
                     ))
                   ) : (
@@ -187,6 +194,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
       <Dialog
         open={newGroupDialog}
         onClose={() => setNewGroupDialog(false)}
+        disableRestoreFocus  // <- Verhindert Fokus-Konflikt
       >
         <DialogTitle>Neue Gruppe anlegen</DialogTitle>
         <DialogContent>

@@ -12,7 +12,8 @@ struct GroupRequest {
 #[derive(Deserialize, Debug)]
 struct GroupResponse {
     message: String,
-    group_id: i64,
+    #[serde(default)]
+    group_id: Option<i64>,  // <- Optional, falls Server es nicht liefert
 }
 
 #[derive(Serialize)]
@@ -34,7 +35,6 @@ pub async fn add_group(
 
     // API-Endpunkt für Gruppen
     let api_url = "http://3.74.73.164:3000/groups/add";
-
 
     // JSON-Daten für Cloud-Backend
     let group_data = GroupRequest {
@@ -66,15 +66,17 @@ pub async fn add_group(
         });
     }
 
-    // JSON-Antwort auslesen
-    let group_response: GroupResponse = response
-        .json()
-        .await
-        .map_err(|_| "Antwort konnte nicht gelesen werden".to_string())?;
+    // Rohantwort auslesen und loggen
+    let body = response.text().await.unwrap_or_default();
+    println!("Server-Antwort: {}", body);
 
+    // JSON-Antwort parsen
+    let group_response: GroupResponse = serde_json::from_str(&body)
+        .map_err(|e| format!("Parse-Fehler: {}. Rohdaten: {}", e, body))?;
+    
     Ok(GroupResult {
         success: true,
         message: group_response.message,
-        group_id: Some(group_response.group_id),
+        group_id: group_response.group_id,  // <- Kann jetzt None sein
     })
 }
