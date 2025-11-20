@@ -12,7 +12,8 @@ struct AccountRequest {
     service_email: String,
     service_username: String,
     service_password: String,
-    group_id: u32, // soll verschlüsselt gesendet werden
+    #[serde(skip_serializing_if = "Option::is_none")]
+    group_id: Option<u32>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -35,7 +36,7 @@ pub async fn add_account(
     serviceemail: String,
     serviceusername: String,
     servicepassword: String,
-    groupid: u32
+    groupid: Option<u32>
 ) -> Result<AccountResult, String> {
 
     // Token abrufen
