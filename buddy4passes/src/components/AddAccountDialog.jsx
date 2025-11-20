@@ -32,14 +32,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   // Gruppen laden
   useEffect(() => {
-    if (open) {
-      invoke("get_groups")
-        .then((res) => setGroups(Array.isArray(res) ? res : []))
-        .catch((err) =>
-          console.error("Fehler beim Laden der Gruppen: ", err)
-        );
-    }
-  }, [open]);
+  }, []);
 
   // Neue Gruppe anlegen
   async function handleAddGroup() {
@@ -149,7 +142,7 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
                   label="Gruppe (optional)"
                   variant="outlined"
                   fullWidth
-                  value={groupId ?? ""}
+                  value={groupId || ""}
                   onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
                 >
                   {groups.length > 0 ? (
@@ -195,6 +188,9 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
             fullWidth
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
+            sx={{
+              marginTop: 1
+            }}
           />
         </DialogContent>
         <DialogActions>
