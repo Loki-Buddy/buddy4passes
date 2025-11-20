@@ -37,9 +37,10 @@ export default function DisplayAccountDialogSlide({
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [groupName, setGroupName] = useState("");
 
   // Gruppen
-  const [groupName, setGroupName] = useState("");
+  const [groupId, setGroupId] = useState(null);
   const [groups, setGroups] = useState([]);
 
   const [editService, setEditService] = useState(false);
@@ -52,14 +53,33 @@ export default function DisplayAccountDialogSlide({
 
   const { showSnackbar } = useSnackbar();
 
+  async function fetchGroups() {
+    try {
+      const response = await invoke("get_groups");
+      if (response.success === false) {
+        return;
+      }
+      const sortedGroups = response.groups.sort(
+        (a, b) => a.group_id - b.group_id
+      );
+      setGroups(sortedGroups);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  }
+
   useEffect(() => {
     if (account) {
+      fetchGroups();
+
       setService(account.service);
       setEmail(account.service_email);
       setUsername(account.service_username);
       setPassword(account.service_password);
-      setGroupName(account.service_group_name || ""); 
-
+      setGroupId(account.group_id);
+      
+      const group = groups.find((g) => g.group_id === account.group_id);
+      setGroupName(group ? group.group_name : "");
       setEditService(false);
       setEditEmail(false);
       setEditUsername(false);
@@ -67,40 +87,18 @@ export default function DisplayAccountDialogSlide({
       setEditGroup(false);
       setShowPassword(false);
     }
-  }, [account]);
-
-  useEffect(() => {
-    if (open) {
-      invoke("get_groups")
-        .then((res) => setGroups(Array.isArray(res) ? res : []))
-        .catch((err) => console.error("Fehler beim Laden der Gruppen: ", err));
-    }
-  }, [open]);
+  }, [account]); // <- Dependency hinzugefügt
 
   if (!account) return null;
-
   async function handleUpdate(e) {
     e.preventDefault();
 
     try {
-      // Wenn der eingegebene Gruppenname noch nicht existiert, zuerst anlegen
-      let selectedGroupId = null;
-      const existingGroup = groups.find((g) => g.name === groupName);
-      if (existingGroup) {
-        selectedGroupId = existingGroup.id;
-      } else if (groupName.trim()) {
-        const result = await invoke("add_group", { groupname: groupName });
-        // ID?
-        selectedGroupId = Date.now();
-        setGroups((old) => [...old, { id: selectedGroupId, name: groupName }]);
-      }
-
       const data = {
         service,
         service_email: email,
         service_username: username,
-        service_password: password,
-        service_group_id: selectedGroupId,
+        service_password: password
       };
 
       await invoke("change_account_creds", {
@@ -209,34 +207,31 @@ export default function DisplayAccountDialogSlide({
                 onChange={(e) => setPassword(e.target.value)}
               />
 
-              <Autocomplete
-                freeSolo
-                disableClearable
-                options={groups.map((g) => g.name)}
+              <TextField
+                select
+                label="Gruppe (optional)"
+                variant="outlined"
+                fullWidth
                 value={groupName}
-                onChange={(e, newValue) => setGroupName(newValue)}
-                onInputChange={(e, newValue) => setGroupName(newValue)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Gruppe"
-                    variant="outlined"
-                    disabled={!editGroup}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Tooltip title="Bearbeiten">
-                            <IconButton size="small" onClick={() => setEditGroup(true)}>
-                              <EditIcon sx={iconStyle} />
-                            </IconButton>
-                          </Tooltip>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                onChange={(e) => setGroupId(e.target.value ? Number(e.target.value) : null)}
+              >
+                {groups.length > 0 ? (
+                  groups.map((g) => (
+                    <MenuItem key={g.group_id} value={g.group_id}>
+                      {g.group_name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>Keine Gruppen vorhanden</MenuItem>
                 )}
-              />
+              </TextField>
+
+              <Button
+                variant="outlined"
+                onClick={() => setNewGroupDialog(true)}
+              >
+                +
+              </Button>
             </Stack>
 
             <DialogActions>
@@ -271,3 +266,36 @@ export default function DisplayAccountDialogSlide({
     </>
   );
 }
+
+
+
+/* const [groupId, setGroupId] = useState(null);
+  const [groups, setGroups] = useState([]);
+  const [newGroupDialog, setNewGroupDialog] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+<Dialog
+        open={newGroupDialog}
+        onClose={() => setNewGroupDialog(false)}
+        disableRestoreFocus
+        disableEnforceFocus  // <- Zusätzlich hinzugefügt
+      >
+        <DialogTitle>Neue Gruppe anlegen</DialogTitle>
+        <DialogContent>
+          <TextField
+            sx={{
+              mt:1
+            }}
+            label="Gruppenname"
+            fullWidth
+            value={newGroupName}
+            onChange={(e) => setNewGroupName(e.target.value)}
+            autoFocus  // <- Fokus direkt ins Textfeld
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNewGroupDialog(false)}>Abbrechen</Button>
+          <Button variant="contained" onClick={handleAddGroup}>
+            Speichern
+          </Button>
+        </DialogActions>
+      </Dialog> */

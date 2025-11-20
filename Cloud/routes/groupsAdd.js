@@ -18,7 +18,7 @@ router.post("/groups/add", auth, async (req, res) => {
             "INSERT INTO groups (group_name, user_id) VALUES ($1, $2) RETURNING group_id",
             [group_name, user_id]
         );
-        conso
+        
         res.status(201).json({
             message: "Gruppe erfolgreich hinzugefügt!",
             group_id: result.rows[0].group_id
