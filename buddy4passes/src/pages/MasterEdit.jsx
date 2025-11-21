@@ -10,7 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
-import { useSnackbar } from "../components/SnackbarContext";
+import { useSnackbar } from "../contexts/SnackbarContext";
 import { useNavigate } from "react-router-dom";
 import dashboardIcon from "../assets/dashboard.png";
 import "./../styles/MasterEdit.css";

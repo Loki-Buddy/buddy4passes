@@ -6,12 +6,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountCard from "../components/AccountCard";
 import Box from "@mui/material/Box";
-import AddAccountDialogSlide from "../components/addAccountDialog";
+import AddAccountDialogSlide from "../components/AddAccountDialog";
 import Tooltip from "@mui/material/Tooltip";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DisplayAccountDialogSlide from "../components/DisplayAccountDialog";
 import { Button } from "@mui/material";
 import benutzerIcon from "../assets/benutzer.png";
+import NestedList from "../components/NestedList";
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -20,8 +21,21 @@ export function Dashboard() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountInfo, setSelectedAccountsInfo] = useState(null);
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
-  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] =
-    useState(false);
+  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] = useState(false);
+  const [groups, setGroups] = useState([]);
+  const [filter, setFilter] = useState(null);
+  const [displayAccounts, setDisplayAccounts] = useState([]);
+
+  async function filterAccountsByGroup() {
+    if (filter === null) {
+      setDisplayAccounts(accounts);
+    } else {
+      const filtered = accounts.filter(
+        (account) => account.group_id === filter
+      );
+      setDisplayAccounts(filtered);
+    }
+  }
 
   async function fetchAccounts() {
     try {
@@ -35,15 +49,38 @@ export function Dashboard() {
         (a, b) => a.account_id - b.account_id
       );
       setMessage("");
+      console.log(sortedAccounts);
       setAccounts(sortedAccounts);
     } catch (error) {
       console.error("Error fetching accounts:", error);
     }
   }
+  async function fetchGroups() {
+    try {
+      const response = await invoke("get_groups");
+
+      if (response.success === false) {
+        return;
+      }
+      const sortedGroups = response.groups.sort(
+        (a, b) => a.group_id - b.group_id
+      );
+      setGroups(sortedGroups);
+
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  }
+
 
   useEffect(() => {
+    fetchGroups();
     fetchAccounts();
   }, []);
+
+  useEffect(() => {
+    filterAccountsByGroup();
+  }, [filter, accounts]);
 
   return (
     <main className="Dashboard">
@@ -71,59 +108,72 @@ export function Dashboard() {
         Profil
       </Button>
       <h2>Dashboard</h2>
-      <Box
-        sx={{
-          minHeight: "70vh",
-          minWidth: "80vw",
-          backgroundColor: "rgba(255, 255, 255, 0.75)",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <div className="account-list">
-          <Tooltip title="Eintrag hinzufügen">
-            <AddCircleIcon
-              fontSize="large"
-              onClick={() => {
-                setOpenAddAccountDialog(true);
-                setSelectedAccount(null);
-              }}
-              sx={{
-                color: "rgba(255, 255, 255, 0.75)",
-                cursor: "pointer",
-                "&:hover": {
-                  color: "rgb(135, 206, 250)",
-                },
-                alignSelf: "center",
-              }}
+      <div className="layout">
+        <div className="sidebar">
+          <div className="sidebar-scrollable">
+            <NestedList
+              groups={groups}
+              onGroupAdded={() => fetchGroups()}
+              onFilterChange={(groupId) => setFilter(groupId)}
+              selectedGroup={filter}
             />
-          </Tooltip>
-          {message ? (
-            <p>{message}</p>
-          ) : (
-            accounts.map((account) => (
-              <AccountCard
-                key={account.account_id}
-                account_id={account.account_id}
-                service={account.service}
-                selected={selectedAccount === account.account_id}
-                onSelect={() => {
-                  setSelectedAccount(account.account_id);
-                  setSelectedAccountsInfo(account);
-                  setOpenDisplayAccountDialog(true);
+          </div>
+        </div>
+        <div className="content">
+
+          <div className="account-list">
+            <Tooltip title="Eintrag hinzufügen">
+              <AddCircleIcon
+                fontSize="large"
+                onClick={() => {
+                  setOpenAddAccountDialog(true);
+                  setSelectedAccount(null);
+                }}
+                sx={{
+                  color: "rgba(255, 255, 255, 0.75)",
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "rgb(135, 206, 250)",
+                  },
+                  alignSelf: "center",
                 }}
               />
-            ))
-          )}
+            </Tooltip>
+
+            {message ? (
+              <p>{message}</p>
+            ) : (
+              displayAccounts.map((account) => (
+                <AccountCard
+                  key={account.account_id}
+                  account_id={account.account_id}
+                  service={account.service}
+                  selected={selectedAccount === account.account_id}
+                  onSelect={() => {
+                    setSelectedAccount(account.account_id);
+                    setSelectedAccountsInfo(account);
+                    setOpenDisplayAccountDialog(true);
+                  }}
+                />
+              ))
+            )}
+          </div>
+
         </div>
-      </Box>
+      </div>
+
+      {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
       <AddAccountDialogSlide
+        groups={groups}
+        fetchGroups={fetchGroups}
         open={openAddAccountDialog}
         onClose={() => setOpenAddAccountDialog(false)}
         onSubmit={fetchAccounts}
       />
+
       <DisplayAccountDialogSlide
+        groups={groups}
+        fetchGroups={fetchGroups}
         open={openDisplayAccountDialog}
         onClose={() => {
           setOpenDisplayAccountDialog(false);
@@ -132,8 +182,10 @@ export function Dashboard() {
         onSubmit={fetchAccounts}
         account={selectedAccountInfo}
       />
+
       <Footer />
     </main>
+
   );
 }
 

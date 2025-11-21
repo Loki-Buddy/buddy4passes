@@ -1,3 +1,4 @@
+use aes_gcm::aead::rand_core::le;
 use tauri::State;
 use reqwest::Client;
 use std::sync::Arc;
@@ -61,12 +62,15 @@ pub async fn display_accounts(
                 .and_then(|v| crypto.decrypt(v).ok())
                 .unwrap_or_default();
 
+            let group_id = acc["group_id"].as_u64().unwrap_or_default();
+
             json!({
                 "account_id": account_id,
                 "service": service,
                 "service_email": decrypted_email,
                 "service_username": decrypted_username,
                 "service_password": decrypted_password,
+                "group_id": group_id
             })
         })
         .collect();

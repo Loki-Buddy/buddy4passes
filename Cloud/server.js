@@ -8,22 +8,31 @@ app.use(express.json());
 
 async function initDB() {
   await pool.query(`
-        CREATE TABLE IF NOT EXISTS b4puser (
-            user_id SERIAL PRIMARY KEY,
-            user_name TEXT NOT NULL UNIQUE,
-            user_email TEXT NOT NULL UNIQUE,
-            master_password TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS accounts (
-            account_id SERIAL PRIMARY KEY,
-            user_id INTEGER NOT NULL REFERENCES b4puser(user_id) ON DELETE CASCADE,
-            service TEXT NOT NULL,
-            service_email TEXT NOT NULL,
-            service_username TEXT,
-            service_password TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES b4puser(user_id)
-        );`);
+    CREATE TABLE IF NOT EXISTS b4puser (
+      user_id SERIAL PRIMARY KEY,
+      user_name TEXT NOT NULL UNIQUE,
+      user_email TEXT NOT NULL UNIQUE,
+      master_password TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS groups (
+      group_id SERIAL PRIMARY KEY,
+      group_name TEXT NOT NULL,
+      user_id INTEGER NOT NULL REFERENCES b4puser(user_id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS accounts (
+      account_id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES b4puser(user_id) ON DELETE CASCADE,
+      service TEXT NOT NULL,
+      service_email TEXT NOT NULL,
+      service_username TEXT,
+      service_password TEXT NOT NULL,
+      group_id INTEGER REFERENCES groups(group_id) ON DELETE SET NULL
+    );
+  `);
 }
+
 
 // User Registrierung
 const userRegRoute = require("./routes/userRegistration");
@@ -57,11 +66,27 @@ app.use(accountDeleteRoute);
 const accountEditRoute = require("./routes/accountEdit");
 app.use(accountEditRoute);
 
+// Gruppe hinzufügen
+const groupsAddRoute = require("./routes/groupsAdd");
+app.use(groupsAddRoute);
+
+// Gruppen anzeigen
+const groupsDisplayRoute = require("./routes/groupsDisplay");
+app.use(groupsDisplayRoute);
+
+// Gruppen bearbeiten
+const groupsEditRoute = require("./routes/groupsEdit");
+app.use(groupsEditRoute);
+
+// Gruppen löschen
+const groupsDeleteRoute = require("./routes/groupsDelete");
+app.use(groupsDeleteRoute);
+
+// Master-Account bearbeiten
 const masterAccChangesRoute = require("./routes/chmastercreds");
 app.use(masterAccChangesRoute);
 
 // Get user Data
-
 const getUserDataRoute = require("./routes/getUserData");
 app.use(getUserDataRoute);
 

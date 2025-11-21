@@ -3,17 +3,17 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../pool");
 
-router.get("/accounts", auth, async (req, res) => {
+router.get("/groups", auth, async (req, res) => {
   try {
     const userId = req.user.user_id;
 
     const result = await pool.query(
-      "SELECT account_id, service, service_email, service_username, service_password, group_id FROM accounts WHERE user_id = $1",
+      "SELECT group_id, group_name FROM groups WHERE user_id = $1",
       [userId]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Keine Einträge gefunden!" });
+      return res.status(404).json({ message: "Keine Gruppen gefunden!" });
     }
 
     res.json(result.rows);
