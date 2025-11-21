@@ -14,6 +14,7 @@ export function Landing() {
       <div className="hero-content-register">
         <h1>Neu hier? </h1>
         <p>Registriere dich jetzt!</p>
+        <br />
         <div className="hero-ctas">
           <Link to="/register" className="btn">Registrieren</Link>
         </div>

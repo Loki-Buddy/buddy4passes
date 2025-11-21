@@ -1,6 +1,7 @@
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { invoke } from "@tauri-apps/api/core";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -36,7 +37,7 @@ export function MasterEdit({ onSubmit }) {
   const [passwordValidationError, setPasswordValidationError] = useState("");
   const [oldpasswortValidationError, setOldPasswordValidationError] =
     useState("");
-
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const { showSnackbar } = useSnackbar();
 
   async function fetchData() {
@@ -57,6 +58,19 @@ export function MasterEdit({ onSubmit }) {
   }, []);
 
   const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
+
+  async function handleDelete(e) {
+    try {
+      e.preventDefault();
+
+      const response = await invoke("delete_user", { email: email, username: username });
+      showSnackbar(response.message);
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  }
   async function handleSubmit(e) {
     try {
       e.preventDefault();
@@ -259,10 +273,32 @@ export function MasterEdit({ onSubmit }) {
               </div>
             )}
             <Button type="submit">Speichern</Button>
+            <Button onClick={() => setConfirmOpen(true)}
+              sx={{
+                color: 'red',
+              }}>
+              Account löschen
+            </Button>
           </form>
         </div>
       </Box>
       <Footer />
+      
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Account löschen?</DialogTitle>
+        <DialogContent>
+          Willst du deinen Account wirklich löschen? Dies kann nicht rückgängig
+          gemacht werden.
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setConfirmOpen(false)}>
+            Abbrechen
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Löschen
+          </Button>
+        </DialogActions>
+      </Dialog>
     </main>
   );
 }
