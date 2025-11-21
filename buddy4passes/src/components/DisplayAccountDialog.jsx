@@ -32,6 +32,8 @@ export default function DisplayAccountDialogSlide({
   onClose,
   onSubmit,
   account,
+  fetchGroups,
+  groups
 }) {
   const [service, setService] = useState("");
   const [email, setEmail] = useState("");
@@ -41,7 +43,6 @@ export default function DisplayAccountDialogSlide({
 
   // Gruppen
   const [groupId, setGroupId] = useState(null);
-  const [groups, setGroups] = useState([]);
 
   const [editService, setEditService] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
@@ -53,24 +54,7 @@ export default function DisplayAccountDialogSlide({
 
   const { showSnackbar } = useSnackbar();
 
-  async function fetchGroups() {
-    try {
-      const response = await invoke("get_groups");
-      if (response.success === false) {
-        return;
-      }
-      const sortedGroups = response.groups.sort(
-        (a, b) => a.group_id - b.group_id
-      );
-      setGroups(sortedGroups);
-    } catch (error) {
-      console.error("Error fetching groups:", error);
-    }
-  }
 
-  useEffect(() => {
-    fetchGroups();
-  }, []);
 
   useEffect(() => {
     if (account) {
@@ -78,7 +62,7 @@ export default function DisplayAccountDialogSlide({
       setEmail(account.service_email);
       setUsername(account.service_username);
       setPassword(account.service_password);
-      
+
       setEditService(false);
       setEditEmail(false);
       setEditUsername(false);
@@ -88,11 +72,12 @@ export default function DisplayAccountDialogSlide({
     }
   }, [account]);
 
+  if (!groups) return null;
   useEffect(() => {
-    if (account && groups.length > 0) {
+    if (account && groups && groups.length > 0) {
       const groupIdToSet = account.group_id || null;
       setGroupId(groupIdToSet);
-      
+
       const group = groups.find((g) => g.group_id === account.group_id);
       setGroupName(group ? group.group_name : "");
     }
@@ -109,7 +94,7 @@ export default function DisplayAccountDialogSlide({
         service_email: email,
         service_username: username,
         service_password: password,
-        groupid: groupId,
+        group_id: groupId,
       };
 
       await invoke("change_account_creds", {
@@ -224,7 +209,7 @@ export default function DisplayAccountDialogSlide({
                 variant="outlined"
                 fullWidth
                 value={groupId ?? ""}
-                onChange={(e) => {setGroupId(e.target.value ? Number(e.target.value) : null); setEditGroup(true)}}
+                onChange={(e) => { setGroupId(e.target.value ? Number(e.target.value) : null); setEditGroup(true) }}
               >
                 <MenuItem value="">
                   <em>Keine Gruppe</em>

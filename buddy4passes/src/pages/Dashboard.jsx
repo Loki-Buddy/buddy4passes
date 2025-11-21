@@ -23,6 +23,19 @@ export function Dashboard() {
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
   const [openDisplayAccountDialog, setOpenDisplayAccountDialog] = useState(false);
   const [groups, setGroups] = useState([]);
+  const [filter, setFilter] = useState(null);
+  const [displayAccounts, setDisplayAccounts] = useState([]);
+
+  async function filterAccountsByGroup() {
+    if (filter === null) {
+      setDisplayAccounts(accounts);
+    } else {
+      const filtered = accounts.filter(
+        (account) => account.group_id === filter
+      );
+      setDisplayAccounts(filtered);
+    }
+  }
 
   async function fetchAccounts() {
     try {
@@ -65,27 +78,10 @@ export function Dashboard() {
     fetchAccounts();
   }, []);
 
-  async function handleAddTestGroup() {
-    try {
-      const response = await invoke("get_groups");
+  useEffect(() => {
+    filterAccountsByGroup();
+  }, [filter, accounts]);
 
-      if (!response.success) {
-        console.error(`Fehler: ${response.message}`);
-        return;
-      }
-
-      console.log("Gruppen erfolgreich abgerufen:");
-      console.log(response.groups); // gesamte Liste
-
-      // Optional: schön formatiert ausgeben
-      response.groups.forEach((group) => {
-        console.log(`ID: ${group.group_id} | Name: ${group.group_name}`);
-      });
-
-    } catch (error) {
-      console.error("Unerwarteter Fehler:", error);
-    }
-  }
   return (
     <main className="Dashboard">
       <Header />
@@ -118,6 +114,8 @@ export function Dashboard() {
             <NestedList
               groups={groups}
               onGroupAdded={() => fetchGroups()}
+              onFilterChange={(groupId) => setFilter(groupId)}
+              selectedGroup={filter}
             />
           </div>
         </div>
@@ -145,7 +143,7 @@ export function Dashboard() {
             {message ? (
               <p>{message}</p>
             ) : (
-              accounts.map((account) => (
+              displayAccounts.map((account) => (
                 <AccountCard
                   key={account.account_id}
                   account_id={account.account_id}
@@ -166,12 +164,16 @@ export function Dashboard() {
 
       {/* Dialoge müssen außerhalb des Flex-Containers bleiben */}
       <AddAccountDialogSlide
+        groups={groups}
+        fetchGroups={fetchGroups}
         open={openAddAccountDialog}
         onClose={() => setOpenAddAccountDialog(false)}
         onSubmit={fetchAccounts}
       />
 
       <DisplayAccountDialogSlide
+        groups={groups}
+        fetchGroups={fetchGroups}
         open={openDisplayAccountDialog}
         onClose={() => {
           setOpenDisplayAccountDialog(false);

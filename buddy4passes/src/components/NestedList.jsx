@@ -15,7 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 
-export default function NestedList({ groups, onGroupAdded }) {
+export default function NestedList({ groups, onGroupAdded, onFilterChange, selectedGroup }) {
   const [open, setOpen] = React.useState(false);
   const [newGroupDialog, setNewGroupDialog] = React.useState(false);
   const [editGroupDialog, setEditGroupDialog] = React.useState(false);
@@ -99,8 +99,8 @@ export default function NestedList({ groups, onGroupAdded }) {
           </ListItemButton>
 
           {groups.length > 0 && groups.map((group) => (
-            <ListItemButton key={group.group_id} sx={{ pl: 4, width: '100%', minWidth: 0 }}>
-              <ListItemText primary={group.group_name} />
+            <ListItemButton key={group.group_id} sx={{ pl: 4, width: '100%', minWidth: 0, backgroundColor: selectedGroup === group.group_id ? "rgb(135, 206, 250)" : "transparent" }}>
+              <ListItemText onClick={() => onFilterChange(prev => prev === group.group_id ? null : group.group_id)} primary={group.group_name} />
 
               <IconButton
                 size="small"

@@ -15,7 +15,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
+export default function AddAccountDialogSlide({ open, onClose, onSubmit, fetchGroups, groups }) {
   // Account
   const [service, setService] = useState("");
   const [email, setEmail] = useState("");
@@ -24,31 +24,14 @@ export default function AddAccountDialogSlide({ open, onClose, onSubmit }) {
 
   // Gruppen
   const [groupId, setGroupId] = useState(null);
-  const [groups, setGroups] = useState([]);
   const [newGroupDialog, setNewGroupDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
 
   const { showSnackbar } = useSnackbar();
 
-  async function fetchGroups() {
-    try {
-      const response = await invoke("get_groups");
-      if (response.success === false) {
-        return;
-      }
-      const sortedGroups = response.groups.sort(
-        (a, b) => a.group_id - b.group_id
-      );
-      setGroups(sortedGroups);
-    } catch (error) {
-      console.error("Error fetching groups:", error);
-    }
-  }
 
-  // Gruppen laden
-  useEffect(() => {
-    fetchGroups();
-  }, []);
+
+
 
   // Neue Gruppe anlegen
   async function handleAddGroup() {
