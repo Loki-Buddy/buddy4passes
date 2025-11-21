@@ -22,7 +22,7 @@ export function SnackbarProvider({ children }) {
       <Snackbar
         open={snackbarOpen}
         onClose={handleClose}
-        autoHideDuration={2000}
+        autoHideDuration={4000}
         message={snackbarMessage}
       />
     </SnackbarContext.Provider>

@@ -100,7 +100,7 @@ export default function NestedList({ groups, onGroupAdded, onFilterChange, selec
 
           {groups.length > 0 && groups.map((group) => (
             <ListItemButton key={group.group_id} sx={{ pl: 4, width: '100%', minWidth: 0, backgroundColor: selectedGroup === group.group_id ? "rgb(135, 206, 250)" : "transparent" }}>
-              <ListItemText onClick={() => { onFilterChange(prev => prev === group.group_id ? null : group.group_id); showSnackbar(`Aktiver Filter: ${group.group_name}`) }} primary={group.group_name} />
+              <ListItemText onClick={() => { onFilterChange(prev => prev === group.group_id ? null : group.group_id); selectedGroup !== group.group_id ? showSnackbar(`Aktiver Filter: ${group.group_name}`) : showSnackbar("Filter deaktiviert"); }} primary={group.group_name} />
 
               <IconButton
                 size="small"
