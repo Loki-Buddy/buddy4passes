@@ -54,7 +54,7 @@ function RegistrationForm() {
       }
 
       showSnackbar(
-        `Registrierung erfolgreich! Du dich mit ${data.username} anmelden`
+        `Registrierung erfolgreich! Du kannst dich mit ${data.username} anmelden`
       );
       navigate("/login");
     } catch (err) {
