@@ -1,6 +1,7 @@
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { invoke } from "@tauri-apps/api/core";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -36,7 +37,7 @@ export function MasterEdit({ onSubmit }) {
   const [passwordValidationError, setPasswordValidationError] = useState("");
   const [oldpasswortValidationError, setOldPasswordValidationError] =
     useState("");
-
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const { showSnackbar } = useSnackbar();
 
   async function fetchData() {
@@ -272,18 +273,32 @@ export function MasterEdit({ onSubmit }) {
               </div>
             )}
             <Button type="submit">Speichern</Button>
-            <Button onClick={handleDelete}
+            <Button onClick={() => setConfirmOpen(true)}
               sx={{
                 color: 'red',
               }}>
-              Master Account löschen
+              Account löschen
             </Button>
           </form>
-
         </div>
-
       </Box>
       <Footer />
+      
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Account löschen?</DialogTitle>
+        <DialogContent>
+          Willst du deinen Account wirklich löschen? Dies kann nicht rückgängig
+          gemacht werden.
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setConfirmOpen(false)}>
+            Abbrechen
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Löschen
+          </Button>
+        </DialogActions>
+      </Dialog>
     </main>
   );
 }
