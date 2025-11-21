@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import Snackbar from "@mui/material/Snackbar";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "./SnackbarContext";
+import { useSnackbar } from "../contexts/SnackbarContext";
 
 function RegistrationForm() {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function RegistrationForm() {
       }
 
       showSnackbar(
-        `Registrierung erfolgreich! Du dich mit ${data.username} anmelden`
+        `Registrierung erfolgreich! Du kannst dich mit ${data.username} anmelden`
       );
       navigate("/login");
     } catch (err) {
