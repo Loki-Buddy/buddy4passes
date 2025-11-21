@@ -57,6 +57,19 @@ export function MasterEdit({ onSubmit }) {
   }, []);
 
   const iconStyle = { cursor: "pointer", "&:hover": { color: "#1976d2" } };
+
+  async function handleDelete(e) {
+    try {
+      e.preventDefault();
+
+      const response = await invoke("delete_user", { email: email, username: username });
+      showSnackbar(response.message);
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  }
   async function handleSubmit(e) {
     try {
       e.preventDefault();
@@ -259,8 +272,16 @@ export function MasterEdit({ onSubmit }) {
               </div>
             )}
             <Button type="submit">Speichern</Button>
+            <Button onClick={handleDelete}
+              sx={{
+                color: 'red',
+              }}>
+              Master Account löschen
+            </Button>
           </form>
+
         </div>
+
       </Box>
       <Footer />
     </main>
