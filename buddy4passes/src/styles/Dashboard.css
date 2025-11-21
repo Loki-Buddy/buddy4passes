@@ -161,6 +161,7 @@ box-sizing: border-box;
 overflow-y: auto;
 height: 100%;
 max-width: 1200px;
+width: 55vw;
 margin: 0 1rem; /* Reduced from 2rem to 1rem */
 }
 
