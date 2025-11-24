@@ -33,7 +33,7 @@ export default function DisplayAccountDialogSlide({
   onSubmit,
   account,
   fetchGroups,
-  groups
+  groups,
 }) {
   const [service, setService] = useState("");
   const [email, setEmail] = useState("");
@@ -53,8 +53,6 @@ export default function DisplayAccountDialogSlide({
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { showSnackbar } = useSnackbar();
-
-
 
   useEffect(() => {
     if (account) {
@@ -82,7 +80,6 @@ export default function DisplayAccountDialogSlide({
       setGroupName(group ? group.group_name : "");
     }
   }, [account, groups]);
-
 
   if (!account) return null;
   async function handleUpdate(e) {
@@ -168,7 +165,10 @@ export default function DisplayAccountDialogSlide({
                   endAdornment: (
                     <InputAdornment position="end">
                       <Tooltip title="Bearbeiten">
-                        <IconButton size="small" onClick={() => setEditService(true)}>
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditService(true)}
+                        >
                           <EditIcon sx={iconStyle} />
                         </IconButton>
                       </Tooltip>
@@ -184,6 +184,33 @@ export default function DisplayAccountDialogSlide({
                 disabled={!editEmail}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => navigator.clipboard.writeText(email)}
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditEmail(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <TextField
@@ -192,6 +219,35 @@ export default function DisplayAccountDialogSlide({
                 disabled={!editUsername}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            navigator.clipboard.writeText(username)
+                          }
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditUsername(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <TextField
@@ -201,6 +257,55 @@ export default function DisplayAccountDialogSlide({
                 disabled={!editPassword}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {" "}
+                      <Tooltip
+                        title={
+                          showPassword
+                            ? "Passwort verbergen"
+                            : "Passwort anzeigen"
+                        }
+                      >
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                        >
+                          {" "}
+                          {showPassword ? (
+                            <VisibilityOffIcon />
+                          ) : (
+                            <VisibilityIcon />
+                          )}{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="In Zwischenablage kopieren">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            navigator.clipboard.writeText(password)
+                          }
+                        >
+                          {" "}
+                          <ContentCopyIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                      <Tooltip title="Bearbeiten">
+                        {" "}
+                        <IconButton
+                          size="small"
+                          onClick={() => setEditPassword(true)}
+                        >
+                          {" "}
+                          <EditIcon sx={iconStyle} />{" "}
+                        </IconButton>{" "}
+                      </Tooltip>{" "}
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <TextField
@@ -209,7 +314,10 @@ export default function DisplayAccountDialogSlide({
                 variant="outlined"
                 fullWidth
                 value={groupId ?? ""}
-                onChange={(e) => { setGroupId(e.target.value ? Number(e.target.value) : null); setEditGroup(true) }}
+                onChange={(e) => {
+                  setGroupId(e.target.value ? Number(e.target.value) : null);
+                  setEditGroup(true);
+                }}
               >
                 <MenuItem value="">
                   <em>Keine Gruppe</em>
