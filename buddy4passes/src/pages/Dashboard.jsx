@@ -21,7 +21,8 @@ export function Dashboard() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountInfo, setSelectedAccountsInfo] = useState(null);
   const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
-  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] = useState(false);
+  const [openDisplayAccountDialog, setOpenDisplayAccountDialog] =
+    useState(false);
   const [groups, setGroups] = useState([]);
   const [filter, setFilter] = useState(null);
   const [displayAccounts, setDisplayAccounts] = useState([]);
@@ -60,18 +61,17 @@ export function Dashboard() {
       const response = await invoke("get_groups");
 
       if (response.success === false) {
+        setGroups([]);
         return;
       }
       const sortedGroups = response.groups.sort(
         (a, b) => a.group_id - b.group_id
       );
       setGroups(sortedGroups);
-
     } catch (error) {
       console.error("Error fetching groups:", error);
     }
   }
-
 
   useEffect(() => {
     fetchGroups();
@@ -116,11 +116,11 @@ export function Dashboard() {
               onGroupAdded={() => fetchGroups()}
               onFilterChange={(groupId) => setFilter(groupId)}
               selectedGroup={filter}
+              updateGroups={fetchGroups}
             />
           </div>
         </div>
         <div className="content">
-
           <div className="account-list">
             <Tooltip title="Eintrag hinzufügen">
               <AddCircleIcon
@@ -158,7 +158,6 @@ export function Dashboard() {
               ))
             )}
           </div>
-
         </div>
       </div>
 
@@ -185,7 +184,6 @@ export function Dashboard() {
 
       <Footer />
     </main>
-
   );
 }
 
